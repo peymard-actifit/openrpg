@@ -105,3 +105,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 7 
 - **Rapport**: [2025-12-22_00h30m35s_v0.9.0.txt](logs/deploys/2025-12-22_00h30m35s_v0.9.0.txt) 
  
+ 
+## v0.10.0 - 22/12/2025 00:45:40 
+ 
+- **Type**: minor 
+- **Message**: Inventaire amǸliorǸ + DǸs variǸs + Panel fixe + Valeur objets 
+- **Fichiers modifiés**: 9 
+- **Rapport**: [2025-12-22_00h45m40s_v0.10.0.txt](logs/deploys/2025-12-22_00h45m40s_v0.10.0.txt) 
+ 

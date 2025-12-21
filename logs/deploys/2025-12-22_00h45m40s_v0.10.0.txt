@@ -1,0 +1,46 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 00:45:40 
+🏷️  Version: v0.9.0 → v0.10.0 
+📊 Type: minor 
+💬 Message: Inventaire amǸliorǸ + DǸs variǸs + Panel fixe + Valeur objets 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (9) 
+-------------------------------------------------- 
+ M api/chat.js
+ M logs/deploys/2025-12-22_00h30m35s_v0.9.0.txt
+ M package.json
+ M src/components/Dice.jsx
+ M src/components/Inventory.jsx
+ M src/pages/Game.jsx
+ M src/styles/alignment.css
+ M src/styles/dice.css
+ M src/styles/game.css
+ M src/styles/inventory.css
+?? logs/deploys/2025-12-22_00h45m40s_v0.10.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |   8 +
+ api/chat.js                                  |  39 +++-
+ logs/deploys/2025-12-21_23h21m45s_v0.8.0.txt |   3 +
+ logs/deploys/2025-12-22_00h30m35s_v0.9.0.txt |  40 +++++
+ package.json                                 |   2 +-
+ src/components/AlignmentDisplay.jsx          |  54 ++++++
+ src/components/Dice.jsx                      |  72 +++-----
+ src/components/Inventory.jsx                 |  82 +++++++--
+ src/components/StatsPanel.jsx                |  40 +++++
+ src/pages/Game.jsx                           | 259 ++++++++++++++++-----------
+ src/styles/alignment.css                     | 138 ++++++++++++++
+ src/styles/dice.css                          | 129 +++++--------
+ src/styles/game.css                          |  43 +++++
+ src/styles/inventory.css                     | 247 +++++++++++++++++++------
+ 14 files changed, 838 insertions(+), 318 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

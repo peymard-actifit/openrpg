@@ -62,8 +62,6 @@
   text-align: center;
   flex: 1;
   min-width: 0;
-  cursor: help;
-  position: relative;
 }
 
 .game-title h1 {
@@ -76,25 +74,13 @@
   text-overflow: ellipsis;
 }
 
-.game-title:hover::after {
-  content: attr(title);
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-card);
-  border: 1px solid var(--gold-dim);
-  padding: var(--space-md);
-  border-radius: 6px;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  max-width: 300px;
-  width: max-content;
-  z-index: 100;
-  white-space: normal;
-  text-align: left;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  margin-top: var(--space-xs);
+/* Wrapper inventaire avec preview */
+.inventory-btn-wrapper {
+  position: relative;
+}
+
+.inventory-btn-wrapper:hover .inventory-preview {
+  display: block;
 }
 
 .game-level {
@@ -386,10 +372,6 @@
   
   .game-title h1 {
     font-size: 0.9rem;
-  }
-  
-  .game-title:hover::after {
-    display: none;
   }
   
   .game-stats-mini {

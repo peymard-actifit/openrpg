@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: messages,
-      temperature: 0.9,
+      temperature: 0.85,
       max_tokens: 1500,
       presence_penalty: 0.3,
       frequency_penalty: 0.2
@@ -33,15 +33,31 @@ export default async function handler(req, res) {
       if (match) deathReason = match[1]
     }
 
-    // Extraire les objets AJOUTÉS [OBJET:nom|icône|description]
+    // Extraire les objets [OBJET:nom|icône|description|valeur]
     const newItems = []
-    const itemMatches = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^\]]+)\]/g)
-    for (const match of itemMatches) {
+    // Format avec valeur
+    const itemMatchesWithValue = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^|]+)\|(\d+)\]/g)
+    for (const match of itemMatchesWithValue) {
       newItems.push({
         name: match[1].trim(),
         icon: match[2].trim(),
-        description: match[3].trim()
+        description: match[3].trim(),
+        value: parseInt(match[4]) || 0
       })
+    }
+    // Format sans valeur (rétrocompatibilité)
+    const itemMatchesNoValue = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^\]|]+)\](?!\d)/g)
+    for (const match of itemMatchesNoValue) {
+      // Vérifier que ce n'est pas déjà parsé avec valeur
+      const alreadyAdded = newItems.some(item => item.name === match[1].trim())
+      if (!alreadyAdded) {
+        newItems.push({
+          name: match[1].trim(),
+          icon: match[2].trim(),
+          description: match[3].trim(),
+          value: 0
+        })
+      }
     }
 
     // Extraire les objets RETIRÉS [RETIRER:nom]

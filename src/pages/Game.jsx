@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import * as api from '../lib/api'
 import Dice from '../components/Dice'
-import Inventory from '../components/Inventory'
+import Inventory, { InventoryPreview } from '../components/Inventory'
 import LevelUpModal from '../components/LevelUpModal'
 import StatsPanel from '../components/StatsPanel'
 import { VoiceInput, VoiceOutput, useTextToSpeech } from '../components/VoiceControls'
@@ -23,6 +23,7 @@ export default function Game() {
   const [sending, setSending] = useState(false)
   const [gameStarted, setGameStarted] = useState(false)
   const [diceRequested, setDiceRequested] = useState(false)
+  const [diceType, setDiceType] = useState(6)
   const [voiceOutputEnabled, setVoiceOutputEnabled] = useState(false)
   const [inventoryOpen, setInventoryOpen] = useState(false)
   const [inventory, setInventory] = useState([])
@@ -73,7 +74,7 @@ export default function Game() {
       const response = await api.sendToAI([
         { role: 'system', content: buildInventoryCheckPrompt() },
         ...historyForCheck,
-        { role: 'user', content: '[SYSTÈME] Analyse l\'historique et vérifie la cohérence de l\'inventaire. Si des objets ont été trouvés mais pas ajoutés, ou utilisés/perdus mais toujours présents, corrige.' }
+        { role: 'user', content: '[SYSTÈME] Analyse l\'historique. Ajoute les objets manquants avec leur valeur estimée.' }
       ], { game, profile, inventory })
 
       processAIResponse(response, true)
@@ -87,13 +88,15 @@ export default function Game() {
     
 INVENTAIRE ACTUEL: ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name}`).join(', ') : 'Vide'}
 
-Analyse l'historique des messages. Identifie:
-1. Les objets mentionnés comme TROUVÉS/OBTENUS/REÇUS/RAMASSÉS mais absents de l'inventaire → ajoute-les avec [OBJET:nom|icône|description]
-2. Les objets mentionnés comme UTILISÉS/PERDUS/DONNÉS/DÉTRUITS/CONSOMMÉS mais encore présents → retire-les avec [RETIRER:nom]
+Analyse l'historique. Pour chaque objet mentionné comme obtenu mais absent:
+[OBJET:nom|icône|description courte|valeur en pièces]
 
-IMPORTANT: Inclus TOUS les objets importants mentionnés (or, armes, équipements, consommables, clés, etc.)
+Exemple: [OBJET:Épée rouillée|⚔️|Vieille épée ébréchée|15]
 
-Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout est cohérent, ne réponds rien.`
+Inclus TOUT: or (pièces d'or → 💰), armes, armures, potions, clés, etc.
+Pour l'or/argent, indique la quantité dans le nom.
+
+Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
   }
 
   async function fetchGame() {
@@ -115,9 +118,7 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
       
       if (messagesData && messagesData.length > 0) {
         const lastMsg = messagesData[messagesData.length - 1]
-        if (lastMsg.role === 'assistant' && lastMsg.content.includes('[LANCER_DE]')) {
-          setDiceRequested(true)
-        }
+        checkForDiceRequest(lastMsg.content)
       }
     } catch (err) {
       console.error('Erreur:', err)
@@ -127,13 +128,31 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
     }
   }
 
-  function handleDiceRoll(value) {
+  function checkForDiceRequest(content) {
+    // Cherche [LANCER_Dx] où x est le type de dé
+    const diceMatch = content.match(/\[LANCER_D(\d+)\]/)
+    if (diceMatch) {
+      setDiceType(parseInt(diceMatch[1]))
+      setDiceRequested(true)
+    } else if (content.includes('[LANCER_DE]')) {
+      setDiceType(6)
+      setDiceRequested(true)
+    }
+  }
+
+  function handleDiceRoll(value, type) {
     setDiceRequested(false)
-    confirmAndSend(`🎲 ${value}`)
+    confirmAndSend(`🎲 D${type}: ${value}`)
   }
 
   function handleVoiceTranscript(text) {
     setInput(prev => prev + (prev ? ' ' : '') + text)
+  }
+
+  function handleDiscardItem(index) {
+    const updatedInventory = inventory.filter((_, i) => i !== index)
+    setInventory(updatedInventory)
+    api.updateGame(gameId, { inventory: updatedInventory })
   }
 
   async function handleLevelUpChoice(statKey) {
@@ -162,7 +181,7 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
       
       const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Contexte de l'aventure: ${game.initialPrompt}. Lance l'aventure de manière immersive. Établis une quête principale claire et présente au moins un élément de tension ou un antagoniste potentiel. Si le joueur reçoit des objets de départ, liste-les.` }
+        { role: 'user', content: `Contexte: ${game.initialPrompt}. Lance l'aventure. Si le personnage commence avec des objets, liste-les tous.` }
       ], { game, profile, stats: game.currentStats })
 
       const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
@@ -178,7 +197,6 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
     }
   }
 
-  // Demande de confirmation avant envoi
   function prepareMessage() {
     const msg = input.trim()
     if (!msg) return
@@ -189,7 +207,6 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
 
   function cancelMessage() {
     setShowConfirm(false)
-    // Garde le message dans l'input pour modification
   }
 
   function confirmAndSend(overrideMessage = null) {
@@ -235,18 +252,14 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
   }
 
   function processAIResponse(response, silent = false) {
-    if (response.content.includes('[LANCER_DE]')) {
-      setDiceRequested(true)
-    }
+    checkForDiceRequest(response.content)
 
-    // Ajout d'objets
     if (response.newItems && response.newItems.length > 0) {
       const updatedInventory = [...inventory, ...response.newItems]
       setInventory(updatedInventory)
       api.updateGame(gameId, { inventory: updatedInventory })
     }
 
-    // Retrait d'objets
     if (response.removedItems && response.removedItems.length > 0) {
       const updatedInventory = inventory.filter(item => 
         !response.removedItems.some(removed => 
@@ -258,7 +271,6 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
       api.updateGame(gameId, { inventory: updatedInventory })
     }
 
-    // Changement d'alignement
     if (response.alignmentChange) {
       const newAlignment = {
         goodEvil: Math.max(-100, Math.min(100, alignment.goodEvil + (response.alignmentChange.goodEvil || 0))),
@@ -285,82 +297,62 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
   function buildSystemPrompt() {
     const turnCount = messages.filter(m => m.role === 'user').length
 
-    return `Tu es le Maître du Jeu d'OpenRPG, un jeu de rôle textuel immersif et DRAMATIQUE.
+    return `Tu es le Maître du Jeu d'OpenRPG, un jeu de rôle textuel immersif.
 
 ═══════════════════════════════════════════
-CONTEXTE & RÉFÉRENCES
+CONTEXTE DE L'AVENTURE
 ═══════════════════════════════════════════
 ${game?.initialPrompt}
 
-IMPORTANT: Utilise tes connaissances sur cet univers/contexte pour enrichir l'histoire avec des références authentiques (lieux, personnages, événements, objets typiques de cet univers).
+Utilise tes connaissances de cet univers pour enrichir l'histoire.
 
 ═══════════════════════════════════════════
-PERSONNAGE
+PERSONNAGE - ${profile?.characterName} (Niveau ${game?.level})
 ═══════════════════════════════════════════
-Nom: ${profile?.characterName}
-Niveau: ${game?.level} (Tour ${turnCount + 1})
-Force: ${game?.currentStats?.strength}/20 | Intelligence: ${game?.currentStats?.intelligence}/20
-Sagesse: ${game?.currentStats?.wisdom}/20 | Dextérité: ${game?.currentStats?.dexterity}/20
-Constitution: ${game?.currentStats?.constitution}/20 | Mana: ${game?.currentStats?.mana}/20
+FOR: ${game?.currentStats?.strength} | INT: ${game?.currentStats?.intelligence} | SAG: ${game?.currentStats?.wisdom}
+DEX: ${game?.currentStats?.dexterity} | CON: ${game?.currentStats?.constitution} | MANA: ${game?.currentStats?.mana}
 
-ALIGNEMENT ACTUEL:
-• Bon/Mauvais: ${alignment.goodEvil} (${alignment.goodEvil > 30 ? 'Bon' : alignment.goodEvil < -30 ? 'Mauvais' : 'Neutre'})
-• Loyal/Chaotique: ${alignment.lawChaos} (${alignment.lawChaos > 30 ? 'Loyal' : alignment.lawChaos < -30 ? 'Chaotique' : 'Neutre'})
+Alignement: ${alignment.goodEvil > 30 ? 'Bon' : alignment.goodEvil < -30 ? 'Mauvais' : 'Neutre'} / ${alignment.lawChaos > 30 ? 'Loyal' : alignment.lawChaos < -30 ? 'Chaotique' : 'Neutre'}
 
 ═══════════════════════════════════════════
-INVENTAIRE (${inventory.length} objets)
+INVENTAIRE
 ═══════════════════════════════════════════
-${inventory.length > 0 ? inventory.map(i => `• ${i.icon} ${i.name}: ${i.description}`).join('\n') : '(Vide)'}
-
-═══════════════════════════════════════════
-RÈGLES CRITIQUES
-═══════════════════════════════════════════
-
-🎲 LANCER DE DÉ - DEMANDE SOUVENT [LANCER_DE]:
-   • TOUTE action incertaine, risquée ou spectaculaire
-   • Combats, acrobaties, persuasion, discrétion
-   • Actions surprenantes du joueur
-   • Si le succès n'est pas garanti → dé !
-   Résultats: 1=échec critique, 2-3=échec, 4-5=réussite, 6=critique
-
-💀 MODE HARDCORE: Mort permanente, dangers réels
-
-📦 INVENTAIRE (CRUCIAL - NE JAMAIS OUBLIER):
-   • TOUT objet reçu/trouvé/acheté → [OBJET:nom|icône|description]
-   • Objet utilisé/perdu/vendu/donné → [RETIRER:nom]
-   • Inclure: or, armes, armures, potions, clés, documents, tout!
-
-⚖️ ALIGNEMENT (évolue selon les actions):
-   • Action bonne/altruiste → [ALIGN:+10,0] (bon)
-   • Action mauvaise/égoïste → [ALIGN:-10,0] (mauvais)
-   • Action ordonnée/honorable → [ALIGN:0,+10] (loyal)
-   • Action imprévisible/rebelle → [ALIGN:0,-10] (chaotique)
-   • Cumule si l'action est double (ex: [ALIGN:+10,-10])
-
-⬆️ PROGRESSION - Régulière:
-   • Tous les 5-8 tours environ → [LEVEL_UP]
-   • Après victoire importante → [LEVEL_UP]
-   • Après résolution de quête → [LEVEL_UP]
+${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name} (${i.value || 0}💰)`).join(', ') : 'Vide'}
 
 ═══════════════════════════════════════════
-STORYTELLING DRAMATIQUE
+RÈGLES
 ═══════════════════════════════════════════
 
-🔥 TENSION: Retournements, trahisons, révélations
-👤 ANTAGONISTES: Ennemis récurrents, motivés
-⚡ ÉVÉNEMENTS: Vols, embuscades, dilemmes moraux
-📜 QUÊTE: Obstacles, interférences, évolution
-🎭 CONSÉQUENCES: Les actions ont un impact durable
+🎲 DÉS - UNIQUEMENT quand il y a un vrai aléa:
+   • Combat, action physique risquée → [LANCER_D20]
+   • Petite chance (pile ou face) → [LANCER_D2]
+   • Trois options → [LANCER_D3]
+   • Chance moyenne → [LANCER_D6]
+   • Dégâts, effets variés → [LANCER_D10]
+   • Pourcentage, événement rare → [LANCER_D100]
+   NE DEMANDE PAS de dé si le succès/échec est évident.
+
+📦 OBJETS - Format avec valeur:
+   [OBJET:nom|icône|description|valeur]
+   Exemple: [OBJET:Potion de soin|🧪|Restaure 20 PV|25]
+   [RETIRER:nom] pour objet perdu/utilisé
+
+⚖️ ALIGNEMENT - Selon les actions:
+   [ALIGN:goodEvil,lawChaos] ex: [ALIGN:+10,-5]
+
+⬆️ NIVEAU - Tous les 6-8 tours ou après exploit:
+   [LEVEL_UP]
+
+💀 MORT - Permanente:
+   [MORT:description]
 
 ═══════════════════════════════════════════
-CONSIGNES FINALES
+STORYTELLING
 ═══════════════════════════════════════════
-• Réponds dans la langue du joueur
-• N'utilise JAMAIS [IMAGE:]
-• Demande des jets de dé RÉGULIÈREMENT
-• Fais évoluer l'alignement selon les choix
-• Donne des objets régulièrement
-• Fais monter de niveau régulièrement`
+• Crée tension, antagonistes, retournements
+• Les actions ont des conséquences durables
+• Donne des objets régulièrement avec leur valeur
+• N'utilise JAMAIS [IMAGE:]`
   }
 
   function handleKeyPress(e) {
@@ -379,11 +371,14 @@ CONSIGNES FINALES
       <header className="game-header">
         <div className="header-left">
           <Link to="/dashboard" className="back-btn">←</Link>
-          <button className="inventory-btn" onClick={() => setInventoryOpen(true)}>
-            🎒 {inventory.length}
-          </button>
+          <div className="inventory-btn-wrapper">
+            <button className="inventory-btn" onClick={() => setInventoryOpen(true)}>
+              🎒 {inventory.length}
+            </button>
+            <InventoryPreview items={inventory} />
+          </div>
         </div>
-        <div className="game-title" title={game?.initialPrompt}>
+        <div className="game-title">
           <h1>{game?.title}</h1>
           <span className="game-level">Niveau {game?.level}</span>
         </div>
@@ -444,7 +439,7 @@ CONSIGNES FINALES
 
             <div className="input-area">
               {diceRequested && (
-                <div className="dice-request">🎲 Le Maître du Jeu demande un lancer de dé !</div>
+                <div className="dice-request">🎲 Lancez un D{diceType} !</div>
               )}
               
               {showConfirm && (
@@ -462,7 +457,11 @@ CONSIGNES FINALES
               )}
               
               <div className="input-container">
-                <Dice onRoll={handleDiceRoll} disabled={sending || !diceRequested} />
+                <Dice 
+                  onRoll={handleDiceRoll} 
+                  disabled={sending || !diceRequested}
+                  diceType={diceType}
+                />
                 
                 <div className="input-wrapper">
                   <textarea
@@ -492,7 +491,8 @@ CONSIGNES FINALES
       <Inventory 
         items={inventory} 
         isOpen={inventoryOpen} 
-        onClose={() => setInventoryOpen(false)} 
+        onClose={() => setInventoryOpen(false)}
+        onDiscardItem={handleDiscardItem}
       />
 
       <LevelUpModal
@@ -512,7 +512,7 @@ function formatMessage(content) {
   formatted = formatted.replace(/\[OBJET:[^\]]+\]/g, '')
   formatted = formatted.replace(/\[RETIRER:[^\]]+\]/g, '')
   formatted = formatted.replace(/\[ALIGN:[^\]]+\]/g, '')
-  
+  formatted = formatted.replace(/\[LANCER_D\d+\]/g, '<span class="dice-inline">🎲</span>')
   formatted = formatted.replace(/\[LANCER_DE\]/g, '<span class="dice-inline">🎲</span>')
   formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, '<div class="death-notice">💀 MORT — $1</div>')
   formatted = formatted.replace(/\[LEVEL_UP\]/g, '<div class="level-up-notice">⬆️ NIVEAU SUPÉRIEUR !</div>')
