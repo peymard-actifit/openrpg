@@ -1,0 +1,43 @@
+# 📊 Historique des Déploiements - OpenRPG
+
+Ce fichier trace automatiquement tous les déploiements du projet.
+
+---
+
+## v0.1.0 - 21/12/2024
+
+- **Type**: initial
+- **Message**: Initial commit - Création du projet
+- **Fichiers modifiés**: 1
+
+---
+
+## v0.2.0 - 21/12/2024
+
+- **Type**: minor
+- **Message**: Plateforme JDR complète avec auth, parties, et IA
+- **Fichiers modifiés**: 30
+
+---
+
+## v0.3.0 - 21/12/2024
+
+- **Type**: minor
+- **Message**: Dé d6 interactif + Mode vocal (STT/TTS)
+- **Fichiers modifiés**: 12
+
+---
+
+## v0.4.0 - 21/12/2024
+
+- **Type**: minor
+- **Message**: Migration vers MongoDB (openrpg-db)
+- **Fichiers modifiés**: 20
+
+---
+
+## Prochains déploiements
+
+*Les nouveaux déploiements seront automatiquement ajoutés ci-dessous par le script `deploy.cmd`*
+
+
