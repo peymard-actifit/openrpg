@@ -1,0 +1,49 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 21/12/2025 23:11:04 
+🏷️  Version: v0.6.0 → v0.7.0 
+📊 Type: minor 
+💬 Message: Design responsive PC/tablette/smartphone + police lisible 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (10) 
+-------------------------------------------------- 
+ M api/chat.js
+ M index.html
+ M logs/deploys/2025-12-21_23h04m44s_v0.6.0.txt
+ M package.json
+ M src/pages/Game.jsx
+ M src/styles/dashboard.css
+ M src/styles/game.css
+ M src/styles/global.css
+ M src/styles/inventory.css
+ M src/styles/landing.css
+ M src/styles/levelup.css
+?? logs/deploys/2025-12-21_23h11m04s_v0.7.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |    8 +
+ api/chat.js                                  |   29 +-
+ index.html                                   |    6 +-
+ logs/deploys/2025-12-21_22h40m34s_v0.5.3.txt |    3 +
+ logs/deploys/2025-12-21_23h04m44s_v0.6.0.txt | 1865 ++++++++++++++++++++++++++
+ package.json                                 |    2 +-
+ src/components/Inventory.jsx                 |   54 +
+ src/components/LevelUpModal.jsx              |   42 +
+ src/lib/api.js                               |    3 -
+ src/pages/Game.jsx                           |  294 ++--
+ src/styles/dashboard.css                     |  177 ++-
+ src/styles/game.css                          |  410 +++---
+ src/styles/global.css                        |  164 +--
+ src/styles/inventory.css                     |  174 +++
+ src/styles/landing.css                       |  145 +-
+ src/styles/levelup.css                       |  121 ++
+ 16 files changed, 2987 insertions(+), 510 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -81,3 +81,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 9 
 - **Rapport**: [2025-12-21_23h04m44s_v0.6.0.txt](logs/deploys/2025-12-21_23h04m44s_v0.6.0.txt) 
  
+ 
+## v0.7.0 - 21/12/2025 23:11:04 
+ 
+- **Type**: minor 
+- **Message**: Design responsive PC/tablette/smartphone + police lisible 
+- **Fichiers modifiés**: 10 
+- **Rapport**: [2025-12-21_23h11m04s_v0.7.0.txt](logs/deploys/2025-12-21_23h11m04s_v0.7.0.txt) 
+ 

@@ -1,23 +1,31 @@
 .inventory-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 200;
   animation: fadeIn 0.2s ease;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .inventory-panel {
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
+  width: 95%;
+  max-width: 550px;
+  max-height: 85vh;
   background: var(--bg-card);
   border: 1px solid var(--gold-dim);
   border-radius: 12px;
   overflow: hidden;
   animation: slideUp 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -32,6 +40,7 @@
   padding: var(--space-md) var(--space-lg);
   background: var(--bg-elevated);
   border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  flex-shrink: 0;
 }
 
 .inventory-header h2 {
@@ -42,14 +51,14 @@
 }
 
 .close-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 1px solid var(--gold-dim);
   background: transparent;
   color: var(--gold);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.1rem;
   transition: all 0.2s;
 }
 
@@ -61,7 +70,7 @@
 .inventory-content {
   padding: var(--space-lg);
   overflow-y: auto;
-  max-height: calc(80vh - 60px);
+  flex: 1;
 }
 
 .inventory-empty {
@@ -70,15 +79,18 @@
   color: var(--text-muted);
 }
 
+.inventory-empty p {
+  font-size: 1.1rem;
+  margin-bottom: var(--space-sm);
+}
+
 .inventory-empty small {
-  display: block;
-  margin-top: var(--space-sm);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 
 .inventory-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   gap: var(--space-sm);
   margin-bottom: var(--space-lg);
 }
@@ -98,20 +110,19 @@
 
 .inventory-item:hover {
   border-color: var(--gold-dim);
-  transform: translateY(-2px);
 }
 
 .inventory-item.selected {
   border-color: var(--gold);
-  background: rgba(212, 175, 55, 0.1);
+  background: rgba(212, 175, 55, 0.15);
 }
 
 .item-icon {
-  font-size: 1.8rem;
+  font-size: 2rem;
 }
 
 .item-name {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
   text-align: center;
   overflow: hidden;
@@ -129,23 +140,35 @@
 
 .item-details h3 {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: var(--gold);
   margin-bottom: var(--space-sm);
 }
 
 .item-description {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.7;
   margin-bottom: var(--space-md);
 }
 
 .item-effects {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--emerald);
-  padding: var(--space-sm);
-  background: rgba(34, 139, 34, 0.1);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(34, 139, 34, 0.15);
   border-radius: 4px;
 }
 
+/* Responsive smartphone */
+@media (max-width: 480px) {
+  .inventory-panel {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .inventory-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

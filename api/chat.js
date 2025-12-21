@@ -15,8 +15,10 @@ export default async function handler(req, res) {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: messages,
-      temperature: 0.8,
-      max_tokens: 500
+      temperature: 0.85,
+      max_tokens: 1500,
+      presence_penalty: 0.2,
+      frequency_penalty: 0.1
     })
 
     const content = completion.choices[0].message.content
@@ -31,7 +33,7 @@ export default async function handler(req, res) {
       if (match) deathReason = match[1]
     }
 
-    // Extraire les objets
+    // Extraire les objets [OBJET:nom|icône|description]
     const newItems = []
     const itemMatches = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^\]]+)\]/g)
     for (const match of itemMatches) {
@@ -52,7 +54,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('OpenAI Error:', error)
     return res.status(500).json({ 
-      error: 'Erreur IA',
+      error: 'Erreur de communication avec l\'IA',
       details: error.message 
     })
   }

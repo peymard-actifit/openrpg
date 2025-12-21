@@ -12,7 +12,8 @@ export default function Game() {
   const { gameId } = useParams()
   const { user, profile } = useAuth()
   const navigate = useNavigate()
-  const messagesEndRef = useRef(null)
+  const messagesContainerRef = useRef(null)
+  const lastMessageRef = useRef(null)
   
   const [game, setGame] = useState(null)
   const [messages, setMessages] = useState([])
@@ -33,8 +34,12 @@ export default function Game() {
     fetchGame()
   }, [gameId])
 
+  // Scroll au début du dernier message quand un nouveau message arrive
   useEffect(() => {
-    scrollToBottom()
+    if (lastMessageRef.current && messagesContainerRef.current) {
+      // Scroll pour que le dernier message soit en haut de la zone visible
+      lastMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
   }, [messages])
 
   useEffect(() => {
@@ -76,10 +81,6 @@ export default function Game() {
     }
   }
 
-  function scrollToBottom() {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
-
   function handleDiceRoll(value) {
     setDiceRequested(false)
     sendMessage(`🎲 ${value}`)
@@ -115,7 +116,7 @@ export default function Game() {
       
       const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Contexte: ${game.initialPrompt}. Lance l'aventure.` }
+        { role: 'user', content: `Contexte de l'aventure: ${game.initialPrompt}. Lance l'aventure de manière immersive.` }
       ], { game, profile, stats: game.currentStats })
 
       const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
@@ -141,7 +142,8 @@ export default function Game() {
       const userMsg = await api.addMessage(gameId, 'user', messageToSend)
       setMessages(prev => [...prev, userMsg])
 
-      const history = [...messages, userMsg].slice(-10).map(m => ({
+      // Garder les 15 derniers messages pour le contexte
+      const history = [...messages, userMsg].slice(-15).map(m => ({
         role: m.role,
         content: m.content
       }))
@@ -163,28 +165,24 @@ export default function Game() {
   }
 
   function processAIResponse(response) {
-    // Dé demandé
     if (response.content.includes('[LANCER_DE]')) {
       setDiceRequested(true)
     }
 
-    // Nouveaux objets
     if (response.newItems && response.newItems.length > 0) {
       const updatedInventory = [...inventory, ...response.newItems]
       setInventory(updatedInventory)
       api.updateGame(gameId, { inventory: updatedInventory })
     }
 
-    // Mort
     if (response.playerDied) {
       api.updateGame(gameId, { 
         status: 'archived', 
         deathReason: response.deathReason 
       })
-      setTimeout(() => navigate(`/archive/${gameId}`), 3000)
+      setTimeout(() => navigate(`/archive/${gameId}`), 4000)
     }
 
-    // Level up - choix du joueur
     if (response.levelUp) {
       setPendingLevel(game.level + 1)
       setLevelUpPending(true)
@@ -192,21 +190,37 @@ export default function Game() {
   }
 
   function buildSystemPrompt() {
-    return `Tu es le MJ d'OpenRPG. RÈGLES STRICTES:
+    return `Tu es le Maître du Jeu d'OpenRPG, un jeu de rôle textuel immersif.
 
-1. RÉPONSES COURTES (3-5 phrases max). Pas de descriptions fleuries inutiles.
-2. MODE HARDCORE: mort permanente possible.
-3. Pour actions risquées: [LANCER_DE] (d6: 1=échec crit, 6=réussite crit)
-4. OBJETS: quand le joueur trouve/obtient un objet, ajoute [OBJET:nom|icône|description courte]
-5. LEVEL UP après exploits majeurs: [LEVEL_UP]
-6. MORT: [MORT:raison]
-7. Jamais de [IMAGE:]. Pas d'images.
-8. Langue du joueur.
+CONTEXTE DE L'AVENTURE:
+${game?.initialPrompt}
 
-CONTEXTE: ${game?.initialPrompt}
-PERSONNAGE: ${profile?.characterName}, Niv.${game?.level}
-STATS: FOR:${game?.currentStats?.strength} INT:${game?.currentStats?.intelligence} SAG:${game?.currentStats?.wisdom} DEX:${game?.currentStats?.dexterity} CON:${game?.currentStats?.constitution} MANA:${game?.currentStats?.mana}
-INVENTAIRE: ${inventory.map(i => i.name).join(', ') || 'vide'}`
+PERSONNAGE:
+- Nom: ${profile?.characterName}
+- Niveau: ${game?.level}
+- Force: ${game?.currentStats?.strength}/20
+- Intelligence: ${game?.currentStats?.intelligence}/20
+- Sagesse: ${game?.currentStats?.wisdom}/20
+- Dextérité: ${game?.currentStats?.dexterity}/20
+- Constitution: ${game?.currentStats?.constitution}/20
+- Mana: ${game?.currentStats?.mana}/20
+
+INVENTAIRE: ${inventory.length > 0 ? inventory.map(i => i.name).join(', ') : 'Vide'}
+
+RÈGLES:
+1. MODE HARDCORE: La mort du personnage est permanente. Sois juste mais les dangers sont réels.
+2. DÉ D6: Pour les actions risquées ou incertaines, demande au joueur de lancer le dé avec [LANCER_DE].
+   - Résultat 1: Échec critique (conséquences graves)
+   - Résultat 2-3: Échec
+   - Résultat 4-5: Réussite
+   - Résultat 6: Réussite critique (bonus)
+   - Les stats élevées (15+) donnent un avantage.
+3. OBJETS: Quand le joueur trouve ou reçoit un objet important, ajoute [OBJET:nom|icône|description]
+4. LEVEL UP: Après un exploit majeur, ajoute [LEVEL_UP] - le joueur choisira quelle stat améliorer.
+5. MORT: Si le personnage meurt, termine par [MORT:description de la mort]
+6. Réponds dans la langue du joueur.
+7. Sois descriptif et immersif, crée une atmosphère.
+8. N'utilise JAMAIS de balise [IMAGE:].`
   }
 
   function handleKeyPress(e) {
@@ -231,7 +245,7 @@ INVENTAIRE: ${inventory.map(i => i.name).join(', ') || 'vide'}`
         </div>
         <div className="game-title">
           <h1>{game?.title}</h1>
-          <span className="game-level">Niv. {game?.level}</span>
+          <span className="game-level">Niveau {game?.level}</span>
         </div>
         <div className="game-controls">
           <VoiceOutput 
@@ -260,15 +274,19 @@ INVENTAIRE: ${inventory.map(i => i.name).join(', ') || 'vide'}`
                 onClick={startGame}
                 disabled={sending}
               >
-                {sending ? '...' : '⚔️ Commencer'}
+                {sending ? 'Préparation...' : '⚔️ Commencer l\'Aventure'}
               </button>
             </div>
           </div>
         ) : (
           <>
-            <div className="messages-container">
+            <div className="messages-container" ref={messagesContainerRef}>
               {messages.map((msg, index) => (
-                <div key={msg.id || index} className={`message ${msg.role}`}>
+                <div 
+                  key={msg.id || index} 
+                  className={`message ${msg.role}`}
+                  ref={index === messages.length - 1 ? lastMessageRef : null}
+                >
                   <div className="message-content">
                     {formatMessage(msg.content)}
                   </div>
@@ -281,12 +299,11 @@ INVENTAIRE: ${inventory.map(i => i.name).join(', ') || 'vide'}`
                   </div>
                 </div>
               )}
-              <div ref={messagesEndRef} />
             </div>
 
             <div className="input-area">
               {diceRequested && (
-                <div className="dice-request">🎲 Lancez le dé !</div>
+                <div className="dice-request">🎲 Le Maître du Jeu demande un lancer de dé !</div>
               )}
               
               <div className="input-container">
@@ -297,7 +314,7 @@ INVENTAIRE: ${inventory.map(i => i.name).join(', ') || 'vide'}`
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Action..."
+                    placeholder="Que faites-vous ?"
                     disabled={sending}
                     rows={1}
                   />
@@ -340,7 +357,7 @@ function formatMessage(content) {
   formatted = formatted.replace(/\[OBJET:[^\]]+\]/g, '')
   
   formatted = formatted.replace(/\[LANCER_DE\]/g, '<span class="dice-inline">🎲</span>')
-  formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, '<div class="death-notice">💀 $1</div>')
+  formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, '<div class="death-notice">💀 MORT — $1</div>')
   formatted = formatted.replace(/\[LEVEL_UP\]/g, '<div class="level-up-notice">⬆️ NIVEAU SUPÉRIEUR !</div>')
 
   return <div dangerouslySetInnerHTML={{ __html: formatted.replace(/\n/g, '<br/>') }} />

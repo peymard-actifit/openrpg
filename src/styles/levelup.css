@@ -1,29 +1,40 @@
 .levelup-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 300;
   animation: fadeIn 0.3s ease;
+  padding: var(--space-lg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .levelup-modal {
   background: var(--bg-card);
   border: 2px solid var(--gold);
   border-radius: 16px;
-  padding: var(--space-2xl);
-  max-width: 400px;
-  width: 90%;
+  padding: var(--space-xl);
+  max-width: 420px;
+  width: 100%;
   animation: levelUpPop 0.5s ease;
-  box-shadow: 0 0 60px var(--gold-glow);
+  box-shadow: 0 0 80px var(--gold-glow);
 }
 
 @keyframes levelUpPop {
-  0% { opacity: 0; transform: scale(0.8); }
-  50% { transform: scale(1.05); }
+  0% { opacity: 0; transform: scale(0.85); }
+  60% { transform: scale(1.03); }
   100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 10px var(--gold-glow); }
+  to { text-shadow: 0 0 25px var(--gold), 0 0 40px var(--gold-glow); }
 }
 
 .levelup-header {
@@ -33,7 +44,7 @@
 
 .levelup-header h2 {
   font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: var(--gold);
   margin-bottom: var(--space-sm);
   animation: glow 1s ease-in-out infinite alternate;
@@ -41,7 +52,7 @@
 
 .levelup-header p {
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .levelup-stats {
@@ -69,20 +80,42 @@
   transform: translateX(5px);
 }
 
+.stat-choice:active {
+  transform: translateX(3px);
+}
+
 .stat-choice .stat-icon {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
 }
 
 .stat-choice .stat-name {
   flex: 1;
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--text-primary);
 }
 
 .stat-choice .stat-value {
   font-family: var(--font-medieval);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--gold);
 }
 
+/* Responsive */
+@media (max-width: 480px) {
+  .levelup-modal {
+    padding: var(--space-lg);
+  }
+  
+  .levelup-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .stat-choice {
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .stat-choice .stat-icon {
+    font-size: 1.4rem;
+  }
+}
