@@ -15,10 +15,10 @@ export default async function handler(req, res) {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: messages,
-      temperature: 0.85,
+      temperature: 0.9,
       max_tokens: 1500,
-      presence_penalty: 0.2,
-      frequency_penalty: 0.1
+      presence_penalty: 0.3,
+      frequency_penalty: 0.2
     })
 
     const content = completion.choices[0].message.content
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
       if (match) deathReason = match[1]
     }
 
-    // Extraire les objets [OBJET:nom|icône|description]
+    // Extraire les objets AJOUTÉS [OBJET:nom|icône|description]
     const newItems = []
     const itemMatches = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^\]]+)\]/g)
     for (const match of itemMatches) {
@@ -44,12 +44,20 @@ export default async function handler(req, res) {
       })
     }
 
+    // Extraire les objets RETIRÉS [RETIRER:nom]
+    const removedItems = []
+    const removeMatches = content.matchAll(/\[RETIRER:\s*([^\]]+)\]/g)
+    for (const match of removeMatches) {
+      removedItems.push(match[1].trim())
+    }
+
     return res.status(200).json({
       content,
       playerDied,
       deathReason,
       levelUp,
-      newItems
+      newItems,
+      removedItems
     })
   } catch (error) {
     console.error('OpenAI Error:', error)

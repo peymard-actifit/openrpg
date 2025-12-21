@@ -89,3 +89,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 10 
 - **Rapport**: [2025-12-21_23h11m04s_v0.7.0.txt](logs/deploys/2025-12-21_23h11m04s_v0.7.0.txt) 
  
+ 
+## v0.8.0 - 21/12/2025 23:21:45 
+ 
+- **Type**: minor 
+- **Message**: Inventaire dynamique + Storytelling dramatique 
+- **Fichiers modifiés**: 3 
+- **Rapport**: [2025-12-21_23h21m45s_v0.8.0.txt](logs/deploys/2025-12-21_23h21m45s_v0.8.0.txt) 
+ 

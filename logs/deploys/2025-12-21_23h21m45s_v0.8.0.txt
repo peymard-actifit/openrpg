@@ -1,0 +1,39 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 21/12/2025 23:21:45 
+🏷️  Version: v0.7.0 → v0.8.0 
+📊 Type: minor 
+💬 Message: Inventaire dynamique + Storytelling dramatique 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (3) 
+-------------------------------------------------- 
+ M api/chat.js
+ M logs/deploys/2025-12-21_23h11m04s_v0.7.0.txt
+ M package.json
+ M src/pages/Game.jsx
+?? logs/deploys/2025-12-21_23h21m45s_v0.8.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |   8 +
+ api/chat.js                                  |  20 +-
+ index.html                                   |   6 +-
+ logs/deploys/2025-12-21_23h04m44s_v0.6.0.txt |   3 +
+ logs/deploys/2025-12-21_23h11m04s_v0.7.0.txt |  52 +++++
+ package.json                                 |   2 +-
+ src/pages/Game.jsx                           | 203 +++++++++++++++----
+ src/styles/dashboard.css                     | 177 ++++++++++++-----
+ src/styles/game.css                          | 284 +++++++++++++++++++++------
+ src/styles/global.css                        | 164 ++++++++--------
+ src/styles/inventory.css                     |  69 ++++---
+ src/styles/landing.css                       | 145 ++++++++++----
+ src/styles/levelup.css                       |  57 ++++--
+ 13 files changed, 884 insertions(+), 306 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

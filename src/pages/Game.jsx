@@ -27,6 +27,7 @@ export default function Game() {
   const [inventory, setInventory] = useState([])
   const [levelUpPending, setLevelUpPending] = useState(false)
   const [pendingLevel, setPendingLevel] = useState(null)
+  const [inventoryChecked, setInventoryChecked] = useState(false)
   
   const { speak, stop: stopSpeaking, isSpeaking } = useTextToSpeech()
 
@@ -34,10 +35,8 @@ export default function Game() {
     fetchGame()
   }, [gameId])
 
-  // Scroll au début du dernier message quand un nouveau message arrive
   useEffect(() => {
     if (lastMessageRef.current && messagesContainerRef.current) {
-      // Scroll pour que le dernier message soit en haut de la zone visible
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [messages])
@@ -50,6 +49,48 @@ export default function Game() {
       }
     }
   }, [messages, voiceOutputEnabled])
+
+  // Vérification d'inventaire pour les parties en cours
+  useEffect(() => {
+    if (gameStarted && messages.length > 0 && !inventoryChecked && !sending) {
+      checkInventoryConsistency()
+    }
+  }, [gameStarted, messages, inventoryChecked])
+
+  async function checkInventoryConsistency() {
+    if (inventoryChecked || messages.length < 3) return
+    setInventoryChecked(true)
+
+    // Demander à l'IA de vérifier l'inventaire
+    const historyForCheck = messages.slice(-20).map(m => ({
+      role: m.role,
+      content: m.content
+    }))
+
+    try {
+      const response = await api.sendToAI([
+        { role: 'system', content: buildInventoryCheckPrompt() },
+        ...historyForCheck,
+        { role: 'user', content: '[SYSTÈME] Analyse l\'historique et vérifie la cohérence de l\'inventaire. Si des objets ont été trouvés mais pas ajoutés, ou utilisés/perdus mais toujours présents, corrige.' }
+      ], { game, profile, inventory })
+
+      processAIResponse(response)
+    } catch (err) {
+      console.error('Erreur vérification inventaire:', err)
+    }
+  }
+
+  function buildInventoryCheckPrompt() {
+    return `Tu es le système de gestion d'inventaire d'OpenRPG.
+    
+INVENTAIRE ACTUEL: ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name}`).join(', ') : 'Vide'}
+
+Analyse l'historique des messages. Identifie:
+1. Les objets mentionnés comme TROUVÉS/OBTENUS mais absents de l'inventaire → ajoute-les avec [OBJET:nom|icône|description]
+2. Les objets mentionnés comme UTILISÉS/PERDUS/DONNÉS/DÉTRUITS mais encore présents → retire-les avec [RETIRER:nom]
+
+Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout est cohérent, ne réponds rien.`
+  }
 
   async function fetchGame() {
     try {
@@ -116,12 +157,13 @@ export default function Game() {
       
       const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Contexte de l'aventure: ${game.initialPrompt}. Lance l'aventure de manière immersive.` }
+        { role: 'user', content: `Contexte de l'aventure: ${game.initialPrompt}. Lance l'aventure de manière immersive. Établis une quête principale claire et présente au moins un élément de tension ou un antagoniste potentiel.` }
       ], { game, profile, stats: game.currentStats })
 
       const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
       setMessages([aiMessage])
       setGameStarted(true)
+      setInventoryChecked(true)
       
       processAIResponse(response)
     } catch (err) {
@@ -142,7 +184,6 @@ export default function Game() {
       const userMsg = await api.addMessage(gameId, 'user', messageToSend)
       setMessages(prev => [...prev, userMsg])
 
-      // Garder les 15 derniers messages pour le contexte
       const history = [...messages, userMsg].slice(-15).map(m => ({
         role: m.role,
         content: m.content
@@ -169,8 +210,21 @@ export default function Game() {
       setDiceRequested(true)
     }
 
+    // Ajout d'objets
     if (response.newItems && response.newItems.length > 0) {
       const updatedInventory = [...inventory, ...response.newItems]
+      setInventory(updatedInventory)
+      api.updateGame(gameId, { inventory: updatedInventory })
+    }
+
+    // Retrait d'objets
+    if (response.removedItems && response.removedItems.length > 0) {
+      const updatedInventory = inventory.filter(item => 
+        !response.removedItems.some(removed => 
+          item.name.toLowerCase().includes(removed.toLowerCase()) ||
+          removed.toLowerCase().includes(item.name.toLowerCase())
+        )
+      )
       setInventory(updatedInventory)
       api.updateGame(gameId, { inventory: updatedInventory })
     }
@@ -190,37 +244,94 @@ export default function Game() {
   }
 
   function buildSystemPrompt() {
-    return `Tu es le Maître du Jeu d'OpenRPG, un jeu de rôle textuel immersif.
+    return `Tu es le Maître du Jeu d'OpenRPG, un jeu de rôle textuel immersif et DRAMATIQUE.
 
-CONTEXTE DE L'AVENTURE:
+═══════════════════════════════════════════
+CONTEXTE DE L'AVENTURE
+═══════════════════════════════════════════
 ${game?.initialPrompt}
 
-PERSONNAGE:
-- Nom: ${profile?.characterName}
-- Niveau: ${game?.level}
-- Force: ${game?.currentStats?.strength}/20
-- Intelligence: ${game?.currentStats?.intelligence}/20
-- Sagesse: ${game?.currentStats?.wisdom}/20
-- Dextérité: ${game?.currentStats?.dexterity}/20
-- Constitution: ${game?.currentStats?.constitution}/20
-- Mana: ${game?.currentStats?.mana}/20
+═══════════════════════════════════════════
+PERSONNAGE
+═══════════════════════════════════════════
+Nom: ${profile?.characterName}
+Niveau: ${game?.level}
+Force: ${game?.currentStats?.strength}/20 | Intelligence: ${game?.currentStats?.intelligence}/20
+Sagesse: ${game?.currentStats?.wisdom}/20 | Dextérité: ${game?.currentStats?.dexterity}/20
+Constitution: ${game?.currentStats?.constitution}/20 | Mana: ${game?.currentStats?.mana}/20
 
-INVENTAIRE: ${inventory.length > 0 ? inventory.map(i => i.name).join(', ') : 'Vide'}
+═══════════════════════════════════════════
+INVENTAIRE (${inventory.length} objets)
+═══════════════════════════════════════════
+${inventory.length > 0 ? inventory.map(i => `• ${i.icon} ${i.name}: ${i.description}`).join('\n') : '(Vide)'}
 
-RÈGLES:
-1. MODE HARDCORE: La mort du personnage est permanente. Sois juste mais les dangers sont réels.
-2. DÉ D6: Pour les actions risquées ou incertaines, demande au joueur de lancer le dé avec [LANCER_DE].
-   - Résultat 1: Échec critique (conséquences graves)
-   - Résultat 2-3: Échec
-   - Résultat 4-5: Réussite
-   - Résultat 6: Réussite critique (bonus)
-   - Les stats élevées (15+) donnent un avantage.
-3. OBJETS: Quand le joueur trouve ou reçoit un objet important, ajoute [OBJET:nom|icône|description]
-4. LEVEL UP: Après un exploit majeur, ajoute [LEVEL_UP] - le joueur choisira quelle stat améliorer.
-5. MORT: Si le personnage meurt, termine par [MORT:description de la mort]
-6. Réponds dans la langue du joueur.
-7. Sois descriptif et immersif, crée une atmosphère.
-8. N'utilise JAMAIS de balise [IMAGE:].`
+═══════════════════════════════════════════
+RÈGLES DU JEU
+═══════════════════════════════════════════
+
+🎲 DÉ D6 - Pour actions risquées, utilise [LANCER_DE]:
+   • 1 = Échec CRITIQUE (conséquences graves, perte possible)
+   • 2-3 = Échec (complications)
+   • 4-5 = Réussite
+   • 6 = Réussite CRITIQUE (bonus exceptionnel)
+   • Stats 15+ = avantage narratif
+
+💀 MODE HARDCORE:
+   • La mort est PERMANENTE
+   • Les dangers sont RÉELS
+   • Pas de seconde chance
+
+📦 GESTION INVENTAIRE (CRUCIAL):
+   • Objet TROUVÉ/REÇU → [OBJET:nom|icône|description courte]
+   • Objet UTILISÉ/PERDU/DONNÉ/DÉTRUIT/VOLÉ → [RETIRER:nom de l'objet]
+   • Vérifie TOUJOURS la cohérence avec les actions du joueur
+
+⬆️ PROGRESSION:
+   • Exploit majeur → [LEVEL_UP]
+   • Mort → [MORT:description]
+
+═══════════════════════════════════════════
+STORYTELLING DRAMATIQUE (IMPORTANT)
+═══════════════════════════════════════════
+
+Tu dois créer une aventure VIVANTE avec:
+
+🔥 TENSION NARRATIVE:
+   • Introduis des retournements de situation inattendus
+   • Les alliés peuvent trahir, les ennemis peuvent aider
+   • Les choix ont des conséquences à long terme
+
+👤 ANTAGONISTES:
+   • Crée des ennemis récurrents avec leurs propres motivations
+   • Ils évoluent, s'adaptent, reviennent
+   • Certains peuvent être raisonnés, d'autres non
+
+⚡ ÉVÉNEMENTS DRAMATIQUES:
+   • Pertes (objets volés, alliés blessés, lieux détruits)
+   • Dilemmes moraux sans bonne réponse
+   • Révélations qui changent tout
+   • Poursuites, embuscades, pièges
+
+🎭 AUTOUR DU PERSONNAGE:
+   • Son passé peut le rattraper
+   • Ses actions ont des répercussions
+   • Des PNJ se souviennent de lui
+   • Sa réputation le précède
+
+📜 QUÊTE PRINCIPALE:
+   • Maintiens un fil conducteur clair
+   • Ajoute des obstacles et complications
+   • Les antagonistes interfèrent avec ses objectifs
+   • La quête peut évoluer/se transformer
+
+═══════════════════════════════════════════
+CONSIGNES FINALES
+═══════════════════════════════════════════
+• Réponds dans la langue du joueur
+• Sois immersif et descriptif
+• N'utilise JAMAIS [IMAGE:]
+• Fais vivre le monde autour du personnage
+• Surprends le joueur régulièrement`
   }
 
   function handleKeyPress(e) {
@@ -353,8 +464,9 @@ RÈGLES:
 function formatMessage(content) {
   let formatted = content
 
-  // Retirer les tags d'objets du texte affiché
+  // Retirer les tags système du texte affiché
   formatted = formatted.replace(/\[OBJET:[^\]]+\]/g, '')
+  formatted = formatted.replace(/\[RETIRER:[^\]]+\]/g, '')
   
   formatted = formatted.replace(/\[LANCER_DE\]/g, '<span class="dice-inline">🎲</span>')
   formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, '<div class="death-notice">💀 MORT — $1</div>')
