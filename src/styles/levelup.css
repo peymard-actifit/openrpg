@@ -1,0 +1,88 @@
+.levelup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  animation: fadeIn 0.3s ease;
+}
+
+.levelup-modal {
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  border-radius: 16px;
+  padding: var(--space-2xl);
+  max-width: 400px;
+  width: 90%;
+  animation: levelUpPop 0.5s ease;
+  box-shadow: 0 0 60px var(--gold-glow);
+}
+
+@keyframes levelUpPop {
+  0% { opacity: 0; transform: scale(0.8); }
+  50% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.levelup-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.levelup-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--gold);
+  margin-bottom: var(--space-sm);
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+.levelup-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.levelup-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.stat-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-elevated);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.stat-choice:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+  transform: translateX(5px);
+}
+
+.stat-choice .stat-icon {
+  font-size: 1.5rem;
+}
+
+.stat-choice .stat-name {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.stat-choice .stat-value {
+  font-family: var(--font-medieval);
+  font-size: 1.1rem;
+  color: var(--gold);
+}
+

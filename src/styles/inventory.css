@@ -1,0 +1,151 @@
+.inventory-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fadeIn 0.2s ease;
+}
+
+.inventory-panel {
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-dim);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.inventory-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--gold);
+  margin: 0;
+}
+
+.close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: transparent;
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: var(--gold);
+  color: var(--bg-dark);
+}
+
+.inventory-content {
+  padding: var(--space-lg);
+  overflow-y: auto;
+  max-height: calc(80vh - 60px);
+}
+
+.inventory-empty {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--text-muted);
+}
+
+.inventory-empty small {
+  display: block;
+  margin-top: var(--space-sm);
+  font-size: 0.85rem;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.inventory-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  background: var(--bg-elevated);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.inventory-item:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-2px);
+}
+
+.inventory-item.selected {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.item-icon {
+  font-size: 1.8rem;
+}
+
+.item-name {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.item-details {
+  background: var(--bg-elevated);
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  padding: var(--space-lg);
+}
+
+.item-details h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: var(--space-sm);
+}
+
+.item-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: var(--space-md);
+}
+
+.item-effects {
+  font-size: 0.85rem;
+  color: var(--emerald);
+  padding: var(--space-sm);
+  background: rgba(34, 139, 34, 0.1);
+  border-radius: 4px;
+}
+

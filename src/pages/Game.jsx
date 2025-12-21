@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import * as api from '../lib/api'
 import Dice from '../components/Dice'
+import Inventory from '../components/Inventory'
+import LevelUpModal from '../components/LevelUpModal'
 import { VoiceInput, VoiceOutput, useTextToSpeech } from '../components/VoiceControls'
 import '../styles/game.css'
 
@@ -19,8 +21,11 @@ export default function Game() {
   const [sending, setSending] = useState(false)
   const [gameStarted, setGameStarted] = useState(false)
   const [diceRequested, setDiceRequested] = useState(false)
-  const [lastDiceRoll, setLastDiceRoll] = useState(null)
   const [voiceOutputEnabled, setVoiceOutputEnabled] = useState(false)
+  const [inventoryOpen, setInventoryOpen] = useState(false)
+  const [inventory, setInventory] = useState([])
+  const [levelUpPending, setLevelUpPending] = useState(false)
+  const [pendingLevel, setPendingLevel] = useState(null)
   
   const { speak, stop: stopSpeaking, isSpeaking } = useTextToSpeech()
 
@@ -51,6 +56,7 @@ export default function Game() {
       }
       
       setGame(gameData)
+      setInventory(gameData.inventory || [])
 
       const messagesData = await api.getMessages(gameId)
       setMessages(messagesData || [])
@@ -75,13 +81,31 @@ export default function Game() {
   }
 
   function handleDiceRoll(value) {
-    setLastDiceRoll(value)
     setDiceRequested(false)
-    sendMessage(`🎲 J'ai lancé le dé : ${value}`)
+    sendMessage(`🎲 ${value}`)
   }
 
   function handleVoiceTranscript(text) {
     setInput(prev => prev + (prev ? ' ' : '') + text)
+  }
+
+  async function handleLevelUpChoice(statKey) {
+    const newStats = { ...game.currentStats }
+    newStats[statKey] = (newStats[statKey] || 10) + 1
+    
+    await api.updateGame(gameId, { 
+      level: pendingLevel,
+      currentStats: newStats
+    })
+    
+    setGame(prev => ({
+      ...prev,
+      level: pendingLevel,
+      currentStats: newStats
+    }))
+    
+    setLevelUpPending(false)
+    setPendingLevel(null)
   }
 
   async function startGame() {
@@ -91,21 +115,14 @@ export default function Game() {
       
       const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Démarre cette aventure. Contexte: ${game.initialPrompt}. Présente la scène d'ouverture de manière immersive et termine par une situation où le joueur doit faire un choix ou agir.` }
-      ], {
-        game,
-        profile,
-        stats: game.currentStats
-      })
+        { role: 'user', content: `Contexte: ${game.initialPrompt}. Lance l'aventure.` }
+      ], { game, profile, stats: game.currentStats })
 
       const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
-
       setMessages([aiMessage])
       setGameStarted(true)
       
-      if (response.content.includes('[LANCER_DE]')) {
-        setDiceRequested(true)
-      }
+      processAIResponse(response)
     } catch (err) {
       console.error('Erreur démarrage:', err)
     } finally {
@@ -124,7 +141,7 @@ export default function Game() {
       const userMsg = await api.addMessage(gameId, 'user', messageToSend)
       setMessages(prev => [...prev, userMsg])
 
-      const history = [...messages, userMsg].map(m => ({
+      const history = [...messages, userMsg].slice(-10).map(m => ({
         role: m.role,
         content: m.content
       }))
@@ -132,46 +149,12 @@ export default function Game() {
       const response = await api.sendToAI([
         { role: 'system', content: buildSystemPrompt() },
         ...history
-      ], {
-        game,
-        profile,
-        stats: game.currentStats
-      })
-
-      const isDead = response.playerDied || false
-      const levelUp = response.levelUp || false
-      const statIncrease = response.statIncrease || null
+      ], { game, profile, stats: game.currentStats, inventory })
 
       const aiMsg = await api.addMessage(gameId, 'assistant', response.content)
       setMessages(prev => [...prev, aiMsg])
 
-      if (response.content.includes('[LANCER_DE]')) {
-        setDiceRequested(true)
-      }
-
-      if (isDead) {
-        await api.updateGame(gameId, { 
-          status: 'archived', 
-          deathReason: response.deathReason 
-        })
-        setTimeout(() => navigate(`/archive/${gameId}`), 3000)
-      }
-
-      if (levelUp && statIncrease) {
-        const newStats = { ...game.currentStats }
-        newStats[statIncrease] = (newStats[statIncrease] || 10) + 1
-        
-        await api.updateGame(gameId, { 
-          level: game.level + 1,
-          currentStats: newStats
-        })
-        
-        setGame(prev => ({
-          ...prev,
-          level: prev.level + 1,
-          currentStats: newStats
-        }))
-      }
+      processAIResponse(response)
     } catch (err) {
       console.error('Erreur envoi:', err)
     } finally {
@@ -179,49 +162,51 @@ export default function Game() {
     }
   }
 
+  function processAIResponse(response) {
+    // Dé demandé
+    if (response.content.includes('[LANCER_DE]')) {
+      setDiceRequested(true)
+    }
+
+    // Nouveaux objets
+    if (response.newItems && response.newItems.length > 0) {
+      const updatedInventory = [...inventory, ...response.newItems]
+      setInventory(updatedInventory)
+      api.updateGame(gameId, { inventory: updatedInventory })
+    }
+
+    // Mort
+    if (response.playerDied) {
+      api.updateGame(gameId, { 
+        status: 'archived', 
+        deathReason: response.deathReason 
+      })
+      setTimeout(() => navigate(`/archive/${gameId}`), 3000)
+    }
+
+    // Level up - choix du joueur
+    if (response.levelUp) {
+      setPendingLevel(game.level + 1)
+      setLevelUpPending(true)
+    }
+  }
+
   function buildSystemPrompt() {
-    return `Tu es le Maître du Jeu (MJ) d'un jeu de rôle textuel immersif appelé OpenRPG.
+    return `Tu es le MJ d'OpenRPG. RÈGLES STRICTES:
 
-CONTEXTE DE LA PARTIE:
-${game?.initialPrompt}
+1. RÉPONSES COURTES (3-5 phrases max). Pas de descriptions fleuries inutiles.
+2. MODE HARDCORE: mort permanente possible.
+3. Pour actions risquées: [LANCER_DE] (d6: 1=échec crit, 6=réussite crit)
+4. OBJETS: quand le joueur trouve/obtient un objet, ajoute [OBJET:nom|icône|description courte]
+5. LEVEL UP après exploits majeurs: [LEVEL_UP]
+6. MORT: [MORT:raison]
+7. Jamais de [IMAGE:]. Pas d'images.
+8. Langue du joueur.
 
-PERSONNAGE DU JOUEUR:
-- Nom: ${profile?.characterName}
-- Âge: ${profile?.age} ans
-- Sexe: ${profile?.gender}
-- Taille: ${profile?.height} cm
-- Poids: ${profile?.weight} kg
-- Niveau actuel: ${game?.level}
-
-CARACTÉRISTIQUES (sur 20):
-- Force: ${game?.currentStats?.strength}
-- Intelligence: ${game?.currentStats?.intelligence}
-- Sagesse: ${game?.currentStats?.wisdom}
-- Dextérité: ${game?.currentStats?.dexterity}
-- Constitution: ${game?.currentStats?.constitution}
-- Mana: ${game?.currentStats?.mana}
-
-RÈGLES DU JEU:
-1. MODE HARDCORE: Le joueur peut mourir définitivement. Sois juste mais impitoyable.
-2. Le joueur possède un DÉ À 6 FACES (d6). Pour les actions risquées, demande-lui de lancer le dé avec [LANCER_DE].
-3. Après un lancer de dé, utilise le résultat combiné aux stats pour déterminer le succès:
-   - 1 = Échec critique
-   - 2-3 = Échec
-   - 4-5 = Réussite
-   - 6 = Réussite critique
-   - Ajoute un bonus si la stat pertinente est >= 15
-4. Décris les scènes de manière immersive et cinématique.
-5. Propose toujours des choix ou des situations où le joueur doit agir.
-6. Après des accomplissements significatifs, le joueur peut gagner un niveau.
-7. Réponds toujours dans la langue utilisée par le joueur.
-8. Tu peux décrire des images entre [IMAGE: description].
-9. Tu peux suggérer des sons entre [SON: description].
-
-FORMAT DE RÉPONSE:
-- Réponds de manière narrative et immersive.
-- Pour demander un lancer de dé: [LANCER_DE] (le joueur verra un bouton pour lancer)
-- Si le joueur meurt: [MORT: raison de la mort]
-- Si le joueur monte de niveau: [LEVEL_UP: nom_de_la_stat_augmentée]`
+CONTEXTE: ${game?.initialPrompt}
+PERSONNAGE: ${profile?.characterName}, Niv.${game?.level}
+STATS: FOR:${game?.currentStats?.strength} INT:${game?.currentStats?.intelligence} SAG:${game?.currentStats?.wisdom} DEX:${game?.currentStats?.dexterity} CON:${game?.currentStats?.constitution} MANA:${game?.currentStats?.mana}
+INVENTAIRE: ${inventory.map(i => i.name).join(', ') || 'vide'}`
   }
 
   function handleKeyPress(e) {
@@ -232,39 +217,34 @@ FORMAT DE RÉPONSE:
   }
 
   if (loading) {
-    return <div className="game-loading">Chargement de l'aventure...</div>
+    return <div className="game-loading">Chargement...</div>
   }
 
   return (
     <div className="game-page">
       <header className="game-header">
-        <Link to="/dashboard" className="back-btn">← Retour</Link>
+        <div className="header-left">
+          <Link to="/dashboard" className="back-btn">←</Link>
+          <button className="inventory-btn" onClick={() => setInventoryOpen(true)}>
+            🎒 {inventory.length}
+          </button>
+        </div>
         <div className="game-title">
           <h1>{game?.title}</h1>
-          <span className="game-level">Niveau {game?.level}</span>
+          <span className="game-level">Niv. {game?.level}</span>
         </div>
         <div className="game-controls">
-          <div className="voice-mode-toggle">
-            <VoiceOutput 
-              enabled={voiceOutputEnabled} 
-              onToggle={() => {
-                if (voiceOutputEnabled) stopSpeaking()
-                setVoiceOutputEnabled(!voiceOutputEnabled)
-              }} 
-            />
-            {isSpeaking && (
-              <div className="speaking-indicator">
-                <div className="wave">
-                  <span></span><span></span><span></span><span></span>
-                </div>
-              </div>
-            )}
-          </div>
+          <VoiceOutput 
+            enabled={voiceOutputEnabled} 
+            onToggle={() => {
+              if (voiceOutputEnabled) stopSpeaking()
+              setVoiceOutputEnabled(!voiceOutputEnabled)
+            }} 
+          />
           <div className="game-stats-mini">
-            <span title="Force">💪{game?.currentStats?.strength}</span>
-            <span title="Int">🧠{game?.currentStats?.intelligence}</span>
-            <span title="Con">❤️{game?.currentStats?.constitution}</span>
-            <span title="Mana">✨{game?.currentStats?.mana}</span>
+            <span>💪{game?.currentStats?.strength}</span>
+            <span>🧠{game?.currentStats?.intelligence}</span>
+            <span>❤️{game?.currentStats?.constitution}</span>
           </div>
         </div>
       </header>
@@ -273,17 +253,14 @@ FORMAT DE RÉPONSE:
         {!gameStarted ? (
           <div className="game-intro">
             <div className="intro-card">
-              <h2>📜 Votre Quête</h2>
+              <h2>📜 {game?.title}</h2>
               <div className="intro-prompt">{game?.initialPrompt}</div>
-              <div className="intro-warning">
-                ⚠️ Mode Hardcore actif. Chaque décision compte. La mort est permanente.
-              </div>
               <button 
                 className="btn btn-primary btn-large"
                 onClick={startGame}
                 disabled={sending}
               >
-                {sending ? 'Préparation...' : '⚔️ Commencer l\'Aventure'}
+                {sending ? '...' : '⚔️ Commencer'}
               </button>
             </div>
           </div>
@@ -309,30 +286,22 @@ FORMAT DE RÉPONSE:
 
             <div className="input-area">
               {diceRequested && (
-                <div className="dice-request">
-                  <span className="dice-request-text">🎲 Le MJ demande un lancer de dé !</span>
-                </div>
+                <div className="dice-request">🎲 Lancez le dé !</div>
               )}
               
               <div className="input-container">
-                <Dice 
-                  onRoll={handleDiceRoll} 
-                  disabled={sending || !diceRequested}
-                />
+                <Dice onRoll={handleDiceRoll} disabled={sending || !diceRequested} />
                 
                 <div className="input-wrapper">
                   <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Que faites-vous ?"
+                    placeholder="Action..."
                     disabled={sending}
-                    rows={2}
+                    rows={1}
                   />
-                  <VoiceInput 
-                    onTranscript={handleVoiceTranscript}
-                    disabled={sending}
-                  />
+                  <VoiceInput onTranscript={handleVoiceTranscript} disabled={sending} />
                 </div>
                 
                 <button 
@@ -347,6 +316,19 @@ FORMAT DE RÉPONSE:
           </>
         )}
       </main>
+
+      <Inventory 
+        items={inventory} 
+        isOpen={inventoryOpen} 
+        onClose={() => setInventoryOpen(false)} 
+      />
+
+      <LevelUpModal
+        isOpen={levelUpPending}
+        newLevel={pendingLevel}
+        currentStats={game?.currentStats}
+        onChoose={handleLevelUpChoice}
+      />
     </div>
   )
 }
@@ -354,25 +336,12 @@ FORMAT DE RÉPONSE:
 function formatMessage(content) {
   let formatted = content
 
-  formatted = formatted.replace(/\[LANCER_DE\]/g, 
-    '<div class="dice-prompt-inline">🎲 <em>Lancez le dé...</em></div>'
-  )
-
-  formatted = formatted.replace(/\[IMAGE:\s*([^\]]+)\]/g, (_, desc) => 
-    `<div class="game-image-placeholder">🖼️ ${desc}</div>`
-  )
-
-  formatted = formatted.replace(/\[SON:\s*([^\]]+)\]/g, (_, desc) => 
-    `<div class="game-sound-placeholder">🔊 ${desc}</div>`
-  )
-
-  formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, (_, reason) => 
-    `<div class="death-notice">💀 VOUS ÊTES MORT<br/><small>${reason}</small></div>`
-  )
-
-  formatted = formatted.replace(/\[LEVEL_UP:\s*([^\]]+)\]/g, (_, stat) => 
-    `<div class="level-up-notice">⬆️ NIVEAU SUPÉRIEUR !<br/><small>+1 en ${stat}</small></div>`
-  )
+  // Retirer les tags d'objets du texte affiché
+  formatted = formatted.replace(/\[OBJET:[^\]]+\]/g, '')
+  
+  formatted = formatted.replace(/\[LANCER_DE\]/g, '<span class="dice-inline">🎲</span>')
+  formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, '<div class="death-notice">💀 $1</div>')
+  formatted = formatted.replace(/\[LEVEL_UP\]/g, '<div class="level-up-notice">⬆️ NIVEAU SUPÉRIEUR !</div>')
 
   return <div dangerouslySetInnerHTML={{ __html: formatted.replace(/\n/g, '<br/>') }} />
 }

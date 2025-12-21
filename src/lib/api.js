@@ -2,7 +2,6 @@
 
 const API_BASE = '/api'
 
-// Stockage du token JWT
 let authToken = localStorage.getItem('openrpg_token')
 
 function setToken(token) {
@@ -124,10 +123,8 @@ export async function sendToAI(messages, gameContext) {
   })
 }
 
-// Vérifier si connecté
 export function isAuthenticated() {
   return !!authToken
 }
 
 export { setToken, getToken }
-

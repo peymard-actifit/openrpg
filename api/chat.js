@@ -13,31 +13,33 @@ export default async function handler(req, res) {
     const { messages, gameContext } = req.body
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       messages: messages,
       temperature: 0.8,
-      max_tokens: 2000,
-      presence_penalty: 0.3,
-      frequency_penalty: 0.3
+      max_tokens: 500
     })
 
     const content = completion.choices[0].message.content
 
     // Parser les balises spéciales
     const playerDied = content.includes('[MORT:')
-    const levelUp = content.includes('[LEVEL_UP:')
+    const levelUp = content.includes('[LEVEL_UP')
     
     let deathReason = null
-    let statIncrease = null
-
     if (playerDied) {
       const match = content.match(/\[MORT:\s*([^\]]+)\]/)
       if (match) deathReason = match[1]
     }
 
-    if (levelUp) {
-      const match = content.match(/\[LEVEL_UP:\s*([^\]]+)\]/)
-      if (match) statIncrease = match[1].toLowerCase()
+    // Extraire les objets
+    const newItems = []
+    const itemMatches = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^\]]+)\]/g)
+    for (const match of itemMatches) {
+      newItems.push({
+        name: match[1].trim(),
+        icon: match[2].trim(),
+        description: match[3].trim()
+      })
     }
 
     return res.status(200).json({
@@ -45,14 +47,13 @@ export default async function handler(req, res) {
       playerDied,
       deathReason,
       levelUp,
-      statIncrease
+      newItems
     })
   } catch (error) {
     console.error('OpenAI Error:', error)
     return res.status(500).json({ 
-      error: 'Erreur de communication avec l\'IA',
+      error: 'Erreur IA',
       details: error.message 
     })
   }
 }
-

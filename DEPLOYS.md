@@ -73,3 +73,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 4 
 - **Rapport**: [2025-12-21_22h40m34s_v0.5.3.txt](logs/deploys/2025-12-21_22h40m34s_v0.5.3.txt) 
  
+ 
+## v0.6.0 - 21/12/2025 23:04:44 
+ 
+- **Type**: minor 
+- **Message**: Inventaire + Level up avec choix + Textes courts 
+- **Fichiers modifiés**: 9 
+- **Rapport**: [2025-12-21_23h04m44s_v0.6.0.txt](logs/deploys/2025-12-21_23h04m44s_v0.6.0.txt) 
+ 
