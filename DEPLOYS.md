@@ -65,3 +65,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 3 
 - **Rapport**: [2025-12-21_22h35m28s_v0.5.2.txt](logs/deploys/2025-12-21_22h35m28s_v0.5.2.txt) 
  
+ 
+## v0.5.3 - 21/12/2025 22:40:34 
+ 
+- **Type**: patch 
+- **Message**: Fix config Vercel pour dǸploiement 
+- **Fichiers modifiés**: 4 
+- **Rapport**: [2025-12-21_22h40m34s_v0.5.3.txt](logs/deploys/2025-12-21_22h40m34s_v0.5.3.txt) 
+ 
