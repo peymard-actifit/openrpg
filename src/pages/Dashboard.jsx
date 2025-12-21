@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
+import * as api from '../lib/api'
 import '../styles/dashboard.css'
 
 export default function Dashboard() {
@@ -22,13 +22,7 @@ export default function Dashboard() {
     if (!user) return
     
     try {
-      const { data, error } = await supabase
-        .from('games')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
+      const data = await api.getGames()
       setGames(data || [])
     } catch (err) {
       console.error('Erreur chargement parties:', err)
@@ -42,28 +36,17 @@ export default function Dashboard() {
     
     setCreating(true)
     try {
-      const { data, error } = await supabase
-        .from('games')
-        .insert([{
-          user_id: user.id,
-          title: newGameTitle,
-          initial_prompt: newGamePrompt,
-          status: 'active',
-          level: 1,
-          current_stats: {
-            strength: profile.strength,
-            intelligence: profile.intelligence,
-            wisdom: profile.wisdom,
-            dexterity: profile.dexterity,
-            constitution: profile.constitution,
-            mana: profile.mana
-          }
-        }])
-        .select()
-        .single()
+      const currentStats = {
+        strength: profile.strength,
+        intelligence: profile.intelligence,
+        wisdom: profile.wisdom,
+        dexterity: profile.dexterity,
+        constitution: profile.constitution,
+        mana: profile.mana
+      }
 
-      if (error) throw error
-      navigate(`/game/${data.id}`)
+      const game = await api.createGame(newGameTitle, newGamePrompt, currentStats)
+      navigate(`/game/${game.id}`)
     } catch (err) {
       console.error('Erreur création partie:', err)
     } finally {
@@ -85,7 +68,7 @@ export default function Dashboard() {
         <Link to="/" className="logo-small">⚔️ OpenRPG</Link>
         <div className="header-right">
           <div className="profile-badge">
-            <span className="profile-name">{profile?.character_name}</span>
+            <span className="profile-name">{profile?.characterName}</span>
             <span className="profile-level">Niveau de base</span>
           </div>
           <button className="btn btn-secondary btn-sm" onClick={handleLogout}>
@@ -231,4 +214,3 @@ function GameCard({ game, archived }) {
     </div>
   )
 }
-

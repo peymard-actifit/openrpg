@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import * as api from '../lib/api'
 
 const AuthContext = createContext({})
 
@@ -13,83 +13,80 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Vérifier la session actuelle
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchProfile(session.user.id)
-      } else {
-        setLoading(false)
-      }
-    })
-
-    // Écouter les changements d'auth
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null)
-        if (session?.user) {
-          await fetchProfile(session.user.id)
-        } else {
-          setProfile(null)
-          setLoading(false)
-        }
-      }
-    )
-
-    return () => subscription.unsubscribe()
+    // Vérifier si déjà connecté
+    if (api.isAuthenticated()) {
+      fetchCurrentUser()
+    } else {
+      setLoading(false)
+    }
   }, [])
 
-  async function fetchProfile(userId) {
+  async function fetchCurrentUser() {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single()
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Erreur profil:', error)
-      }
-      setProfile(data || null)
+      const data = await api.getMe()
+      setUser(data.user)
+      setProfile(data.profile)
     } catch (err) {
-      console.error('Erreur:', err)
+      // Token invalide, déconnecter
+      api.logout()
+      setUser(null)
+      setProfile(null)
     } finally {
       setLoading(false)
     }
   }
 
   async function signUp(email, password) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password
-    })
-    return { data, error }
+    try {
+      const data = await api.register(email, password)
+      setUser(data.user)
+      return { data, error: null }
+    } catch (err) {
+      return { data: null, error: err }
+    }
   }
 
   async function signIn(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
-    return { data, error }
+    try {
+      const data = await api.login(email, password)
+      setUser(data.user)
+      // Récupérer le profil
+      try {
+        const profileData = await api.getProfile()
+        setProfile(profileData)
+      } catch {
+        setProfile(null)
+      }
+      return { data, error: null }
+    } catch (err) {
+      return { data: null, error: err }
+    }
   }
 
   async function signOut() {
-    const { error } = await supabase.auth.signOut()
-    return { error }
+    api.logout()
+    setUser(null)
+    setProfile(null)
+    return { error: null }
   }
 
   async function createProfile(profileData) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .insert([{ user_id: user.id, ...profileData }])
-      .select()
-      .single()
-
-    if (!error) {
+    try {
+      const data = await api.createProfile(profileData)
       setProfile(data)
+      return { data, error: null }
+    } catch (err) {
+      return { data: null, error: err }
     }
-    return { data, error }
+  }
+
+  async function refreshProfile() {
+    try {
+      const data = await api.getProfile()
+      setProfile(data)
+    } catch {
+      setProfile(null)
+    }
   }
 
   const value = {
@@ -100,7 +97,7 @@ export function AuthProvider({ children }) {
     signIn,
     signOut,
     createProfile,
-    refreshProfile: () => user && fetchProfile(user.id)
+    refreshProfile
   }
 
   return (
@@ -109,4 +106,3 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   )
 }
-

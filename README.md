@@ -3,7 +3,7 @@
 **Plateforme de jeu de rôle textuel et vocal alimentée par l'Intelligence Artificielle**
 
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)](https://vercel.com)
-[![Supabase](https://img.shields.io/badge/Database-openrpg--db-green)](https://supabase.com)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB-green)](https://mongodb.com)
 [![OpenAI](https://img.shields.io/badge/AI-OpenAI%20GPT--4-blue)](https://openai.com)
 
 ---
@@ -48,10 +48,24 @@
 
 ### Prérequis
 - Node.js 18+
-- Compte Supabase (base openrpg-db)
+- Base MongoDB (openrpg-db sur Vercel)
 - Clé API OpenAI
 
-### Configuration
+### Configuration Vercel
+
+1. **Variables d'environnement** (Settings > Environment Variables) :
+
+```
+OPENAI_API_KEY=sk-votre-clef-openai
+MONGODB_URI=mongodb+srv://...  (fourni par Vercel MongoDB)
+JWT_SECRET=votre-clef-secrete-jwt
+```
+
+2. **Lier la base MongoDB** :
+   - Storage > Create Database > MongoDB
+   - La variable `MONGODB_URI` sera automatiquement ajoutée
+
+### Développement local
 
 1. **Cloner le projet**
 ```bash
@@ -60,47 +74,78 @@ cd openrpg
 npm install
 ```
 
-2. **Configurer Supabase**
-   - Créer un projet nommé `openrpg-db` sur [supabase.com](https://supabase.com)
-   - Exécuter le schéma SQL dans `supabase/schema.sql`
-   - Récupérer l'URL et la clé anon
-
-3. **Variables d'environnement**
-
-Sur **Vercel** (Settings > Environment Variables) :
-```
-OPENAI_API_KEY=sk-votre-clef-openai
-VITE_SUPABASE_URL=https://votre-projet.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
-```
-
-En **local** (fichier `.env`) :
+2. **Créer `.env`** :
 ```env
-OPENAI_API_KEY=sk-votre-clef-openai
-VITE_SUPABASE_URL=https://votre-projet.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
+OPENAI_API_KEY=sk-votre-clef
+MONGODB_URI=mongodb+srv://...
+JWT_SECRET=secret-local-dev
 ```
 
-4. **Lancer en développement**
+3. **Lancer**
 ```bash
 npm run dev
 ```
 
 ---
 
-## 🔊 Fonctionnalités Vocales
+## 🗄️ Structure de la Base MongoDB
 
-### Speech-to-Text (Parler)
-- Cliquez sur 🎤 pour enregistrer votre voix
-- Cliquez à nouveau pour arrêter
-- Le texte transcrit apparaît dans la zone de saisie
-- Utilise **OpenAI Whisper**
+### Collection `users`
+```json
+{
+  "_id": "ObjectId",
+  "email": "user@example.com",
+  "password": "hash_bcrypt",
+  "createdAt": "Date"
+}
+```
 
-### Text-to-Speech (Écouter)
-- Activez 🔊 dans l'en-tête pour que le MJ parle
-- Chaque réponse de l'IA sera lue à voix haute
-- Voix "Onyx" (grave et immersive)
-- Utilise **OpenAI TTS**
+### Collection `profiles`
+```json
+{
+  "_id": "ObjectId",
+  "userId": "string",
+  "characterName": "Aldric",
+  "age": 25,
+  "gender": "male",
+  "height": 180,
+  "weight": 75,
+  "strength": 14,
+  "intelligence": 12,
+  "wisdom": 10,
+  "dexterity": 11,
+  "constitution": 13,
+  "mana": 10,
+  "createdAt": "Date"
+}
+```
+
+### Collection `games`
+```json
+{
+  "_id": "ObjectId",
+  "userId": "string",
+  "title": "La Quête du Dragon",
+  "initialPrompt": "Un monde médiéval...",
+  "status": "active | archived",
+  "level": 1,
+  "currentStats": { "strength": 14, ... },
+  "deathReason": null,
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
+```
+
+### Collection `messages`
+```json
+{
+  "_id": "ObjectId",
+  "gameId": "string",
+  "role": "user | assistant",
+  "content": "Je tire mon épée...",
+  "createdAt": "Date"
+}
+```
 
 ---
 
@@ -115,71 +160,38 @@ Le dé à 6 faces est utilisé pour résoudre les actions incertaines :
 | 4-5 | Réussite - L'action réussit |
 | 6 | Réussite critique - Bonus spécial |
 
-Les caractéristiques du personnage modifient les chances :
-- Stat ≥ 15 : Bonus au résultat
-- Le MJ décide quand un lancer est nécessaire avec `[LANCER_DE]`
-
----
-
-## 🗄️ Structure de la Base de Données
-
-### `profiles`
-| Colonne | Type | Description |
-|---------|------|-------------|
-| user_id | UUID | Référence auth.users |
-| character_name | VARCHAR | Nom du personnage |
-| strength, intelligence, wisdom, dexterity, constitution, mana | INTEGER | Stats 1-20 |
-
-### `games`
-| Colonne | Type | Description |
-|---------|------|-------------|
-| user_id | UUID | Propriétaire |
-| title | VARCHAR | Titre de la partie |
-| initial_prompt | TEXT | Contexte immuable |
-| status | VARCHAR | active / archived |
-| level | INTEGER | Niveau actuel |
-| current_stats | JSONB | Stats évoluées |
-
-### `game_messages`
-| Colonne | Type | Description |
-|---------|------|-------------|
-| game_id | UUID | Partie associée |
-| role | VARCHAR | user / assistant |
-| content | TEXT | Contenu du message |
-
----
-
-## 🛠️ Technologies
-
-- **Frontend** : React 18 + Vite
-- **Routing** : React Router DOM
-- **Base de données** : Supabase PostgreSQL (openrpg-db)
-- **Authentification** : Supabase Auth
-- **IA Texte** : OpenAI GPT-4o
-- **IA Voix** : OpenAI Whisper (STT) + TTS
-- **Hébergement** : Vercel
-
 ---
 
 ## 📁 Structure du Projet
 
 ```
 openrpg/
-├── api/                    # Serverless functions Vercel
-│   ├── chat.js            # Conversation GPT-4o
-│   ├── speak.js           # Text-to-Speech
-│   ├── transcribe.js      # Speech-to-Text (Whisper)
-│   └── generate-image.js  # DALL-E (optionnel)
+├── api/                       # Serverless functions Vercel
+│   ├── lib/
+│   │   ├── mongodb.js        # Connexion MongoDB
+│   │   └── auth.js           # JWT + bcrypt
+│   ├── auth/
+│   │   ├── register.js       # Inscription
+│   │   ├── login.js          # Connexion
+│   │   └── me.js             # Session actuelle
+│   ├── games/
+│   │   ├── index.js          # Liste / Création
+│   │   ├── [gameId].js       # Détail / Update
+│   │   └── [gameId]/
+│   │       └── messages.js   # Messages de la partie
+│   ├── profile.js            # Profil utilisateur
+│   ├── chat.js               # Conversation GPT-4o
+│   ├── speak.js              # Text-to-Speech
+│   └── transcribe.js         # Speech-to-Text
 ├── src/
-│   ├── components/        # Composants réutilisables
-│   │   ├── Dice.jsx       # Dé d6 interactif
-│   │   └── VoiceControls.jsx
-│   ├── contexts/          # React Context
-│   │   └── AuthContext.jsx
-│   ├── lib/               # Bibliothèques
-│   │   ├── supabase.js
-│   │   └── openai.js
-│   ├── pages/             # Pages de l'application
+│   ├── components/
+│   │   ├── Dice.jsx          # Dé d6 interactif
+│   │   └── VoiceControls.jsx # Micro + Speaker
+│   ├── contexts/
+│   │   └── AuthContext.jsx   # Auth React
+│   ├── lib/
+│   │   └── api.js            # Client API
+│   ├── pages/
 │   │   ├── Landing.jsx
 │   │   ├── Login.jsx
 │   │   ├── Register.jsx
@@ -187,11 +199,20 @@ openrpg/
 │   │   ├── Dashboard.jsx
 │   │   ├── Game.jsx
 │   │   └── Archive.jsx
-│   └── styles/            # CSS
-├── supabase/
-│   └── schema.sql         # Schéma de la BDD
-└── vercel.json            # Configuration Vercel
+│   └── styles/
+└── vercel.json
 ```
+
+---
+
+## 🛠️ Technologies
+
+- **Frontend** : React 18 + Vite
+- **Backend** : Vercel Serverless Functions
+- **Base de données** : MongoDB Atlas (openrpg-db)
+- **Auth** : JWT + bcrypt
+- **IA Texte** : OpenAI GPT-4o
+- **IA Voix** : OpenAI Whisper + TTS
 
 ---
 

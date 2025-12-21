@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
+import * as api from '../lib/api'
 import '../styles/archive.css'
 
 export default function Archive() {
@@ -19,23 +19,10 @@ export default function Archive() {
 
   async function fetchArchive() {
     try {
-      const { data: gameData, error: gameError } = await supabase
-        .from('games')
-        .select('*')
-        .eq('id', gameId)
-        .eq('user_id', user.id)
-        .single()
-
-      if (gameError) throw gameError
+      const gameData = await api.getGame(gameId)
       setGame(gameData)
 
-      const { data: messagesData, error: messagesError } = await supabase
-        .from('game_messages')
-        .select('*')
-        .eq('game_id', gameId)
-        .order('created_at', { ascending: true })
-
-      if (messagesError) throw messagesError
+      const messagesData = await api.getMessages(gameId)
       setMessages(messagesData || [])
     } catch (err) {
       console.error('Erreur:', err)
@@ -72,17 +59,17 @@ export default function Archive() {
             </div>
           </div>
 
-          {game?.death_reason && (
+          {game?.deathReason && (
             <div className="death-reason">
               <h3>Cause de la Mort</h3>
-              <p>{game.death_reason}</p>
+              <p>{game.deathReason}</p>
             </div>
           )}
         </div>
 
         <div className="archive-prompt">
           <h2>📜 Contexte Initial</h2>
-          <p>{game?.initial_prompt}</p>
+          <p>{game?.initialPrompt}</p>
         </div>
 
         <div className="archive-story">
@@ -113,4 +100,3 @@ export default function Archive() {
     </div>
   )
 }
-

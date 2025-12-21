@@ -54,7 +54,7 @@ export default function CreateProfile() {
 
     try {
       const { error } = await createProfile({
-        character_name: characterName,
+        characterName,
         age,
         gender,
         height,
@@ -246,4 +246,3 @@ function getStatLabel(stat) {
   }
   return labels[stat] || stat
 }
-

@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
-import { sendToAI } from '../lib/openai'
+import * as api from '../lib/api'
 import Dice from '../components/Dice'
 import { VoiceInput, VoiceOutput, useTextToSpeech } from '../components/VoiceControls'
 import '../styles/game.css'
@@ -33,7 +32,6 @@ export default function Game() {
     scrollToBottom()
   }, [messages])
 
-  // Parler le dernier message de l'IA si voix activée
   useEffect(() => {
     if (voiceOutputEnabled && messages.length > 0) {
       const lastMessage = messages[messages.length - 1]
@@ -45,14 +43,7 @@ export default function Game() {
 
   async function fetchGame() {
     try {
-      const { data: gameData, error: gameError } = await supabase
-        .from('games')
-        .select('*')
-        .eq('id', gameId)
-        .eq('user_id', user.id)
-        .single()
-
-      if (gameError) throw gameError
+      const gameData = await api.getGame(gameId)
       
       if (gameData.status === 'archived') {
         navigate(`/archive/${gameId}`)
@@ -61,17 +52,10 @@ export default function Game() {
       
       setGame(gameData)
 
-      const { data: messagesData, error: messagesError } = await supabase
-        .from('game_messages')
-        .select('*')
-        .eq('game_id', gameId)
-        .order('created_at', { ascending: true })
-
-      if (messagesError) throw messagesError
+      const messagesData = await api.getMessages(gameId)
       setMessages(messagesData || [])
       setGameStarted(messagesData && messagesData.length > 0)
       
-      // Vérifier si un lancer de dé est demandé dans le dernier message
       if (messagesData && messagesData.length > 0) {
         const lastMsg = messagesData[messagesData.length - 1]
         if (lastMsg.role === 'assistant' && lastMsg.content.includes('[LANCER_DE]')) {
@@ -93,7 +77,6 @@ export default function Game() {
   function handleDiceRoll(value) {
     setLastDiceRoll(value)
     setDiceRequested(false)
-    // Envoyer automatiquement le résultat du dé
     sendMessage(`🎲 J'ai lancé le dé : ${value}`)
   }
 
@@ -106,29 +89,20 @@ export default function Game() {
     try {
       const systemPrompt = buildSystemPrompt()
       
-      const response = await sendToAI([
+      const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Démarre cette aventure. Contexte: ${game.initial_prompt}. Présente la scène d'ouverture de manière immersive et termine par une situation où le joueur doit faire un choix ou agir.` }
+        { role: 'user', content: `Démarre cette aventure. Contexte: ${game.initialPrompt}. Présente la scène d'ouverture de manière immersive et termine par une situation où le joueur doit faire un choix ou agir.` }
       ], {
         game,
         profile,
-        stats: game.current_stats
+        stats: game.currentStats
       })
 
-      const { data: aiMessage } = await supabase
-        .from('game_messages')
-        .insert([{
-          game_id: gameId,
-          role: 'assistant',
-          content: response.content
-        }])
-        .select()
-        .single()
+      const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
 
       setMessages([aiMessage])
       setGameStarted(true)
       
-      // Vérifier si un lancer de dé est demandé
       if (response.content.includes('[LANCER_DE]')) {
         setDiceRequested(true)
       }
@@ -147,16 +121,7 @@ export default function Game() {
     setSending(true)
 
     try {
-      const { data: userMsg } = await supabase
-        .from('game_messages')
-        .insert([{
-          game_id: gameId,
-          role: 'user',
-          content: messageToSend
-        }])
-        .select()
-        .single()
-
+      const userMsg = await api.addMessage(gameId, 'user', messageToSend)
       setMessages(prev => [...prev, userMsg])
 
       const history = [...messages, userMsg].map(m => ({
@@ -164,61 +129,47 @@ export default function Game() {
         content: m.content
       }))
 
-      const response = await sendToAI([
+      const response = await api.sendToAI([
         { role: 'system', content: buildSystemPrompt() },
         ...history
       ], {
         game,
         profile,
-        stats: game.current_stats
+        stats: game.currentStats
       })
 
       const isDead = response.playerDied || false
       const levelUp = response.levelUp || false
       const statIncrease = response.statIncrease || null
 
-      const { data: aiMsg } = await supabase
-        .from('game_messages')
-        .insert([{
-          game_id: gameId,
-          role: 'assistant',
-          content: response.content
-        }])
-        .select()
-        .single()
-
+      const aiMsg = await api.addMessage(gameId, 'assistant', response.content)
       setMessages(prev => [...prev, aiMsg])
 
-      // Vérifier si un lancer de dé est demandé
       if (response.content.includes('[LANCER_DE]')) {
         setDiceRequested(true)
       }
 
       if (isDead) {
-        await supabase
-          .from('games')
-          .update({ status: 'archived', death_reason: response.deathReason })
-          .eq('id', gameId)
-        
+        await api.updateGame(gameId, { 
+          status: 'archived', 
+          deathReason: response.deathReason 
+        })
         setTimeout(() => navigate(`/archive/${gameId}`), 3000)
       }
 
       if (levelUp && statIncrease) {
-        const newStats = { ...game.current_stats }
+        const newStats = { ...game.currentStats }
         newStats[statIncrease] = (newStats[statIncrease] || 10) + 1
         
-        await supabase
-          .from('games')
-          .update({ 
-            level: game.level + 1,
-            current_stats: newStats
-          })
-          .eq('id', gameId)
+        await api.updateGame(gameId, { 
+          level: game.level + 1,
+          currentStats: newStats
+        })
         
         setGame(prev => ({
           ...prev,
           level: prev.level + 1,
-          current_stats: newStats
+          currentStats: newStats
         }))
       }
     } catch (err) {
@@ -232,10 +183,10 @@ export default function Game() {
     return `Tu es le Maître du Jeu (MJ) d'un jeu de rôle textuel immersif appelé OpenRPG.
 
 CONTEXTE DE LA PARTIE:
-${game?.initial_prompt}
+${game?.initialPrompt}
 
 PERSONNAGE DU JOUEUR:
-- Nom: ${profile?.character_name}
+- Nom: ${profile?.characterName}
 - Âge: ${profile?.age} ans
 - Sexe: ${profile?.gender}
 - Taille: ${profile?.height} cm
@@ -243,12 +194,12 @@ PERSONNAGE DU JOUEUR:
 - Niveau actuel: ${game?.level}
 
 CARACTÉRISTIQUES (sur 20):
-- Force: ${game?.current_stats?.strength}
-- Intelligence: ${game?.current_stats?.intelligence}
-- Sagesse: ${game?.current_stats?.wisdom}
-- Dextérité: ${game?.current_stats?.dexterity}
-- Constitution: ${game?.current_stats?.constitution}
-- Mana: ${game?.current_stats?.mana}
+- Force: ${game?.currentStats?.strength}
+- Intelligence: ${game?.currentStats?.intelligence}
+- Sagesse: ${game?.currentStats?.wisdom}
+- Dextérité: ${game?.currentStats?.dexterity}
+- Constitution: ${game?.currentStats?.constitution}
+- Mana: ${game?.currentStats?.mana}
 
 RÈGLES DU JEU:
 1. MODE HARDCORE: Le joueur peut mourir définitivement. Sois juste mais impitoyable.
@@ -310,10 +261,10 @@ FORMAT DE RÉPONSE:
             )}
           </div>
           <div className="game-stats-mini">
-            <span title="Force">💪{game?.current_stats?.strength}</span>
-            <span title="Int">🧠{game?.current_stats?.intelligence}</span>
-            <span title="Con">❤️{game?.current_stats?.constitution}</span>
-            <span title="Mana">✨{game?.current_stats?.mana}</span>
+            <span title="Force">💪{game?.currentStats?.strength}</span>
+            <span title="Int">🧠{game?.currentStats?.intelligence}</span>
+            <span title="Con">❤️{game?.currentStats?.constitution}</span>
+            <span title="Mana">✨{game?.currentStats?.mana}</span>
           </div>
         </div>
       </header>
@@ -323,7 +274,7 @@ FORMAT DE RÉPONSE:
           <div className="game-intro">
             <div className="intro-card">
               <h2>📜 Votre Quête</h2>
-              <div className="intro-prompt">{game?.initial_prompt}</div>
+              <div className="intro-prompt">{game?.initialPrompt}</div>
               <div className="intro-warning">
                 ⚠️ Mode Hardcore actif. Chaque décision compte. La mort est permanente.
               </div>
@@ -403,27 +354,22 @@ FORMAT DE RÉPONSE:
 function formatMessage(content) {
   let formatted = content
 
-  // Demande de lancer de dé
   formatted = formatted.replace(/\[LANCER_DE\]/g, 
     '<div class="dice-prompt-inline">🎲 <em>Lancez le dé...</em></div>'
   )
 
-  // Images
   formatted = formatted.replace(/\[IMAGE:\s*([^\]]+)\]/g, (_, desc) => 
     `<div class="game-image-placeholder">🖼️ ${desc}</div>`
   )
 
-  // Sons
   formatted = formatted.replace(/\[SON:\s*([^\]]+)\]/g, (_, desc) => 
     `<div class="game-sound-placeholder">🔊 ${desc}</div>`
   )
 
-  // Mort
   formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, (_, reason) => 
     `<div class="death-notice">💀 VOUS ÊTES MORT<br/><small>${reason}</small></div>`
   )
 
-  // Level Up
   formatted = formatted.replace(/\[LEVEL_UP:\s*([^\]]+)\]/g, (_, stat) => 
     `<div class="level-up-notice">⬆️ NIVEAU SUPÉRIEUR !<br/><small>+1 en ${stat}</small></div>`
   )
