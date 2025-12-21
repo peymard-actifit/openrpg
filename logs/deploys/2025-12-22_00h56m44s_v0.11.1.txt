@@ -1,0 +1,39 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 00:56:44 
+🏷️  Version: v0.11.0 → v0.11.1 
+📊 Type: patch 
+💬 Message: Fix dǸs - lancer toujours possible + animation 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (4) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_00h53m13s_v0.11.0.txt
+ M package.json
+ M src/components/Dice.jsx
+ M src/pages/Game.jsx
+ M src/styles/dice.css
+?? logs/deploys/2025-12-22_00h56m44s_v0.11.1.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ CONSIGNES.txt                                 | 216 ++++++++++++++++
+ DEPLOYS.md                                    |   8 +
+ api/chat.js                                   |  10 +-
+ logs/deploys/2025-12-22_00h45m40s_v0.10.0.txt |   3 +
+ logs/deploys/2025-12-22_00h53m13s_v0.11.0.txt |  47 ++++
+ package.json                                  |   2 +-
+ src/components/Dice.jsx                       |  41 ++-
+ src/pages/Dashboard.jsx                       | 357 ++++++++++++++++----------
+ src/pages/Game.jsx                            |  72 ++++--
+ src/styles/dashboard.css                      | 253 ++++++++++--------
+ src/styles/dice.css                           | 123 ++++++---
+ src/styles/game.css                           |  18 ++
+ 12 files changed, 847 insertions(+), 303 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -484,7 +484,7 @@ STORYTELLING
               <div className="input-container">
                 <Dice 
                   onRoll={handleDiceRoll} 
-                  disabled={sending || !diceRequested}
+                  requested={diceRequested && !sending}
                   diceType={diceType}
                 />
                 

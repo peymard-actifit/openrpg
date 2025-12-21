@@ -1,11 +1,11 @@
 .dice-btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
   border: 2px solid var(--gold-dim);
   background: var(--bg-elevated);
-  color: var(--gold);
-  font-size: 1.4rem;
+  color: var(--text-primary);
+  font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -16,53 +16,118 @@
   position: relative;
 }
 
-.dice-btn.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  border-color: var(--text-muted);
-}
-
-.dice-btn.active {
+.dice-btn:hover {
   border-color: var(--gold);
-  animation: pulse 1.5s ease-in-out infinite;
-  box-shadow: 0 0 15px var(--gold-glow);
+  transform: scale(1.05);
+  background: rgba(212, 175, 55, 0.1);
 }
 
-.dice-btn.active:hover {
-  transform: scale(1.1);
-  background: rgba(212, 175, 55, 0.2);
+.dice-btn:active {
+  transform: scale(0.95);
 }
 
+/* Quand demandé par l'IA */
+.dice-btn.requested {
+  border-color: var(--gold);
+  animation: dicePulse 1s ease-in-out infinite;
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.dice-btn.requested:hover {
+  animation: none;
+  box-shadow: 0 0 30px var(--gold-glow);
+}
+
+/* Animation ping pour attirer l'attention */
+.dice-ping {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.dice-ping::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: pingRing 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes pingRing {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Résultat affiché */
+.dice-btn.result {
+  border-color: var(--emerald);
+  background: rgba(34, 139, 34, 0.2);
+}
+
+.dice-btn.result .dice-face {
+  color: var(--gold);
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+/* Animation de roulement */
 .dice-btn.rolling {
   animation: shake 0.1s infinite;
+}
+
+.dice-btn.rolling .dice-face {
+  animation: flash 0.1s infinite;
+}
+
+@keyframes dicePulse {
+  0%, 100% { box-shadow: 0 0 15px var(--gold-glow); }
+  50% { box-shadow: 0 0 30px var(--gold-glow); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(-8deg) scale(1.05); }
+  50% { transform: rotate(8deg) scale(1.05); }
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 .dice-face {
   font-weight: bold;
   line-height: 1;
+  font-family: var(--font-medieval);
 }
 
 .dice-type {
   font-size: 0.6rem;
   position: absolute;
-  bottom: 2px;
+  bottom: 3px;
   color: var(--text-muted);
+  font-family: var(--font-body);
 }
 
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 10px var(--gold-glow); }
-  50% { box-shadow: 0 0 25px var(--gold-glow); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: rotate(-5deg); }
-  50% { transform: rotate(5deg); }
-}
-
+/* Responsive */
 @media (max-width: 480px) {
   .dice-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 1.2rem;
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+  }
+  
+  .dice-btn.result .dice-face {
+    font-size: 1.5rem;
   }
 }

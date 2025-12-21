@@ -121,3 +121,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 7 
 - **Rapport**: [2025-12-22_00h53m13s_v0.11.0.txt](logs/deploys/2025-12-22_00h53m13s_v0.11.0.txt) 
  
+ 
+## v0.11.1 - 22/12/2025 00:56:44 
+ 
+- **Type**: patch 
+- **Message**: Fix dǸs - lancer toujours possible + animation 
+- **Fichiers modifiés**: 4 
+- **Rapport**: [2025-12-22_00h56m44s_v0.11.1.txt](logs/deploys/2025-12-22_00h56m44s_v0.11.1.txt) 
+ 
