@@ -57,3 +57,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-21_22h27m48s_v0.5.1.txt](logs/deploys/2025-12-21_22h27m48s_v0.5.1.txt) 
  
+ 
+## v0.5.2 - 21/12/2025 22:35:28 
+ 
+- **Type**: patch 
+- **Message**: CaractǸristiques libres sans limite de points 
+- **Fichiers modifiés**: 3 
+- **Rapport**: [2025-12-21_22h35m28s_v0.5.2.txt](logs/deploys/2025-12-21_22h35m28s_v0.5.2.txt) 
+ 

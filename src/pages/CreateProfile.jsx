@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import '../styles/create-profile.css'
 
-const TOTAL_STAT_POINTS = 60
 const MAX_STAT = 20
 const MIN_STAT = 1
 
@@ -22,7 +21,7 @@ export default function CreateProfile() {
   const [height, setHeight] = useState(170)
   const [weight, setWeight] = useState(70)
   
-  // Étape 2: Caractéristiques (sur 20)
+  // Étape 2: Caractéristiques (sur 20, libres)
   const [stats, setStats] = useState({
     strength: 10,
     intelligence: 10,
@@ -32,23 +31,13 @@ export default function CreateProfile() {
     mana: 10
   })
 
-  const totalPoints = Object.values(stats).reduce((sum, val) => sum + val, 0)
-  const remainingPoints = TOTAL_STAT_POINTS - totalPoints
-
-  function updateStat(stat, delta) {
-    const newValue = stats[stat] + delta
-    if (newValue < MIN_STAT || newValue > MAX_STAT) return
-    if (delta > 0 && remainingPoints <= 0) return
-    
-    setStats(prev => ({ ...prev, [stat]: newValue }))
+  function updateStat(stat, value) {
+    const numValue = parseInt(value) || MIN_STAT
+    const clampedValue = Math.min(MAX_STAT, Math.max(MIN_STAT, numValue))
+    setStats(prev => ({ ...prev, [stat]: clampedValue }))
   }
 
   async function handleSubmit() {
-    if (remainingPoints !== 0) {
-      setError(`Vous devez distribuer exactement ${TOTAL_STAT_POINTS} points`)
-      return
-    }
-    
     setLoading(true)
     setError('')
 
@@ -114,8 +103,8 @@ export default function CreateProfile() {
                   type="number"
                   value={age}
                   onChange={(e) => setAge(parseInt(e.target.value) || 18)}
-                  min="16"
-                  max="999"
+                  min="1"
+                  max="9999"
                 />
               </div>
 
@@ -136,9 +125,9 @@ export default function CreateProfile() {
                 <input
                   type="number"
                   value={height}
-                  onChange={(e) => setHeight(parseInt(e.target.value) || 150)}
-                  min="50"
-                  max="300"
+                  onChange={(e) => setHeight(parseInt(e.target.value) || 100)}
+                  min="1"
+                  max="1000"
                 />
               </div>
 
@@ -148,8 +137,8 @@ export default function CreateProfile() {
                   type="number"
                   value={weight}
                   onChange={(e) => setWeight(parseInt(e.target.value) || 50)}
-                  min="20"
-                  max="500"
+                  min="1"
+                  max="1000"
                 />
               </div>
             </div>
@@ -167,10 +156,8 @@ export default function CreateProfile() {
         {step === 2 && (
           <div className="profile-step">
             <div className="stats-header">
-              <h2>Répartition des Points</h2>
-              <div className={`points-remaining ${remainingPoints === 0 ? 'complete' : remainingPoints < 0 ? 'over' : ''}`}>
-                Points restants: <span>{remainingPoints}</span>
-              </div>
+              <h2>Définissez vos Caractéristiques</h2>
+              <p className="stats-hint">Choisissez librement vos valeurs entre 1 et 20</p>
             </div>
 
             <div className="stats-grid">
@@ -180,28 +167,35 @@ export default function CreateProfile() {
                     <span className="stat-icon">{getStatIcon(key)}</span>
                     <span className="stat-label">{getStatLabel(key)}</span>
                   </div>
-                  <div className="stat-adjuster">
-                    <button 
-                      className="stat-btn"
-                      onClick={() => updateStat(key, -1)}
-                      disabled={value <= MIN_STAT}
-                    >
-                      −
-                    </button>
-                    <span className="stat-value">{value}</span>
-                    <button 
-                      className="stat-btn"
-                      onClick={() => updateStat(key, 1)}
-                      disabled={value >= MAX_STAT || remainingPoints <= 0}
-                    >
-                      +
-                    </button>
+                  <div className="stat-input-wrapper">
+                    <input
+                      type="number"
+                      className="stat-input"
+                      value={value}
+                      onChange={(e) => updateStat(key, e.target.value)}
+                      min={MIN_STAT}
+                      max={MAX_STAT}
+                    />
+                    <input
+                      type="range"
+                      className="stat-slider"
+                      value={value}
+                      onChange={(e) => updateStat(key, e.target.value)}
+                      min={MIN_STAT}
+                      max={MAX_STAT}
+                    />
                   </div>
                   <div className="stat-bar-mini">
                     <div className="stat-fill-mini" style={{ width: `${(value / MAX_STAT) * 100}%` }}></div>
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="stats-summary">
+              <p>
+                <strong>{characterName}</strong> — {age} ans, {height}cm, {weight}kg
+              </p>
             </div>
 
             <div className="step-actions">
@@ -211,7 +205,7 @@ export default function CreateProfile() {
               <button 
                 className="btn btn-primary"
                 onClick={handleSubmit}
-                disabled={loading || remainingPoints !== 0}
+                disabled={loading}
               >
                 {loading ? 'Création...' : 'Créer mon Héros'}
               </button>

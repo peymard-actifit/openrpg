@@ -1,0 +1,33 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 21/12/2025 22:35:28 
+🏷️  Version: v0.5.1 → v0.5.2 
+📊 Type: patch 
+💬 Message: CaractǸristiques libres sans limite de points 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (3) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-21_22h27m48s_v0.5.1.txt
+ M package.json
+ M src/pages/CreateProfile.jsx
+ M src/styles/create-profile.css
+?? logs/deploys/2025-12-21_22h35m28s_v0.5.2.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |   8 ++
+ logs/deploys/2025-12-21_22h24m33s_v0.5.0.txt |   3 +
+ logs/deploys/2025-12-21_22h27m48s_v0.5.1.txt |  32 +++++++
+ package.json                                 |   2 +-
+ src/pages/CreateProfile.jsx                  |  82 +++++++++---------
+ src/styles/create-profile.css                | 123 +++++++++++++++------------
+ src/styles/global.css                        |   2 +-
+ 7 files changed, 152 insertions(+), 100 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

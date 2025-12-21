@@ -12,7 +12,7 @@
 
 .create-profile-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 650px;
   background: var(--bg-card);
   border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 16px;
@@ -76,40 +76,20 @@
 
 /* Stats Step */
 .stats-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
   margin-bottom: var(--space-xl);
-  flex-wrap: wrap;
-  gap: var(--space-md);
 }
 
 .stats-header h2 {
   font-family: var(--font-display);
   font-size: 1.3rem;
   color: var(--text-primary);
+  margin-bottom: var(--space-sm);
 }
 
-.points-remaining {
-  font-family: var(--font-display);
+.stats-hint {
+  color: var(--text-muted);
   font-size: 0.9rem;
-  color: var(--text-secondary);
-  padding: var(--space-sm) var(--space-md);
-  background: var(--bg-elevated);
-  border-radius: 20px;
-}
-
-.points-remaining span {
-  color: var(--gold);
-  font-weight: 600;
-}
-
-.points-remaining.complete span {
-  color: var(--emerald);
-}
-
-.points-remaining.over span {
-  color: var(--crimson-bright);
 }
 
 .stats-grid {
@@ -121,9 +101,10 @@
 
 .stat-control {
   display: grid;
-  grid-template-columns: 140px 1fr auto;
+  grid-template-columns: 150px 1fr;
+  grid-template-rows: auto auto;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm) var(--space-md);
   padding: var(--space-md);
   background: var(--bg-elevated);
   border-radius: 8px;
@@ -134,6 +115,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  grid-row: span 2;
 }
 
 .stat-icon {
@@ -148,50 +130,69 @@
   color: var(--text-secondary);
 }
 
-.stat-adjuster {
+.stat-input-wrapper {
   display: flex;
   align-items: center;
   gap: var(--space-md);
 }
 
-.stat-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--gold-dim);
-  background: var(--bg-card);
-  color: var(--gold);
-  font-size: 1.3rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stat-btn:hover:not(:disabled) {
-  background: var(--gold);
-  color: var(--bg-dark);
-}
-
-.stat-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.stat-value {
+.stat-input {
+  width: 60px;
+  padding: var(--space-sm);
   font-family: var(--font-medieval);
-  font-size: 1.8rem;
-  color: var(--gold);
-  min-width: 40px;
+  font-size: 1.4rem;
   text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+  color: var(--gold);
 }
 
-.stat-bar-mini {
-  width: 80px;
+.stat-input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.stat-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
   height: 6px;
   background: var(--bg-dark);
   border-radius: 3px;
+  cursor: pointer;
+}
+
+.stat-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.stat-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.stat-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.stat-bar-mini {
+  grid-column: 2;
+  height: 4px;
+  background: var(--bg-dark);
+  border-radius: 2px;
   overflow: hidden;
 }
 
@@ -199,6 +200,19 @@
   height: 100%;
   background: linear-gradient(90deg, var(--crimson) 0%, var(--gold) 100%);
   transition: width 0.3s ease;
+}
+
+.stats-summary {
+  text-align: center;
+  padding: var(--space-md);
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  margin-bottom: var(--space-xl);
+  color: var(--text-secondary);
+}
+
+.stats-summary strong {
+  color: var(--gold);
 }
 
 .step-actions {
@@ -215,13 +229,15 @@
   
   .stat-info {
     justify-content: center;
+    grid-row: auto;
   }
   
-  .stat-adjuster {
+  .stat-input-wrapper {
     justify-content: center;
   }
   
   .stat-bar-mini {
+    grid-column: 1;
     width: 100%;
   }
   
@@ -229,4 +245,3 @@
     grid-template-columns: 1fr;
   }
 }
-
