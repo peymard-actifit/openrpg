@@ -1,0 +1,29 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 21/12/2025 22:27:48 
+🏷️  Version: v0.5.0 → v0.5.1 
+📊 Type: patch 
+💬 Message: Correction typo CSS couleur gold 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-21_22h24m33s_v0.5.0.txt
+ M package.json
+ M src/styles/global.css
+?? logs/deploys/2025-12-21_22h27m48s_v0.5.1.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 +++++++
+ logs/deploys/2025-12-21_22h24m33s_v0.5.0.txt | 32 ++++++++++++++++++++++++++++
+ package.json                                 |  2 +-
+ src/styles/global.css                        |  2 +-
+ 4 files changed, 42 insertions(+), 2 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

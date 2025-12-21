@@ -49,3 +49,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 0 
 - **Rapport**: [2025-12-21_22h24m33s_v0.5.0.txt](logs/deploys/2025-12-21_22h24m33s_v0.5.0.txt) 
  
+ 
+## v0.5.1 - 21/12/2025 22:27:48 
+ 
+- **Type**: patch 
+- **Message**: Correction typo CSS couleur gold 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-21_22h27m48s_v0.5.1.txt](logs/deploys/2025-12-21_22h27m48s_v0.5.1.txt) 
+ 
