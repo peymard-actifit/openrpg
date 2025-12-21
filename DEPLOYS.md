@@ -97,3 +97,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 3 
 - **Rapport**: [2025-12-21_23h21m45s_v0.8.0.txt](logs/deploys/2025-12-21_23h21m45s_v0.8.0.txt) 
  
+ 
+## v0.9.0 - 22/12/2025 00:30:35 
+ 
+- **Type**: minor 
+- **Message**: Alignement + Validation message + Stats panel + Tooltip titre 
+- **Fichiers modifiés**: 7 
+- **Rapport**: [2025-12-22_00h30m35s_v0.9.0.txt](logs/deploys/2025-12-22_00h30m35s_v0.9.0.txt) 
+ 

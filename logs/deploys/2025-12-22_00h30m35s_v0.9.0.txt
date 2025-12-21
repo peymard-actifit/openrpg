@@ -1,0 +1,37 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 00:30:35 
+🏷️  Version: v0.8.0 → v0.9.0 
+📊 Type: minor 
+💬 Message: Alignement + Validation message + Stats panel + Tooltip titre 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (7) 
+-------------------------------------------------- 
+ M api/chat.js
+ M logs/deploys/2025-12-21_23h21m45s_v0.8.0.txt
+ M package.json
+ M src/pages/Game.jsx
+ M src/styles/game.css
+?? logs/deploys/2025-12-22_00h30m35s_v0.9.0.txt
+?? src/components/AlignmentDisplay.jsx
+?? src/components/StatsPanel.jsx
+?? src/styles/alignment.css
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |   8 +
+ api/chat.js                                  |  29 ++-
+ logs/deploys/2025-12-21_23h11m04s_v0.7.0.txt |   3 +
+ logs/deploys/2025-12-21_23h21m45s_v0.8.0.txt |  42 +++++
+ package.json                                 |   2 +-
+ src/pages/Game.jsx                           | 255 ++++++++++++++++++++++-----
+ src/styles/game.css                          |  61 +++++++
+ 7 files changed, 345 insertions(+), 55 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

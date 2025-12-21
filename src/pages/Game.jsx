@@ -5,6 +5,7 @@ import * as api from '../lib/api'
 import Dice from '../components/Dice'
 import Inventory from '../components/Inventory'
 import LevelUpModal from '../components/LevelUpModal'
+import StatsPanel from '../components/StatsPanel'
 import { VoiceInput, VoiceOutput, useTextToSpeech } from '../components/VoiceControls'
 import '../styles/game.css'
 
@@ -28,6 +29,9 @@ export default function Game() {
   const [levelUpPending, setLevelUpPending] = useState(false)
   const [pendingLevel, setPendingLevel] = useState(null)
   const [inventoryChecked, setInventoryChecked] = useState(false)
+  const [alignment, setAlignment] = useState({ goodEvil: 0, lawChaos: 0 })
+  const [pendingMessage, setPendingMessage] = useState(null)
+  const [showConfirm, setShowConfirm] = useState(false)
   
   const { speak, stop: stopSpeaking, isSpeaking } = useTextToSpeech()
 
@@ -50,7 +54,6 @@ export default function Game() {
     }
   }, [messages, voiceOutputEnabled])
 
-  // Vérification d'inventaire pour les parties en cours
   useEffect(() => {
     if (gameStarted && messages.length > 0 && !inventoryChecked && !sending) {
       checkInventoryConsistency()
@@ -61,7 +64,6 @@ export default function Game() {
     if (inventoryChecked || messages.length < 3) return
     setInventoryChecked(true)
 
-    // Demander à l'IA de vérifier l'inventaire
     const historyForCheck = messages.slice(-20).map(m => ({
       role: m.role,
       content: m.content
@@ -74,7 +76,7 @@ export default function Game() {
         { role: 'user', content: '[SYSTÈME] Analyse l\'historique et vérifie la cohérence de l\'inventaire. Si des objets ont été trouvés mais pas ajoutés, ou utilisés/perdus mais toujours présents, corrige.' }
       ], { game, profile, inventory })
 
-      processAIResponse(response)
+      processAIResponse(response, true)
     } catch (err) {
       console.error('Erreur vérification inventaire:', err)
     }
@@ -86,8 +88,10 @@ export default function Game() {
 INVENTAIRE ACTUEL: ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name}`).join(', ') : 'Vide'}
 
 Analyse l'historique des messages. Identifie:
-1. Les objets mentionnés comme TROUVÉS/OBTENUS mais absents de l'inventaire → ajoute-les avec [OBJET:nom|icône|description]
-2. Les objets mentionnés comme UTILISÉS/PERDUS/DONNÉS/DÉTRUITS mais encore présents → retire-les avec [RETIRER:nom]
+1. Les objets mentionnés comme TROUVÉS/OBTENUS/REÇUS/RAMASSÉS mais absents de l'inventaire → ajoute-les avec [OBJET:nom|icône|description]
+2. Les objets mentionnés comme UTILISÉS/PERDUS/DONNÉS/DÉTRUITS/CONSOMMÉS mais encore présents → retire-les avec [RETIRER:nom]
+
+IMPORTANT: Inclus TOUS les objets importants mentionnés (or, armes, équipements, consommables, clés, etc.)
 
 Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout est cohérent, ne réponds rien.`
   }
@@ -103,6 +107,7 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
       
       setGame(gameData)
       setInventory(gameData.inventory || [])
+      setAlignment(gameData.alignment || { goodEvil: 0, lawChaos: 0 })
 
       const messagesData = await api.getMessages(gameId)
       setMessages(messagesData || [])
@@ -124,7 +129,7 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
 
   function handleDiceRoll(value) {
     setDiceRequested(false)
-    sendMessage(`🎲 ${value}`)
+    confirmAndSend(`🎲 ${value}`)
   }
 
   function handleVoiceTranscript(text) {
@@ -157,7 +162,7 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
       
       const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Contexte de l'aventure: ${game.initialPrompt}. Lance l'aventure de manière immersive. Établis une quête principale claire et présente au moins un élément de tension ou un antagoniste potentiel.` }
+        { role: 'user', content: `Contexte de l'aventure: ${game.initialPrompt}. Lance l'aventure de manière immersive. Établis une quête principale claire et présente au moins un élément de tension ou un antagoniste potentiel. Si le joueur reçoit des objets de départ, liste-les.` }
       ], { game, profile, stats: game.currentStats })
 
       const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
@@ -173,11 +178,35 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
     }
   }
 
-  async function sendMessage(overrideMessage = null) {
-    const messageToSend = overrideMessage || input.trim()
+  // Demande de confirmation avant envoi
+  function prepareMessage() {
+    const msg = input.trim()
+    if (!msg) return
+    
+    setPendingMessage(msg)
+    setShowConfirm(true)
+  }
+
+  function cancelMessage() {
+    setShowConfirm(false)
+    // Garde le message dans l'input pour modification
+  }
+
+  function confirmAndSend(overrideMessage = null) {
+    const msg = overrideMessage || pendingMessage
+    setShowConfirm(false)
+    setPendingMessage(null)
+    if (overrideMessage) {
+      sendMessage(msg)
+    } else {
+      setInput('')
+      sendMessage(msg)
+    }
+  }
+
+  async function sendMessage(messageToSend) {
     if (!messageToSend || sending) return
     
-    if (!overrideMessage) setInput('')
     setSending(true)
 
     try {
@@ -192,7 +221,7 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
       const response = await api.sendToAI([
         { role: 'system', content: buildSystemPrompt() },
         ...history
-      ], { game, profile, stats: game.currentStats, inventory })
+      ], { game, profile, stats: game.currentStats, inventory, alignment })
 
       const aiMsg = await api.addMessage(gameId, 'assistant', response.content)
       setMessages(prev => [...prev, aiMsg])
@@ -205,7 +234,7 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
     }
   }
 
-  function processAIResponse(response) {
+  function processAIResponse(response, silent = false) {
     if (response.content.includes('[LANCER_DE]')) {
       setDiceRequested(true)
     }
@@ -229,6 +258,16 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
       api.updateGame(gameId, { inventory: updatedInventory })
     }
 
+    // Changement d'alignement
+    if (response.alignmentChange) {
+      const newAlignment = {
+        goodEvil: Math.max(-100, Math.min(100, alignment.goodEvil + (response.alignmentChange.goodEvil || 0))),
+        lawChaos: Math.max(-100, Math.min(100, alignment.lawChaos + (response.alignmentChange.lawChaos || 0)))
+      }
+      setAlignment(newAlignment)
+      api.updateGame(gameId, { alignment: newAlignment })
+    }
+
     if (response.playerDied) {
       api.updateGame(gameId, { 
         status: 'archived', 
@@ -244,21 +283,29 @@ Réponds UNIQUEMENT avec les balises nécessaires, sans texte narratif. Si tout 
   }
 
   function buildSystemPrompt() {
+    const turnCount = messages.filter(m => m.role === 'user').length
+
     return `Tu es le Maître du Jeu d'OpenRPG, un jeu de rôle textuel immersif et DRAMATIQUE.
 
 ═══════════════════════════════════════════
-CONTEXTE DE L'AVENTURE
+CONTEXTE & RÉFÉRENCES
 ═══════════════════════════════════════════
 ${game?.initialPrompt}
+
+IMPORTANT: Utilise tes connaissances sur cet univers/contexte pour enrichir l'histoire avec des références authentiques (lieux, personnages, événements, objets typiques de cet univers).
 
 ═══════════════════════════════════════════
 PERSONNAGE
 ═══════════════════════════════════════════
 Nom: ${profile?.characterName}
-Niveau: ${game?.level}
+Niveau: ${game?.level} (Tour ${turnCount + 1})
 Force: ${game?.currentStats?.strength}/20 | Intelligence: ${game?.currentStats?.intelligence}/20
 Sagesse: ${game?.currentStats?.wisdom}/20 | Dextérité: ${game?.currentStats?.dexterity}/20
 Constitution: ${game?.currentStats?.constitution}/20 | Mana: ${game?.currentStats?.mana}/20
+
+ALIGNEMENT ACTUEL:
+• Bon/Mauvais: ${alignment.goodEvil} (${alignment.goodEvil > 30 ? 'Bon' : alignment.goodEvil < -30 ? 'Mauvais' : 'Neutre'})
+• Loyal/Chaotique: ${alignment.lawChaos} (${alignment.lawChaos > 30 ? 'Loyal' : alignment.lawChaos < -30 ? 'Chaotique' : 'Neutre'})
 
 ═══════════════════════════════════════════
 INVENTAIRE (${inventory.length} objets)
@@ -266,78 +313,60 @@ INVENTAIRE (${inventory.length} objets)
 ${inventory.length > 0 ? inventory.map(i => `• ${i.icon} ${i.name}: ${i.description}`).join('\n') : '(Vide)'}
 
 ═══════════════════════════════════════════
-RÈGLES DU JEU
+RÈGLES CRITIQUES
 ═══════════════════════════════════════════
 
-🎲 DÉ D6 - Pour actions risquées, utilise [LANCER_DE]:
-   • 1 = Échec CRITIQUE (conséquences graves, perte possible)
-   • 2-3 = Échec (complications)
-   • 4-5 = Réussite
-   • 6 = Réussite CRITIQUE (bonus exceptionnel)
-   • Stats 15+ = avantage narratif
+🎲 LANCER DE DÉ - DEMANDE SOUVENT [LANCER_DE]:
+   • TOUTE action incertaine, risquée ou spectaculaire
+   • Combats, acrobaties, persuasion, discrétion
+   • Actions surprenantes du joueur
+   • Si le succès n'est pas garanti → dé !
+   Résultats: 1=échec critique, 2-3=échec, 4-5=réussite, 6=critique
 
-💀 MODE HARDCORE:
-   • La mort est PERMANENTE
-   • Les dangers sont RÉELS
-   • Pas de seconde chance
+💀 MODE HARDCORE: Mort permanente, dangers réels
 
-📦 GESTION INVENTAIRE (CRUCIAL):
-   • Objet TROUVÉ/REÇU → [OBJET:nom|icône|description courte]
-   • Objet UTILISÉ/PERDU/DONNÉ/DÉTRUIT/VOLÉ → [RETIRER:nom de l'objet]
-   • Vérifie TOUJOURS la cohérence avec les actions du joueur
+📦 INVENTAIRE (CRUCIAL - NE JAMAIS OUBLIER):
+   • TOUT objet reçu/trouvé/acheté → [OBJET:nom|icône|description]
+   • Objet utilisé/perdu/vendu/donné → [RETIRER:nom]
+   • Inclure: or, armes, armures, potions, clés, documents, tout!
 
-⬆️ PROGRESSION:
-   • Exploit majeur → [LEVEL_UP]
-   • Mort → [MORT:description]
+⚖️ ALIGNEMENT (évolue selon les actions):
+   • Action bonne/altruiste → [ALIGN:+10,0] (bon)
+   • Action mauvaise/égoïste → [ALIGN:-10,0] (mauvais)
+   • Action ordonnée/honorable → [ALIGN:0,+10] (loyal)
+   • Action imprévisible/rebelle → [ALIGN:0,-10] (chaotique)
+   • Cumule si l'action est double (ex: [ALIGN:+10,-10])
+
+⬆️ PROGRESSION - Régulière:
+   • Tous les 5-8 tours environ → [LEVEL_UP]
+   • Après victoire importante → [LEVEL_UP]
+   • Après résolution de quête → [LEVEL_UP]
 
 ═══════════════════════════════════════════
-STORYTELLING DRAMATIQUE (IMPORTANT)
+STORYTELLING DRAMATIQUE
 ═══════════════════════════════════════════
 
-Tu dois créer une aventure VIVANTE avec:
-
-🔥 TENSION NARRATIVE:
-   • Introduis des retournements de situation inattendus
-   • Les alliés peuvent trahir, les ennemis peuvent aider
-   • Les choix ont des conséquences à long terme
-
-👤 ANTAGONISTES:
-   • Crée des ennemis récurrents avec leurs propres motivations
-   • Ils évoluent, s'adaptent, reviennent
-   • Certains peuvent être raisonnés, d'autres non
-
-⚡ ÉVÉNEMENTS DRAMATIQUES:
-   • Pertes (objets volés, alliés blessés, lieux détruits)
-   • Dilemmes moraux sans bonne réponse
-   • Révélations qui changent tout
-   • Poursuites, embuscades, pièges
-
-🎭 AUTOUR DU PERSONNAGE:
-   • Son passé peut le rattraper
-   • Ses actions ont des répercussions
-   • Des PNJ se souviennent de lui
-   • Sa réputation le précède
-
-📜 QUÊTE PRINCIPALE:
-   • Maintiens un fil conducteur clair
-   • Ajoute des obstacles et complications
-   • Les antagonistes interfèrent avec ses objectifs
-   • La quête peut évoluer/se transformer
+🔥 TENSION: Retournements, trahisons, révélations
+👤 ANTAGONISTES: Ennemis récurrents, motivés
+⚡ ÉVÉNEMENTS: Vols, embuscades, dilemmes moraux
+📜 QUÊTE: Obstacles, interférences, évolution
+🎭 CONSÉQUENCES: Les actions ont un impact durable
 
 ═══════════════════════════════════════════
 CONSIGNES FINALES
 ═══════════════════════════════════════════
 • Réponds dans la langue du joueur
-• Sois immersif et descriptif
 • N'utilise JAMAIS [IMAGE:]
-• Fais vivre le monde autour du personnage
-• Surprends le joueur régulièrement`
+• Demande des jets de dé RÉGULIÈREMENT
+• Fais évoluer l'alignement selon les choix
+• Donne des objets régulièrement
+• Fais monter de niveau régulièrement`
   }
 
   function handleKeyPress(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      sendMessage()
+      prepareMessage()
     }
   }
 
@@ -354,7 +383,7 @@ CONSIGNES FINALES
             🎒 {inventory.length}
           </button>
         </div>
-        <div className="game-title">
+        <div className="game-title" title={game?.initialPrompt}>
           <h1>{game?.title}</h1>
           <span className="game-level">Niveau {game?.level}</span>
         </div>
@@ -366,13 +395,14 @@ CONSIGNES FINALES
               setVoiceOutputEnabled(!voiceOutputEnabled)
             }} 
           />
-          <div className="game-stats-mini">
-            <span>💪{game?.currentStats?.strength}</span>
-            <span>🧠{game?.currentStats?.intelligence}</span>
-            <span>❤️{game?.currentStats?.constitution}</span>
-          </div>
         </div>
       </header>
+
+      <StatsPanel 
+        stats={game?.currentStats} 
+        level={game?.level}
+        alignment={alignment}
+      />
 
       <main className="game-main">
         {!gameStarted ? (
@@ -417,6 +447,20 @@ CONSIGNES FINALES
                 <div className="dice-request">🎲 Le Maître du Jeu demande un lancer de dé !</div>
               )}
               
+              {showConfirm && (
+                <div className="confirm-message">
+                  <div className="confirm-text">"{pendingMessage}"</div>
+                  <div className="confirm-actions">
+                    <button className="btn btn-secondary" onClick={cancelMessage}>
+                      ✏️ Modifier
+                    </button>
+                    <button className="btn btn-primary" onClick={() => confirmAndSend()}>
+                      ✓ Envoyer
+                    </button>
+                  </div>
+                </div>
+              )}
+              
               <div className="input-container">
                 <Dice onRoll={handleDiceRoll} disabled={sending || !diceRequested} />
                 
@@ -426,7 +470,7 @@ CONSIGNES FINALES
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Que faites-vous ?"
-                    disabled={sending}
+                    disabled={sending || showConfirm}
                     rows={1}
                   />
                   <VoiceInput onTranscript={handleVoiceTranscript} disabled={sending} />
@@ -434,8 +478,8 @@ CONSIGNES FINALES
                 
                 <button 
                   className="send-btn"
-                  onClick={() => sendMessage()}
-                  disabled={!input.trim() || sending}
+                  onClick={prepareMessage}
+                  disabled={!input.trim() || sending || showConfirm}
                 >
                   ➤
                 </button>
@@ -464,9 +508,10 @@ CONSIGNES FINALES
 function formatMessage(content) {
   let formatted = content
 
-  // Retirer les tags système du texte affiché
+  // Retirer les tags système
   formatted = formatted.replace(/\[OBJET:[^\]]+\]/g, '')
   formatted = formatted.replace(/\[RETIRER:[^\]]+\]/g, '')
+  formatted = formatted.replace(/\[ALIGN:[^\]]+\]/g, '')
   
   formatted = formatted.replace(/\[LANCER_DE\]/g, '<span class="dice-inline">🎲</span>')
   formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, '<div class="death-notice">💀 MORT — $1</div>')

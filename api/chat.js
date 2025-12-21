@@ -51,13 +51,24 @@ export default async function handler(req, res) {
       removedItems.push(match[1].trim())
     }
 
+    // Extraire les changements d'alignement [ALIGN:goodEvil,lawChaos]
+    let alignmentChange = null
+    const alignMatch = content.match(/\[ALIGN:\s*([+-]?\d+)\s*,\s*([+-]?\d+)\s*\]/)
+    if (alignMatch) {
+      alignmentChange = {
+        goodEvil: parseInt(alignMatch[1]),
+        lawChaos: parseInt(alignMatch[2])
+      }
+    }
+
     return res.status(200).json({
       content,
       playerDied,
       deathReason,
       levelUp,
       newItems,
-      removedItems
+      removedItems,
+      alignmentChange
     })
   } catch (error) {
     console.error('OpenAI Error:', error)
