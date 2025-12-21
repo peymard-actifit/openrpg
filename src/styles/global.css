@@ -1,0 +1,225 @@
+:root {
+  /* Palette sombre médiévale */
+  --bg-dark: #0a0a0f;
+  --bg-card: #12121a;
+  --bg-elevated: #1a1a25;
+  --bg-input: #0f0f18;
+  
+  /* Accents */
+  --gold: #d4a f37;
+  --gold-dim: #a07820;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  --crimson: #8b0000;
+  --crimson-bright: #dc143c;
+  --emerald: #228b22;
+  --mana-blue: #4169e1;
+  
+  /* Texte */
+  --text-primary: #e8e4d9;
+  --text-secondary: #9a9590;
+  --text-muted: #5a5550;
+  
+  /* Fonts */
+  --font-display: 'Cinzel', serif;
+  --font-medieval: 'MedievalSharp', cursive;
+  --font-body: 'Crimson Text', serif;
+  
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.app {
+  min-height: 100vh;
+  background: 
+    radial-gradient(ellipse at top left, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+    var(--bg-dark);
+}
+
+/* Utilitaires */
+.loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--gold);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Boutons */
+.btn {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  padding: var(--space-md) var(--space-xl);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--crimson) 0%, #5c0000 100%);
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 0, 0, 0.4);
+  border-color: var(--gold);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+}
+
+.btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Inputs */
+.input-group {
+  margin-bottom: var(--space-lg);
+}
+
+.input-group label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--gold);
+  margin-bottom: var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+  width: 100%;
+  padding: var(--space-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.input-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 8px;
+  padding: var(--space-xl);
+}
+
+/* Stat bars */
+.stat-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.stat-bar .stat-name {
+  width: 100px;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.stat-bar .stat-value {
+  font-family: var(--font-medieval);
+  font-size: 1.2rem;
+  color: var(--gold);
+  min-width: 30px;
+}
+
+.stat-bar .stat-track {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-dark);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stat-bar .stat-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--crimson) 0%, var(--gold) 100%);
+  transition: width 0.5s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dim);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+

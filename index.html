@@ -4,31 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OpenRPG - Jeux de rôles ouvert</title>
-  <link rel="stylesheet" href="/src/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🎲 OpenRPG</h1>
-      <p class="tagline">Jeux de rôles ouvert</p>
-    </header>
-    
-    <main>
-      <section class="hero">
-        <div class="dice-animation">🎲</div>
-        <h2>Bienvenue, Aventurier !</h2>
-        <p>Votre prochaine aventure commence ici...</p>
-        <button class="btn-primary" onclick="rollDice()">Lancer les dés</button>
-        <div id="dice-result" class="dice-result"></div>
-      </section>
-    </main>
-    
-    <footer>
-      <p>OpenRPG &copy; 2025 - L'aventure n'attend que vous</p>
-    </footer>
-  </div>
-  
-  <script type="module" src="/src/main.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
-

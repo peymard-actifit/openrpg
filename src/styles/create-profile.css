@@ -1,0 +1,232 @@
+.create-profile-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  background: 
+    radial-gradient(ellipse at top, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+    var(--bg-dark);
+}
+
+.create-profile-container {
+  width: 100%;
+  max-width: 600px;
+  background: var(--bg-card);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16px;
+  padding: var(--space-2xl);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.create-profile-container h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.step {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.step.active {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.profile-error {
+  background: rgba(139, 0, 0, 0.3);
+  border: 1px solid var(--crimson);
+  border-radius: 4px;
+  padding: var(--space-md);
+  color: #ff6b6b;
+  margin-bottom: var(--space-lg);
+  text-align: center;
+}
+
+.profile-step {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+/* Stats Step */
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.stats-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--text-primary);
+}
+
+.points-remaining {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-elevated);
+  border-radius: 20px;
+}
+
+.points-remaining span {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.points-remaining.complete span {
+  color: var(--emerald);
+}
+
+.points-remaining.over span {
+  color: var(--crimson-bright);
+}
+
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.stat-control {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.stat-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.stat-icon {
+  font-size: 1.5rem;
+}
+
+.stat-label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.stat-adjuster {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.stat-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: var(--bg-card);
+  color: var(--gold);
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-btn:hover:not(:disabled) {
+  background: var(--gold);
+  color: var(--bg-dark);
+}
+
+.stat-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.stat-value {
+  font-family: var(--font-medieval);
+  font-size: 1.8rem;
+  color: var(--gold);
+  min-width: 40px;
+  text-align: center;
+}
+
+.stat-bar-mini {
+  width: 80px;
+  height: 6px;
+  background: var(--bg-dark);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.stat-fill-mini {
+  height: 100%;
+  background: linear-gradient(90deg, var(--crimson) 0%, var(--gold) 100%);
+  transition: width 0.3s ease;
+}
+
+.step-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .stat-control {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .stat-info {
+    justify-content: center;
+  }
+  
+  .stat-adjuster {
+    justify-content: center;
+  }
+  
+  .stat-bar-mini {
+    width: 100%;
+  }
+  
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+}
+
