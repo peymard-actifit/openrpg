@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { sendToAI } from '../lib/openai'
+import Dice from '../components/Dice'
+import { VoiceInput, VoiceOutput, useTextToSpeech } from '../components/VoiceControls'
 import '../styles/game.css'
 
 export default function Game() {
@@ -17,6 +19,11 @@ export default function Game() {
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [gameStarted, setGameStarted] = useState(false)
+  const [diceRequested, setDiceRequested] = useState(false)
+  const [lastDiceRoll, setLastDiceRoll] = useState(null)
+  const [voiceOutputEnabled, setVoiceOutputEnabled] = useState(false)
+  
+  const { speak, stop: stopSpeaking, isSpeaking } = useTextToSpeech()
 
   useEffect(() => {
     fetchGame()
@@ -26,9 +33,18 @@ export default function Game() {
     scrollToBottom()
   }, [messages])
 
+  // Parler le dernier message de l'IA si voix activée
+  useEffect(() => {
+    if (voiceOutputEnabled && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1]
+      if (lastMessage.role === 'assistant') {
+        speak(lastMessage.content)
+      }
+    }
+  }, [messages, voiceOutputEnabled])
+
   async function fetchGame() {
     try {
-      // Charger la partie
       const { data: gameData, error: gameError } = await supabase
         .from('games')
         .select('*')
@@ -45,7 +61,6 @@ export default function Game() {
       
       setGame(gameData)
 
-      // Charger les messages
       const { data: messagesData, error: messagesError } = await supabase
         .from('game_messages')
         .select('*')
@@ -55,6 +70,14 @@ export default function Game() {
       if (messagesError) throw messagesError
       setMessages(messagesData || [])
       setGameStarted(messagesData && messagesData.length > 0)
+      
+      // Vérifier si un lancer de dé est demandé dans le dernier message
+      if (messagesData && messagesData.length > 0) {
+        const lastMsg = messagesData[messagesData.length - 1]
+        if (lastMsg.role === 'assistant' && lastMsg.content.includes('[LANCER_DE]')) {
+          setDiceRequested(true)
+        }
+      }
     } catch (err) {
       console.error('Erreur:', err)
       navigate('/dashboard')
@@ -67,13 +90,22 @@ export default function Game() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  function handleDiceRoll(value) {
+    setLastDiceRoll(value)
+    setDiceRequested(false)
+    // Envoyer automatiquement le résultat du dé
+    sendMessage(`🎲 J'ai lancé le dé : ${value}`)
+  }
+
+  function handleVoiceTranscript(text) {
+    setInput(prev => prev + (prev ? ' ' : '') + text)
+  }
+
   async function startGame() {
     setSending(true)
     try {
       const systemPrompt = buildSystemPrompt()
-      const initialMessage = `**Contexte de l'aventure:**\n${game.initial_prompt}\n\n*L'aventure commence...*`
       
-      // Appel à l'API pour générer le début
       const response = await sendToAI([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: `Démarre cette aventure. Contexte: ${game.initial_prompt}. Présente la scène d'ouverture de manière immersive et termine par une situation où le joueur doit faire un choix ou agir.` }
@@ -83,7 +115,6 @@ export default function Game() {
         stats: game.current_stats
       })
 
-      // Sauvegarder le message système et la réponse
       const { data: aiMessage } = await supabase
         .from('game_messages')
         .insert([{
@@ -96,6 +127,11 @@ export default function Game() {
 
       setMessages([aiMessage])
       setGameStarted(true)
+      
+      // Vérifier si un lancer de dé est demandé
+      if (response.content.includes('[LANCER_DE]')) {
+        setDiceRequested(true)
+      }
     } catch (err) {
       console.error('Erreur démarrage:', err)
     } finally {
@@ -103,34 +139,31 @@ export default function Game() {
     }
   }
 
-  async function sendMessage() {
-    if (!input.trim() || sending) return
+  async function sendMessage(overrideMessage = null) {
+    const messageToSend = overrideMessage || input.trim()
+    if (!messageToSend || sending) return
     
-    const userMessage = input.trim()
-    setInput('')
+    if (!overrideMessage) setInput('')
     setSending(true)
 
     try {
-      // Ajouter le message utilisateur
       const { data: userMsg } = await supabase
         .from('game_messages')
         .insert([{
           game_id: gameId,
           role: 'user',
-          content: userMessage
+          content: messageToSend
         }])
         .select()
         .single()
 
       setMessages(prev => [...prev, userMsg])
 
-      // Construire l'historique pour l'IA
       const history = [...messages, userMsg].map(m => ({
         role: m.role,
         content: m.content
       }))
 
-      // Appel IA
       const response = await sendToAI([
         { role: 'system', content: buildSystemPrompt() },
         ...history
@@ -140,12 +173,10 @@ export default function Game() {
         stats: game.current_stats
       })
 
-      // Vérifier si le joueur est mort
       const isDead = response.playerDied || false
       const levelUp = response.levelUp || false
       const statIncrease = response.statIncrease || null
 
-      // Sauvegarder la réponse IA
       const { data: aiMsg } = await supabase
         .from('game_messages')
         .insert([{
@@ -158,7 +189,11 @@ export default function Game() {
 
       setMessages(prev => [...prev, aiMsg])
 
-      // Gérer la mort
+      // Vérifier si un lancer de dé est demandé
+      if (response.content.includes('[LANCER_DE]')) {
+        setDiceRequested(true)
+      }
+
       if (isDead) {
         await supabase
           .from('games')
@@ -168,7 +203,6 @@ export default function Game() {
         setTimeout(() => navigate(`/archive/${gameId}`), 3000)
       }
 
-      // Gérer le level up
       if (levelUp && statIncrease) {
         const newStats = { ...game.current_stats }
         newStats[statIncrease] = (newStats[statIncrease] || 10) + 1
@@ -218,19 +252,25 @@ CARACTÉRISTIQUES (sur 20):
 
 RÈGLES DU JEU:
 1. MODE HARDCORE: Le joueur peut mourir définitivement. Sois juste mais impitoyable.
-2. Utilise les caractéristiques pour déterminer le succès des actions (jets de dés virtuels).
-3. Décris les scènes de manière immersive et cinématique.
-4. Propose toujours des choix ou des situations où le joueur doit agir.
-5. Si le joueur tente quelque chose de risqué, fais un jet basé sur ses stats.
+2. Le joueur possède un DÉ À 6 FACES (d6). Pour les actions risquées, demande-lui de lancer le dé avec [LANCER_DE].
+3. Après un lancer de dé, utilise le résultat combiné aux stats pour déterminer le succès:
+   - 1 = Échec critique
+   - 2-3 = Échec
+   - 4-5 = Réussite
+   - 6 = Réussite critique
+   - Ajoute un bonus si la stat pertinente est >= 15
+4. Décris les scènes de manière immersive et cinématique.
+5. Propose toujours des choix ou des situations où le joueur doit agir.
 6. Après des accomplissements significatifs, le joueur peut gagner un niveau.
 7. Réponds toujours dans la langue utilisée par le joueur.
-8. Tu peux décrire des images entre [IMAGE: description] pour générer des illustrations.
-9. Tu peux suggérer des sons entre [SON: description] pour l'ambiance.
+8. Tu peux décrire des images entre [IMAGE: description].
+9. Tu peux suggérer des sons entre [SON: description].
 
 FORMAT DE RÉPONSE:
-Réponds de manière narrative et immersive. Sois créatif avec les descriptions.
-Si le joueur meurt, termine par [MORT: raison de la mort].
-Si le joueur monte de niveau, termine par [LEVEL_UP: nom_de_la_stat_augmentée].`
+- Réponds de manière narrative et immersive.
+- Pour demander un lancer de dé: [LANCER_DE] (le joueur verra un bouton pour lancer)
+- Si le joueur meurt: [MORT: raison de la mort]
+- Si le joueur monte de niveau: [LEVEL_UP: nom_de_la_stat_augmentée]`
   }
 
   function handleKeyPress(e) {
@@ -252,11 +292,29 @@ Si le joueur monte de niveau, termine par [LEVEL_UP: nom_de_la_stat_augmentée].
           <h1>{game?.title}</h1>
           <span className="game-level">Niveau {game?.level}</span>
         </div>
-        <div className="game-stats-mini">
-          <span title="Force">💪 {game?.current_stats?.strength}</span>
-          <span title="Intelligence">🧠 {game?.current_stats?.intelligence}</span>
-          <span title="Constitution">❤️ {game?.current_stats?.constitution}</span>
-          <span title="Mana">✨ {game?.current_stats?.mana}</span>
+        <div className="game-controls">
+          <div className="voice-mode-toggle">
+            <VoiceOutput 
+              enabled={voiceOutputEnabled} 
+              onToggle={() => {
+                if (voiceOutputEnabled) stopSpeaking()
+                setVoiceOutputEnabled(!voiceOutputEnabled)
+              }} 
+            />
+            {isSpeaking && (
+              <div className="speaking-indicator">
+                <div className="wave">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="game-stats-mini">
+            <span title="Force">💪{game?.current_stats?.strength}</span>
+            <span title="Int">🧠{game?.current_stats?.intelligence}</span>
+            <span title="Con">❤️{game?.current_stats?.constitution}</span>
+            <span title="Mana">✨{game?.current_stats?.mana}</span>
+          </div>
         </div>
       </header>
 
@@ -265,9 +323,7 @@ Si le joueur monte de niveau, termine par [LEVEL_UP: nom_de_la_stat_augmentée].
           <div className="game-intro">
             <div className="intro-card">
               <h2>📜 Votre Quête</h2>
-              <div className="intro-prompt">
-                {game?.initial_prompt}
-              </div>
+              <div className="intro-prompt">{game?.initial_prompt}</div>
               <div className="intro-warning">
                 ⚠️ Mode Hardcore actif. Chaque décision compte. La mort est permanente.
               </div>
@@ -300,22 +356,42 @@ Si le joueur monte de niveau, termine par [LEVEL_UP: nom_de_la_stat_augmentée].
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="input-container">
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Que faites-vous ?"
-                disabled={sending}
-                rows={2}
-              />
-              <button 
-                className="send-btn"
-                onClick={sendMessage}
-                disabled={!input.trim() || sending}
-              >
-                ➤
-              </button>
+            <div className="input-area">
+              {diceRequested && (
+                <div className="dice-request">
+                  <span className="dice-request-text">🎲 Le MJ demande un lancer de dé !</span>
+                </div>
+              )}
+              
+              <div className="input-container">
+                <Dice 
+                  onRoll={handleDiceRoll} 
+                  disabled={sending || !diceRequested}
+                />
+                
+                <div className="input-wrapper">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Que faites-vous ?"
+                    disabled={sending}
+                    rows={2}
+                  />
+                  <VoiceInput 
+                    onTranscript={handleVoiceTranscript}
+                    disabled={sending}
+                  />
+                </div>
+                
+                <button 
+                  className="send-btn"
+                  onClick={() => sendMessage()}
+                  disabled={!input.trim() || sending}
+                >
+                  ➤
+                </button>
+              </div>
             </div>
           </>
         )}
@@ -325,8 +401,12 @@ Si le joueur monte de niveau, termine par [LEVEL_UP: nom_de_la_stat_augmentée].
 }
 
 function formatMessage(content) {
-  // Parser les balises spéciales [IMAGE:], [SON:], [MORT:], [LEVEL_UP:]
   let formatted = content
+
+  // Demande de lancer de dé
+  formatted = formatted.replace(/\[LANCER_DE\]/g, 
+    '<div class="dice-prompt-inline">🎲 <em>Lancez le dé...</em></div>'
+  )
 
   // Images
   formatted = formatted.replace(/\[IMAGE:\s*([^\]]+)\]/g, (_, desc) => 
@@ -350,4 +430,3 @@ function formatMessage(content) {
 
   return <div dangerouslySetInnerHTML={{ __html: formatted.replace(/\n/g, '<br/>') }} />
 }
-

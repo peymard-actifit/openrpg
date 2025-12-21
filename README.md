@@ -1,9 +1,9 @@
 # 🎲 OpenRPG - Jeux de Rôles Ouvert
 
-**Plateforme de jeu de rôle textuel alimentée par l'Intelligence Artificielle**
+**Plateforme de jeu de rôle textuel et vocal alimentée par l'Intelligence Artificielle**
 
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)](https://vercel.com)
-[![Supabase](https://img.shields.io/badge/Database-Supabase-green)](https://supabase.com)
+[![Supabase](https://img.shields.io/badge/Database-openrpg--db-green)](https://supabase.com)
 [![OpenAI](https://img.shields.io/badge/AI-OpenAI%20GPT--4-blue)](https://openai.com)
 
 ---
@@ -20,11 +20,22 @@
 - **Prompt personnalisé** : Définissez le contexte unique de chaque partie
 - **Prompt immuable** : Une fois lancée, l'aventure suit son cours
 
+### 🎲 Dé à 6 Faces (d6)
+- **Dé visuel interactif** : Toujours visible à côté de la zone de saisie
+- **Demande du MJ** : L'IA peut demander un lancer de dé pour les actions risquées
+- **Animation de lancer** : Effet visuel réaliste
+- **Résultats interprétés** : 1=Échec critique, 6=Réussite critique
+
+### 🎤 Mode Vocal
+- **Parler au lieu d'écrire** : Bouton microphone pour dicter vos actions (Whisper)
+- **Écouter l'histoire** : Le MJ peut vous raconter l'aventure à voix haute (TTS)
+- **Basculer à volonté** : Passez du texte à la voix quand vous voulez
+
 ### ⚔️ Gameplay
 - **Mode Hardcore** : La mort est permanente et irréversible
 - **Niveaux infinis** : Progressez sans limite dans chaque partie
 - **+1 stat/niveau** : Chaque niveau augmente une caractéristique
-- **Conversation IA** : Dialoguez avec un Maître du Jeu intelligent
+- **Conversation IA** : Dialoguez avec un Maître du Jeu intelligent (GPT-4o)
 
 ### 📜 Archives
 - **Parties immortalisées** : Revivez vos aventures terminées
@@ -37,7 +48,7 @@
 
 ### Prérequis
 - Node.js 18+
-- Compte Supabase
+- Compte Supabase (base openrpg-db)
 - Clé API OpenAI
 
 ### Configuration
@@ -50,23 +61,63 @@ npm install
 ```
 
 2. **Configurer Supabase**
-   - Créer un projet sur [supabase.com](https://supabase.com)
+   - Créer un projet nommé `openrpg-db` sur [supabase.com](https://supabase.com)
    - Exécuter le schéma SQL dans `supabase/schema.sql`
    - Récupérer l'URL et la clé anon
 
 3. **Variables d'environnement**
 
-Créer un fichier `.env` :
-```env
-VITE_SUPABASE_URL=https://votre-projet.supabase.co
-VITE_SUPABASE_ANON_KEY=votre-anon-key
+Sur **Vercel** (Settings > Environment Variables) :
+```
 OPENAI_API_KEY=sk-votre-clef-openai
+VITE_SUPABASE_URL=https://votre-projet.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
+```
+
+En **local** (fichier `.env`) :
+```env
+OPENAI_API_KEY=sk-votre-clef-openai
+VITE_SUPABASE_URL=https://votre-projet.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
 ```
 
 4. **Lancer en développement**
 ```bash
 npm run dev
 ```
+
+---
+
+## 🔊 Fonctionnalités Vocales
+
+### Speech-to-Text (Parler)
+- Cliquez sur 🎤 pour enregistrer votre voix
+- Cliquez à nouveau pour arrêter
+- Le texte transcrit apparaît dans la zone de saisie
+- Utilise **OpenAI Whisper**
+
+### Text-to-Speech (Écouter)
+- Activez 🔊 dans l'en-tête pour que le MJ parle
+- Chaque réponse de l'IA sera lue à voix haute
+- Voix "Onyx" (grave et immersive)
+- Utilise **OpenAI TTS**
+
+---
+
+## 🎲 Système de Dé
+
+Le dé à 6 faces est utilisé pour résoudre les actions incertaines :
+
+| Résultat | Interprétation |
+|----------|----------------|
+| 1 | Échec critique - Conséquences graves |
+| 2-3 | Échec - L'action échoue |
+| 4-5 | Réussite - L'action réussit |
+| 6 | Réussite critique - Bonus spécial |
+
+Les caractéristiques du personnage modifient les chances :
+- Stat ≥ 15 : Bonus au résultat
+- Le MJ décide quand un lancer est nécessaire avec `[LANCER_DE]`
 
 ---
 
@@ -77,7 +128,6 @@ npm run dev
 |---------|------|-------------|
 | user_id | UUID | Référence auth.users |
 | character_name | VARCHAR | Nom du personnage |
-| age, gender, height, weight | - | Caractéristiques physiques |
 | strength, intelligence, wisdom, dexterity, constitution, mana | INTEGER | Stats 1-20 |
 
 ### `games`
@@ -89,7 +139,6 @@ npm run dev
 | status | VARCHAR | active / archived |
 | level | INTEGER | Niveau actuel |
 | current_stats | JSONB | Stats évoluées |
-| death_reason | TEXT | Cause de mort |
 
 ### `game_messages`
 | Colonne | Type | Description |
@@ -100,25 +149,49 @@ npm run dev
 
 ---
 
-## 🎯 Comment Jouer
-
-1. **Créez un compte** et définissez votre personnage
-2. **Lancez une partie** avec un prompt décrivant votre aventure
-3. **Conversez** avec l'IA qui joue le rôle du Maître du Jeu
-4. **Faites des choix** qui influencent votre destin
-5. **Progressez** en niveaux grâce à vos accomplissements
-6. **Survivez**... ou rejoignez les archives
-
----
-
 ## 🛠️ Technologies
 
 - **Frontend** : React 18 + Vite
 - **Routing** : React Router DOM
-- **Base de données** : Supabase (PostgreSQL)
+- **Base de données** : Supabase PostgreSQL (openrpg-db)
 - **Authentification** : Supabase Auth
-- **IA** : OpenAI GPT-4o
+- **IA Texte** : OpenAI GPT-4o
+- **IA Voix** : OpenAI Whisper (STT) + TTS
 - **Hébergement** : Vercel
+
+---
+
+## 📁 Structure du Projet
+
+```
+openrpg/
+├── api/                    # Serverless functions Vercel
+│   ├── chat.js            # Conversation GPT-4o
+│   ├── speak.js           # Text-to-Speech
+│   ├── transcribe.js      # Speech-to-Text (Whisper)
+│   └── generate-image.js  # DALL-E (optionnel)
+├── src/
+│   ├── components/        # Composants réutilisables
+│   │   ├── Dice.jsx       # Dé d6 interactif
+│   │   └── VoiceControls.jsx
+│   ├── contexts/          # React Context
+│   │   └── AuthContext.jsx
+│   ├── lib/               # Bibliothèques
+│   │   ├── supabase.js
+│   │   └── openai.js
+│   ├── pages/             # Pages de l'application
+│   │   ├── Landing.jsx
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── CreateProfile.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── Game.jsx
+│   │   └── Archive.jsx
+│   └── styles/            # CSS
+├── supabase/
+│   └── schema.sql         # Schéma de la BDD
+└── vercel.json            # Configuration Vercel
+```
 
 ---
 

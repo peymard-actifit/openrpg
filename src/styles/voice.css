@@ -1,0 +1,119 @@
+.voice-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.voice-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.voice-icon {
+  font-size: 1.3rem;
+}
+
+/* Voice Input (Microphone) */
+.voice-input.recording {
+  background: rgba(139, 0, 0, 0.3);
+  border-color: var(--crimson);
+  animation: recordPulse 1s ease-in-out infinite;
+}
+
+.voice-input.processing {
+  opacity: 0.7;
+}
+
+.recording-icon {
+  animation: blink 0.5s ease-in-out infinite;
+}
+
+@keyframes recordPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(139, 0, 0, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(139, 0, 0, 0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Voice Output (Speaker) */
+.voice-output.active {
+  background: rgba(65, 105, 225, 0.2);
+  border-color: var(--mana-blue);
+}
+
+.voice-output.active .voice-icon {
+  animation: soundWave 1s ease-in-out infinite;
+}
+
+@keyframes soundWave {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Mode Toggle Group */
+.voice-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--bg-card);
+  border-radius: 25px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.voice-mode-toggle .mode-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Speaking indicator */
+.speaking-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: rgba(65, 105, 225, 0.2);
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: var(--mana-blue);
+}
+
+.speaking-indicator .wave {
+  display: flex;
+  gap: 2px;
+}
+
+.speaking-indicator .wave span {
+  width: 3px;
+  height: 12px;
+  background: var(--mana-blue);
+  border-radius: 2px;
+  animation: wave 0.8s ease-in-out infinite;
+}
+
+.speaking-indicator .wave span:nth-child(2) { animation-delay: 0.1s; }
+.speaking-indicator .wave span:nth-child(3) { animation-delay: 0.2s; }
+.speaking-indicator .wave span:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1); }
+}
+
