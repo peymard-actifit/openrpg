@@ -113,3 +113,11 @@ Ce fichier trace automatiquement tous les d√©ploiements du projet.
 - **Fichiers modifi√©s**: 9 
 - **Rapport**: [2025-12-22_00h45m40s_v0.10.0.txt](logs/deploys/2025-12-22_00h45m40s_v0.10.0.txt) 
  
+ 
+## v0.11.0 - 22/12/2025 00:53:13 
+ 
+- **Type**: minor 
+- **Message**: Dashboard stats ic«Ônes + Archives + Victoire + PNJ + CONSIGNES.txt 
+- **Fichiers modifi√©s**: 7 
+- **Rapport**: [2025-12-22_00h53m13s_v0.11.0.txt](logs/deploys/2025-12-22_00h53m13s_v0.11.0.txt) 
+ 

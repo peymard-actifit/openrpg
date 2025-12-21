@@ -26,11 +26,18 @@ export default async function handler(req, res) {
     // Parser les balises spéciales
     const playerDied = content.includes('[MORT:')
     const levelUp = content.includes('[LEVEL_UP')
+    const victory = content.includes('[VICTOIRE:')
     
     let deathReason = null
     if (playerDied) {
       const match = content.match(/\[MORT:\s*([^\]]+)\]/)
       if (match) deathReason = match[1]
+    }
+
+    let victoryReason = null
+    if (victory) {
+      const match = content.match(/\[VICTOIRE:\s*([^\]]+)\]/)
+      if (match) victoryReason = match[1]
     }
 
     // Extraire les objets [OBJET:nom|icône|description|valeur]
@@ -48,7 +55,6 @@ export default async function handler(req, res) {
     // Format sans valeur (rétrocompatibilité)
     const itemMatchesNoValue = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^\]|]+)\](?!\d)/g)
     for (const match of itemMatchesNoValue) {
-      // Vérifier que ce n'est pas déjà parsé avec valeur
       const alreadyAdded = newItems.some(item => item.name === match[1].trim())
       if (!alreadyAdded) {
         newItems.push({
@@ -81,6 +87,8 @@ export default async function handler(req, res) {
       content,
       playerDied,
       deathReason,
+      victory,
+      victoryReason,
       levelUp,
       newItems,
       removedItems,

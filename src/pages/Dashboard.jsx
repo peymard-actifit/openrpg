@@ -1,8 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import * as api from '../lib/api'
 import '../styles/dashboard.css'
+
+const STAT_ICONS = [
+  { key: 'strength', icon: '💪' },
+  { key: 'intelligence', icon: '🧠' },
+  { key: 'wisdom', icon: '🦉' },
+  { key: 'dexterity', icon: '🏃' },
+  { key: 'constitution', icon: '❤️' },
+  { key: 'mana', icon: '✨' }
+]
 
 export default function Dashboard() {
   const { user, profile, signOut } = useAuth()
@@ -10,17 +19,16 @@ export default function Dashboard() {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [showNewGame, setShowNewGame] = useState(false)
-  const [newGamePrompt, setNewGamePrompt] = useState('')
+  const [showArchives, setShowArchives] = useState(false)
   const [newGameTitle, setNewGameTitle] = useState('')
+  const [newGamePrompt, setNewGamePrompt] = useState('')
   const [creating, setCreating] = useState(false)
 
   useEffect(() => {
     fetchGames()
-  }, [user])
+  }, [])
 
   async function fetchGames() {
-    if (!user) return
-    
     try {
       const data = await api.getGames()
       setGames(data || [])
@@ -31,186 +39,277 @@ export default function Dashboard() {
     }
   }
 
-  async function createGame() {
-    if (!newGamePrompt.trim() || !newGameTitle.trim()) return
-    
+  async function handleCreateGame(e) {
+    e.preventDefault()
+    if (!newGameTitle.trim() || !newGamePrompt.trim()) return
+
     setCreating(true)
     try {
-      const currentStats = {
-        strength: profile.strength,
-        intelligence: profile.intelligence,
-        wisdom: profile.wisdom,
-        dexterity: profile.dexterity,
-        constitution: profile.constitution,
-        mana: profile.mana
-      }
-
-      const game = await api.createGame(newGameTitle, newGamePrompt, currentStats)
-      navigate(`/game/${game.id}`)
+      const newGame = await api.createGame(
+        newGameTitle.trim(),
+        newGamePrompt.trim(),
+        profile?.stats || {
+          strength: 10,
+          intelligence: 10,
+          wisdom: 10,
+          dexterity: 10,
+          constitution: 10,
+          mana: 10
+        }
+      )
+      navigate(`/game/${newGame.id}`)
     } catch (err) {
-      console.error('Erreur création partie:', err)
+      console.error('Erreur création:', err)
     } finally {
       setCreating(false)
     }
   }
 
-  async function handleLogout() {
-    await signOut()
+  async function handleContinueArchived(game) {
+    // Créer un doublon de la partie terminée
+    try {
+      const newGame = await api.createGame(
+        `${game.title} (Suite)`,
+        game.initialPrompt,
+        game.currentStats || profile?.stats
+      )
+      // Copier l'inventaire et l'alignement
+      await api.updateGame(newGame.id, {
+        inventory: game.inventory || [],
+        alignment: game.alignment || { goodEvil: 0, lawChaos: 0 },
+        level: game.level || 1
+      })
+      navigate(`/game/${newGame.id}`)
+    } catch (err) {
+      console.error('Erreur continuation:', err)
+    }
+  }
+
+  function handleLogout() {
+    signOut()
     navigate('/')
   }
 
   const activeGames = games.filter(g => g.status === 'active')
   const archivedGames = games.filter(g => g.status === 'archived')
+  const victoryGames = archivedGames.filter(g => g.victory)
+  const deathGames = archivedGames.filter(g => !g.victory)
+
+  if (loading) {
+    return <div className="dashboard"><div className="loading">Chargement...</div></div>
+  }
 
   return (
     <div className="dashboard">
       <header className="dashboard-header">
         <Link to="/" className="logo-small">⚔️ OpenRPG</Link>
         <div className="header-right">
-          <div className="profile-badge">
-            <span className="profile-name">{profile?.characterName}</span>
-            <span className="profile-level">Niveau de base</span>
-          </div>
-          <button className="btn btn-secondary btn-sm" onClick={handleLogout}>
+          <button onClick={handleLogout} className="btn btn-secondary btn-sm">
             Déconnexion
           </button>
         </div>
       </header>
 
-      <main className="dashboard-content">
-        <section className="character-summary">
-          <h2>👤 Mon Personnage</h2>
-          <div className="character-stats">
-            <StatDisplay label="Force" value={profile?.strength} icon="💪" />
-            <StatDisplay label="Intelligence" value={profile?.intelligence} icon="🧠" />
-            <StatDisplay label="Sagesse" value={profile?.wisdom} icon="🦉" />
-            <StatDisplay label="Dextérité" value={profile?.dexterity} icon="🏃" />
-            <StatDisplay label="Constitution" value={profile?.constitution} icon="❤️" />
-            <StatDisplay label="Mana" value={profile?.mana} icon="✨" />
+      <div className="dashboard-content">
+        {/* Résumé du personnage */}
+        <div className="character-card">
+          <div className="character-identity">
+            <h2>{profile?.characterName || 'Aventurier'}</h2>
+            <div className="character-physical">
+              {profile?.age && <span>🎂 {profile.age} ans</span>}
+              {profile?.sex && <span>{profile.sex === 'M' ? '♂️' : profile.sex === 'F' ? '♀️' : '⚧️'}</span>}
+              {profile?.height && <span>📏 {profile.height} cm</span>}
+              {profile?.weight && <span>⚖️ {profile.weight} kg</span>}
+            </div>
           </div>
-        </section>
+          <div className="character-stats-row">
+            {STAT_ICONS.map(stat => (
+              <div key={stat.key} className="stat-chip">
+                <span className="stat-icon">{stat.icon}</span>
+                <span className="stat-val">{profile?.stats?.[stat.key] || 10}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
+        {/* Section parties en cours */}
         <section className="games-section">
           <div className="section-header">
-            <h2>🎮 Mes Aventures</h2>
-            <button className="btn btn-primary" onClick={() => setShowNewGame(true)}>
-              + Nouvelle Partie
-            </button>
+            <h2>🎮 Parties en cours ({activeGames.length})</h2>
+            <div className="section-actions">
+              <button 
+                className="btn btn-secondary btn-sm"
+                onClick={() => setShowArchives(!showArchives)}
+              >
+                📁 Archives ({archivedGames.length})
+              </button>
+              <button 
+                className="btn btn-primary"
+                onClick={() => setShowNewGame(true)}
+              >
+                + Nouvelle Aventure
+              </button>
+            </div>
           </div>
 
-          {loading ? (
-            <div className="loading">Chargement des parties...</div>
-          ) : activeGames.length === 0 ? (
+          {activeGames.length === 0 ? (
             <div className="no-games">
               <p>Aucune aventure en cours</p>
-              <p className="hint">Créez votre première partie pour commencer !</p>
+              <span className="hint">Créez votre première aventure !</span>
             </div>
           ) : (
             <div className="games-grid">
               {activeGames.map(game => (
-                <GameCard key={game.id} game={game} />
+                <div 
+                  key={game.id} 
+                  className="game-card"
+                  onClick={() => navigate(`/game/${game.id}`)}
+                  title={game.initialPrompt}
+                >
+                  <span className="game-icon">📜</span>
+                  <div className="game-info">
+                    <h3>{game.title}</h3>
+                    <span className="game-level">Niveau {game.level || 1}</span>
+                  </div>
+                </div>
               ))}
             </div>
           )}
         </section>
 
-        {archivedGames.length > 0 && (
-          <section className="games-section archived">
-            <h2>💀 Archives (Parties Terminées)</h2>
-            <div className="games-grid">
-              {archivedGames.map(game => (
-                <GameCard key={game.id} game={game} archived />
-              ))}
-            </div>
+        {/* Archives */}
+        {showArchives && archivedGames.length > 0 && (
+          <section className="games-section archives">
+            <h2>📁 Archives</h2>
+            
+            {victoryGames.length > 0 && (
+              <div className="archive-group">
+                <h3>🏆 Victoires</h3>
+                <div className="games-grid">
+                  {victoryGames.map(game => (
+                    <div 
+                      key={game.id} 
+                      className="game-card victory"
+                      title={game.initialPrompt}
+                    >
+                      <span className="game-icon">🏆</span>
+                      <div className="game-info">
+                        <h3>{game.title}</h3>
+                        <span className="game-level">Niveau {game.level || 1}</span>
+                        {game.victoryReason && (
+                          <span className="archive-reason">{game.victoryReason}</span>
+                        )}
+                      </div>
+                      <div className="archive-actions">
+                        <button 
+                          className="btn btn-sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            navigate(`/archive/${game.id}`)
+                          }}
+                        >
+                          👁️ Voir
+                        </button>
+                        <button 
+                          className="btn btn-sm btn-primary"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleContinueArchived(game)
+                          }}
+                        >
+                          ➕ Suite
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {deathGames.length > 0 && (
+              <div className="archive-group">
+                <h3>💀 Tombés au combat</h3>
+                <div className="games-grid">
+                  {deathGames.map(game => (
+                    <div 
+                      key={game.id} 
+                      className="game-card dead"
+                      onClick={() => navigate(`/archive/${game.id}`)}
+                      title={game.initialPrompt}
+                    >
+                      <span className="game-icon">💀</span>
+                      <div className="game-info">
+                        <h3>{game.title}</h3>
+                        <span className="game-level">Niveau {game.level || 1}</span>
+                        {game.deathReason && (
+                          <span className="death-reason">{game.deathReason}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )}
-      </main>
+      </div>
 
-      {/* Modal Nouvelle Partie */}
+      {/* Modal nouvelle partie */}
       {showNewGame && (
         <div className="modal-overlay" onClick={() => setShowNewGame(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h2>📜 Nouvelle Aventure</h2>
             <p className="modal-hint">
-              Décrivez le contexte de votre aventure. Ce prompt initial ne pourra 
-              plus être modifié une fois la partie lancée.
+              Décrivez le contexte de votre aventure. L'IA créera l'histoire.
             </p>
+            
+            <form onSubmit={handleCreateGame}>
+              <div className="input-group">
+                <label>Titre de l'aventure</label>
+                <input
+                  type="text"
+                  value={newGameTitle}
+                  onChange={(e) => setNewGameTitle(e.target.value)}
+                  placeholder="Ex: La Quête du Dragon"
+                  required
+                />
+              </div>
 
-            <div className="input-group">
-              <label>Titre de la partie</label>
-              <input
-                type="text"
-                value={newGameTitle}
-                onChange={(e) => setNewGameTitle(e.target.value)}
-                placeholder="Ex: La Quête du Dragon Noir"
-              />
-            </div>
+              <div className="input-group">
+                <label>Contexte / Prompt initial</label>
+                <textarea
+                  value={newGamePrompt}
+                  onChange={(e) => setNewGamePrompt(e.target.value)}
+                  placeholder="Ex: Je suis un chevalier dans un royaume médiéval fantastique. Je dois retrouver l'épée légendaire volée par un dragon..."
+                  rows={5}
+                  required
+                />
+              </div>
 
-            <div className="input-group">
-              <label>Contexte de l'aventure</label>
-              <textarea
-                value={newGamePrompt}
-                onChange={(e) => setNewGamePrompt(e.target.value)}
-                placeholder="Décrivez l'univers, l'ambiance, le type d'aventure... Ex: Un monde médiéval fantastique où les dragons ont réapparu après 1000 ans de sommeil. Je suis un chevalier errant cherchant à découvrir pourquoi..."
-                rows={6}
-              />
-            </div>
+              <div className="modal-warning">
+                ⚠️ Mode Hardcore : La mort est permanente !
+              </div>
 
-            <div className="modal-warning">
-              ⚠️ Mode Hardcore actif : La mort de votre personnage sera définitive.
-            </div>
-
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setShowNewGame(false)}>
-                Annuler
-              </button>
-              <button 
-                className="btn btn-primary" 
-                onClick={createGame}
-                disabled={!newGamePrompt.trim() || !newGameTitle.trim() || creating}
-              >
-                {creating ? 'Création...' : 'Commencer l\'Aventure'}
-              </button>
-            </div>
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={() => setShowNewGame(false)}
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                  disabled={creating}
+                >
+                  {creating ? 'Création...' : '⚔️ Commencer'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
-    </div>
-  )
-}
-
-function StatDisplay({ label, value, icon }) {
-  return (
-    <div className="stat-display">
-      <span className="stat-icon">{icon}</span>
-      <span className="stat-label">{label}</span>
-      <span className="stat-value">{value || 0}</span>
-    </div>
-  )
-}
-
-function GameCard({ game, archived }) {
-  const navigate = useNavigate()
-  
-  function handleClick() {
-    if (archived) {
-      navigate(`/archive/${game.id}`)
-    } else {
-      navigate(`/game/${game.id}`)
-    }
-  }
-
-  const gameIcons = ['🏰', '🐉', '⚔️', '🧙', '🌲', '🗡️', '🛡️', '📜']
-  const icon = gameIcons[game.id.charCodeAt(0) % gameIcons.length]
-
-  return (
-    <div className={`game-card ${archived ? 'archived' : ''}`} onClick={handleClick}>
-      <div className="game-icon">{icon}</div>
-      <div className="game-info">
-        <h3>{game.title}</h3>
-        <p className="game-level">Niveau {game.level}</p>
-        {archived && <span className="death-badge">💀 Mort</span>}
-      </div>
     </div>
   )
 }

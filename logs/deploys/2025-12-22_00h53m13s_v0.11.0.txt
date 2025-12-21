@@ -1,0 +1,44 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 00:53:13 
+🏷️  Version: v0.10.0 → v0.11.0 
+📊 Type: minor 
+💬 Message: Dashboard stats ic��nes + Archives + Victoire + PNJ + CONSIGNES.txt 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (7) 
+-------------------------------------------------- 
+ M api/chat.js
+ M logs/deploys/2025-12-22_00h45m40s_v0.10.0.txt
+ M package.json
+ M src/pages/Dashboard.jsx
+ M src/pages/Game.jsx
+ M src/styles/dashboard.css
+ M src/styles/game.css
+?? CONSIGNES.txt
+?? logs/deploys/2025-12-22_00h53m13s_v0.11.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |   8 +
+ api/chat.js                                   |  34 ++-
+ logs/deploys/2025-12-22_00h30m35s_v0.9.0.txt  |   3 +
+ logs/deploys/2025-12-22_00h45m40s_v0.10.0.txt |  49 ++++
+ package.json                                  |   2 +-
+ src/components/Dice.jsx                       |  72 ++----
+ src/components/Inventory.jsx                  |  82 ++++--
+ src/pages/Dashboard.jsx                       | 357 ++++++++++++++++----------
+ src/pages/Game.jsx                            | 186 ++++++++------
+ src/styles/alignment.css                      |  41 +--
+ src/styles/dashboard.css                      | 253 ++++++++++--------
+ src/styles/dice.css                           | 129 ++++------
+ src/styles/game.css                           |  50 ++--
+ src/styles/inventory.css                      | 247 +++++++++++++-----
+ 14 files changed, 944 insertions(+), 569 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -280,10 +280,22 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       api.updateGame(gameId, { alignment: newAlignment })
     }
 
+    // Mort du joueur
     if (response.playerDied) {
       api.updateGame(gameId, { 
-        status: 'archived', 
+        status: 'archived',
+        victory: false,
         deathReason: response.deathReason 
+      })
+      setTimeout(() => navigate(`/archive/${gameId}`), 4000)
+    }
+
+    // Victoire !
+    if (response.victory) {
+      api.updateGame(gameId, { 
+        status: 'archived',
+        victory: true,
+        victoryReason: response.victoryReason 
       })
       setTimeout(() => navigate(`/archive/${gameId}`), 4000)
     }
@@ -307,7 +319,7 @@ ${game?.initialPrompt}
 Utilise tes connaissances de cet univers pour enrichir l'histoire.
 
 ═══════════════════════════════════════════
-PERSONNAGE - ${profile?.characterName} (Niveau ${game?.level})
+PERSONNAGE - ${profile?.characterName} (Niveau ${game?.level}, Tour ${turnCount + 1})
 ═══════════════════════════════════════════
 FOR: ${game?.currentStats?.strength} | INT: ${game?.currentStats?.intelligence} | SAG: ${game?.currentStats?.wisdom}
 DEX: ${game?.currentStats?.dexterity} | CON: ${game?.currentStats?.constitution} | MANA: ${game?.currentStats?.mana}
@@ -323,35 +335,48 @@ ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name} (${i.value || 0
 RÈGLES
 ═══════════════════════════════════════════
 
-🎲 DÉS - UNIQUEMENT quand il y a un vrai aléa:
-   • Combat, action physique risquée → [LANCER_D20]
-   • Petite chance (pile ou face) → [LANCER_D2]
-   • Trois options → [LANCER_D3]
-   • Chance moyenne → [LANCER_D6]
-   • Dégâts, effets variés → [LANCER_D10]
-   • Pourcentage, événement rare → [LANCER_D100]
-   NE DEMANDE PAS de dé si le succès/échec est évident.
+🎲 DÉS - Seulement quand le résultat est vraiment incertain:
+   [LANCER_D20] Combat, actions majeures
+   [LANCER_D6] Actions simples
+   [LANCER_D100] Événements très rares
+   Ne demande PAS de dé pour des actions triviales ou évidentes.
 
-📦 OBJETS - Format avec valeur:
-   [OBJET:nom|icône|description|valeur]
-   Exemple: [OBJET:Potion de soin|🧪|Restaure 20 PV|25]
-   [RETIRER:nom] pour objet perdu/utilisé
+📦 OBJETS:
+   [OBJET:nom|icône|description|valeur] pour ajouter
+   [RETIRER:nom] pour retirer
 
-⚖️ ALIGNEMENT - Selon les actions:
-   [ALIGN:goodEvil,lawChaos] ex: [ALIGN:+10,-5]
+⚖️ ALIGNEMENT: [ALIGN:goodEvil,lawChaos]
 
-⬆️ NIVEAU - Tous les 6-8 tours ou après exploit:
-   [LEVEL_UP]
+⬆️ NIVEAU: [LEVEL_UP] (tous les 6-8 tours ou exploit)
 
-💀 MORT - Permanente:
-   [MORT:description]
+═══════════════════════════════════════════
+FIN DE PARTIE
+═══════════════════════════════════════════
+
+💀 MORT - Si le joueur est en danger MORTEL réel:
+   [MORT:description de la mort]
+   Sois juste: la mort doit être méritée par les actions/échecs.
+
+🏆 VICTOIRE - Si l'objectif du prompt initial est ATTEINT:
+   [VICTOIRE:description de l'accomplissement]
+   Vérifie que la quête principale est vraiment accomplie.
+
+═══════════════════════════════════════════
+PNJ (Personnages Non-Joueurs)
+═══════════════════════════════════════════
+Tu peux créer et gérer des PNJ:
+• Alliés, marchands, informateurs, ennemis
+• Ils ont leur personnalité et motivations
+• Ils se souviennent des interactions passées
+• Ils peuvent trahir, aider, évoluer
+• Les antagonistes peuvent revenir
 
 ═══════════════════════════════════════════
 STORYTELLING
 ═══════════════════════════════════════════
-• Crée tension, antagonistes, retournements
+• Crée tension, retournements, dilemmes
 • Les actions ont des conséquences durables
-• Donne des objets régulièrement avec leur valeur
+• Objets avec valeur pour vente aux marchands
 • N'utilise JAMAIS [IMAGE:]`
   }
 
@@ -515,6 +540,7 @@ function formatMessage(content) {
   formatted = formatted.replace(/\[LANCER_D\d+\]/g, '<span class="dice-inline">🎲</span>')
   formatted = formatted.replace(/\[LANCER_DE\]/g, '<span class="dice-inline">🎲</span>')
   formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, '<div class="death-notice">💀 MORT — $1</div>')
+  formatted = formatted.replace(/\[VICTOIRE:\s*([^\]]+)\]/g, '<div class="victory-notice">🏆 VICTOIRE — $1</div>')
   formatted = formatted.replace(/\[LEVEL_UP\]/g, '<div class="level-up-notice">⬆️ NIVEAU SUPÉRIEUR !</div>')
 
   return <div dangerouslySetInnerHTML={{ __html: formatted.replace(/\n/g, '<br/>') }} />

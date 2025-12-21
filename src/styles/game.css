@@ -257,6 +257,24 @@
   margin: var(--space-md) 0;
 }
 
+.victory-notice {
+  background: rgba(34, 139, 34, 0.3);
+  border: 2px solid var(--emerald);
+  padding: var(--space-lg);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--emerald);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin: var(--space-md) 0;
+  animation: victoryPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes victoryPulse {
+  from { box-shadow: 0 0 10px rgba(34, 139, 34, 0.3); }
+  to { box-shadow: 0 0 30px rgba(34, 139, 34, 0.6); }
+}
+
 /* ===== INPUT AREA ===== */
 .input-area {
   background: var(--bg-card);
