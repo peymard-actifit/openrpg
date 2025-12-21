@@ -41,3 +41,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 *Les nouveaux déploiements seront automatiquement ajoutés ci-dessous par le script `deploy.cmd`*
 
 
+ 
+## v0.5.0 - 21/12/2025 22:24:33 
+ 
+- **Type**: minor 
+- **Message**: Version jouable compl��te - Auth, JDR, dǸ d6, mode vocal 
+- **Fichiers modifiés**: 0 
+- **Rapport**: [2025-12-21_22h24m33s_v0.5.0.txt](logs/deploys/2025-12-21_22h24m33s_v0.5.0.txt) 
+ 
