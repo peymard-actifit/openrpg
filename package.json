@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:patch": "deploy.cmd patch",
+    "deploy:minor": "deploy.cmd minor",
+    "deploy:major": "deploy.cmd major"
   },
   "dependencies": {
     "react": "^18.3.1",
