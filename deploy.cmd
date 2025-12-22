@@ -122,6 +122,19 @@ echo. >> DEPLOYS.md
 
 echo ✅ DEPLOYS.md mis a jour
 
+REM Mettre à jour le fichier PROMPTS.md
+echo. >> PROMPTS.md
+echo --- >> PROMPTS.md
+echo. >> PROMPTS.md
+echo ### v%NEW_VERSION% - %DATE_FR% >> PROMPTS.md
+echo. >> PROMPTS.md
+echo ^> %MESSAGE% >> PROMPTS.md
+echo. >> PROMPTS.md
+echo **Type**: %TYPE% ^| **Fichiers**: %FILES_CHANGED% >> PROMPTS.md
+echo. >> PROMPTS.md
+
+echo ✅ PROMPTS.md mis a jour
+
 REM Git operations
 echo ℹ️  Ajout des fichiers...
 git add -A
@@ -171,6 +184,7 @@ echo.
 echo Fichiers generes:
 echo   - logs/deploys/[timestamp]_v[version].txt (rapport detaille)
 echo   - DEPLOYS.md (historique des deployments)
+echo   - PROMPTS.md (historique des prompts)
 echo.
 echo Exemples:
 echo   deploy patch "Correction bug login"

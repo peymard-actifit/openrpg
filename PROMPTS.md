@@ -1,6 +1,7 @@
 # 📜 Historique des Prompts - OpenRPG
 
 Ce fichier contient l'historique de tous les prompts utilisés pour développer le projet OpenRPG.
+Il est mis à jour automatiquement à chaque déploiement via le script `deploy.cmd`.
 
 ---
 
@@ -14,61 +15,67 @@ Ce fichier contient l'historique de tous les prompts utilisés pour développer 
 ---
 
 ### Prompt 2 - Structure du projet JDR
-> Chaque utilisateur du projet doit se connecter. Toutes les données du projet sont stockées dans la base associée au projet. Les données utilisateurs et celles de chaque partie jouée sur le projet. Chaque joueur peut initier ensuite des parties dans une première vue ou chaque partie est représentée par une icone. Lorsqu'on clique sur une icone existante ou qu'on créée une nouvelle partie, openrpg propose au joueur de rédiger un prompt permettant de contextualiser le jdr associé à la partie. Sur cette base, openjdr va ensuite générer des histoires qui seront jouer par le joueur. Le joueur conversera avec openrpg afin d'avancer dans sa partie. Il possèdera des caractéristiques (celles du joueur) qui seront sur son profil initial (à créer au moment de la création du compte - avec les question suivantes : nom du personnage, age, sexe, taille, poids, puis, sur 20, force, intelligence, sagesse, dextérité, constitution, mana), puis il pourra les faire évoluer dans les différentes parties, en fonction des scénarios. Il partira toujours d'un niveau 1 dans chaque partie créée. Il n'y a pas de limite au niveau qu'il peut atteindre dans une partie. Chaque niveau voit l'augmentation d'un point dans une caractéristique. L'IA de openrpg gèrera les interactions, les combats, les réflexions et choisira, selon la partie, de les présenter comme il le souhaite. La possibilité est donnée à openrpg d'utiliser l'IA pour écrire, poser des problèmes, dessiner, faire des sons, de son choix pour animer la partie de l'utilisateur. Par défaut le mode est hardcore et l'utilisateur peut mourir dans chaque partie. Chaque mort est irrémédiable et la partie devient alors archivée et contient les éléments pour pouvoir la revoir ensuite. openrpg possède une clef api OPENAI pour converser avec l'utilisateur dans la langue de son choix. La partie se termine à la mort du joueur/utilisateur dans le contexte de la partie. Une fois que la partie est démarrée, il est impossible de changer le prompt initial de la partie, qui ne peut se finir qu'à la mort du joueur. Essaye de démarrer openrpg.
+> Structure complète du JDR avec authentification, profil utilisateur (6 caractéristiques sur 20), gestion des parties, mode hardcore, conversation IA.
 
-**Résultat**: 
-- Structure React + Vite complète
-- Système d'authentification
-- Création de profil avec 6 caractéristiques RPG
-- Dashboard avec gestion des parties
-- Page de jeu avec conversation IA
-- Mode hardcore avec mort permanente
-- Archives des parties terminées
+**Résultat**: Structure React + Vite, authentification, profil RPG, dashboard, page de jeu, archives.
 
 ---
 
 ### Prompt 3 - Ajout du dé et mode vocal
-> Le joueur a toujours un d6 que l'IA peut lui demander de lancer (dé visualisé à coté de sa ligne d'expression écrite). Un bouton permet de passer de l'expression écrite à l'expression orale au choix du joueur. De la même façon, openrpg peut exprimer par oral ses actions et l'histoire. un bouton permettant de basculer entre les modes. Par ailleurs, utilise la variable OPENAI_API_KEY et créé les variable VITE et utilise la base openrpg-db créée dans vercel.
+> D6 interactif, mode vocal input/output via OpenAI (Whisper + TTS).
 
-**Résultat**:
-- Dé à 6 faces (d6) interactif avec animation
-- L'IA peut demander un lancer de dé avec [LANCER_DE]
-- Mode vocal input (Speech-to-Text via Whisper)
-- Mode vocal output (Text-to-Speech via OpenAI TTS)
-- Configuration des variables d'environnement
+**Résultat**: Dé animé, Speech-to-Text, Text-to-Speech.
 
 ---
 
 ### Prompt 4 - Migration MongoDB
-> C'est la base mongodb créée dans vercel pour le projet.
+> Migration de Supabase vers MongoDB (base créée dans Vercel).
 
-**Résultat**:
-- Migration complète de Supabase vers MongoDB
-- API routes pour auth, profile, games, messages
-- Authentification JWT + bcrypt
-- Collections MongoDB : users, profiles, games, messages
+**Résultat**: API routes MongoDB, auth JWT + bcrypt.
 
 ---
 
 ### Prompt 5 - Script de déploiement
-> Créé un script commit and deploy qui permet d'augmenter au fil de l'amélioration du projet la version en trois niveaux (majeure, mineure, correctif)
+> Script commit and deploy avec versioning sémantique (major.minor.patch).
 
-**Résultat**:
-- Script `deploy.cmd` pour Windows
-- Script `deploy.ps1` pour PowerShell
-- Script `deploy.sh` pour Bash
-- Versioning sémantique (major.minor.patch)
-- Création automatique de tags Git
+**Résultat**: Scripts deploy.cmd, deploy.ps1, deploy.sh.
 
 ---
 
 ### Prompt 6 - Rapport de déploiement
-> Rajoute dans le script la création d'un fichier texte horodaté avec le rapport complet du commit and deploy que tu va stocker dans le github dans un répertoire de suivi des commit et indente dans la racine du github un fichier qui reprendra tous les prompts faits sur le projet openrpg.
+> Création de rapports horodatés dans logs/deploys/, fichier DEPLOYS.md et PROMPTS.md.
 
-**Résultat**:
-- Dossier `logs/deploys/` pour les rapports horodatés
-- Fichier `DEPLOYS.md` pour l'historique des déploiements
-- Fichier `PROMPTS.md` pour l'historique des prompts (ce fichier)
+**Résultat**: Système de tracking des déploiements.
+
+---
+
+## Session 2 - Améliorations UI/UX (22/12/2024)
+
+### v0.13.1 - Tooltips et micro
+> Quand je me déplace sur le bouton moral ou ordre, il affiche le % entre les deux. Quand je me déplace sur le titre je dois voir le modal en dessous joli. Le bouton "Micro" doit être à coté de celui du haut parleur en haut.
+
+**Résultat**: Tooltips alignement avec %, tooltip titre élégant, micro déplacé dans le header.
+
+---
+
+### v0.13.2 - Fix dés + Drag & Drop
+> Les lancers de dés ne fonctionnent pas du tout. Par ailleurs, dans l'écran de gestion des parties, je veux pouvoir faire un drag & drop d'une partie dans l'espace archive.
+
+**Résultat**: Système de dés refait avec animation, drag & drop pour archiver les parties.
+
+---
+
+### v0.14.0 - Menu utilisateur et profil persistant
+> J'ai perdu mes stats qui ont été initialisée à 10 partout. Je veux un menu utilisateur pour pouvoir le re-rentrer et je veux qu'elles soient persistantes. La zone archive doit etre toute petite et positionnée à droite des statistiques. Menu utilisateur avec déconnexion. Modification du personnage via modal. Tooltip OpenRPG avec slogan.
+
+**Résultat**: Menu utilisateur dropdown, modal édition profil, API PUT profile, zone archive compacte, tooltip logo.
+
+---
+
+### v0.15.0 - Suppression parties + Admin
+> Je veux pouvoir effacer des parties en cours avec une mini icône rouge (poubelle). Quand on relance une partie victorieuse archivée, on continue le prompt là où on en était avec tout l'historique (v2, v3, etc.). Menu utilisateur avec mode admin (code 12411241) pour voir toutes les parties de tous les utilisateurs.
+
+**Résultat**: Bouton supprimer (🗑️), continuation avec historique (v2, v3...), mode admin avec vision globale.
 
 ---
 
@@ -76,20 +83,27 @@ Ce fichier contient l'historique de tous les prompts utilisés pour développer 
 
 | Métrique | Valeur |
 |----------|--------|
-| Total prompts | 6 |
-| Version actuelle | 0.4.0 |
-| Fichiers créés | ~40 |
+| Total versions | 0.15.0 |
+| Fichiers créés | ~80 |
 | Technologies | React, Vite, MongoDB, OpenAI, JWT |
 
 ---
 
 ## Notes
 
-- Ce fichier doit être mis à jour manuellement après chaque session de développement
-- Les prompts sont résumés pour la lisibilité
-- Les résultats incluent les principales fonctionnalités ajoutées
+- Ce fichier est maintenant mis à jour **automatiquement** par le script `deploy.cmd`
+- Chaque déploiement ajoute une entrée avec la version, la date et le message
 - **IMPORTANT**: Ne jamais inclure de tokens ou secrets dans ce fichier
 
 ---
 
-*Dernière mise à jour: 21/12/2024*
+*Mis à jour automatiquement à chaque déploiement*
+ 
+--- 
+ 
+### v0.15.1 - 22/12/2025 02:29:27 
+ 
+> Script deploy met a jour PROMPTS.md automatiquement 
+ 
+**Type**: patch | **Fichiers**: 3 
+ 

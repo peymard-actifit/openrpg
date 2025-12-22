@@ -1,0 +1,38 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 02:29:27 
+🏷️  Version: v0.15.0 → v0.15.1 
+📊 Type: patch 
+💬 Message: Script deploy met a jour PROMPTS.md automatiquement 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (3) 
+-------------------------------------------------- 
+ M PROMPTS.md
+ M deploy.cmd
+ M logs/deploys/2025-12-22_02h22m26s_v0.15.0.txt
+ M package.json
+?? logs/deploys/2025-12-22_02h29m27s_v0.15.1.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |   8 ++
+ PROMPTS.md                                    |  87 +++++------
+ api/admin/toggle.js                           |  41 ++++++
+ api/games/[gameId].js                         |  23 +++
+ api/games/all.js                              |  53 +++++++
+ deploy.cmd                                    |  14 ++
+ logs/deploys/2025-12-22_02h10m08s_v0.14.0.txt |   3 +
+ logs/deploys/2025-12-22_02h22m26s_v0.15.0.txt |  43 ++++++
+ package.json                                  |   2 +-
+ src/lib/api.js                                |  17 +++
+ src/pages/Dashboard.jsx                       | 198 ++++++++++++++++++++++++--
+ src/styles/dashboard.css                      | 118 +++++++++++++--
+ 12 files changed, 543 insertions(+), 64 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

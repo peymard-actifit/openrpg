@@ -177,3 +177,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 7 
 - **Rapport**: [2025-12-22_02h22m26s_v0.15.0.txt](logs/deploys/2025-12-22_02h22m26s_v0.15.0.txt) 
  
+ 
+## v0.15.1 - 22/12/2025 02:29:27 
+ 
+- **Type**: patch 
+- **Message**: Script deploy met a jour PROMPTS.md automatiquement 
+- **Fichiers modifiés**: 3 
+- **Rapport**: [2025-12-22_02h29m27s_v0.15.1.txt](logs/deploys/2025-12-22_02h29m27s_v0.15.1.txt) 
+ 
