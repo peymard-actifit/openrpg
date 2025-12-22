@@ -58,10 +58,16 @@
   border-color: var(--gold);
 }
 
-.game-title {
-  text-align: center;
+/* Wrapper titre avec tooltip */
+.game-title-wrapper {
   flex: 1;
   min-width: 0;
+  position: relative;
+}
+
+.game-title {
+  text-align: center;
+  cursor: help;
 }
 
 .game-title h1 {
@@ -72,6 +78,40 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Tooltip du titre */
+.title-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  pointer-events: none;
+  padding-top: var(--space-sm);
+}
+
+.game-title-wrapper:hover .title-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltip-content {
+  background: var(--bg-card);
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  padding: var(--space-md);
+  max-width: 350px;
+  width: max-content;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  font-style: italic;
 }
 
 /* Wrapper inventaire avec preview */
@@ -91,7 +131,7 @@
 .game-controls {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .game-stats-mini {
@@ -419,6 +459,10 @@
   
   .game-title h1 {
     font-size: 0.9rem;
+  }
+  
+  .title-tooltip {
+    display: none;
   }
   
   .game-stats-mini {

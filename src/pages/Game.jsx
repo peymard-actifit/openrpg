@@ -445,11 +445,17 @@ PNJ & STORYTELLING
             </span>
           )}
         </div>
-        <div className="game-title">
-          <h1>{game?.title}</h1>
-          <span className="game-level">Niveau {game?.level}</span>
+        <div className="game-title-wrapper">
+          <div className="game-title">
+            <h1>{game?.title}</h1>
+            <span className="game-level">Niveau {game?.level}</span>
+          </div>
+          <div className="title-tooltip">
+            <div className="tooltip-content">{game?.initialPrompt}</div>
+          </div>
         </div>
         <div className="game-controls">
+          <VoiceInput onTranscript={handleVoiceTranscript} disabled={sending} />
           <VoiceOutput 
             enabled={voiceOutputEnabled} 
             onToggle={() => {
@@ -541,7 +547,6 @@ PNJ & STORYTELLING
                     disabled={sending || showConfirm}
                     rows={1}
                   />
-                  <VoiceInput onTranscript={handleVoiceTranscript} disabled={sending} />
                 </div>
                 
                 <button 

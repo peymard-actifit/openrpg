@@ -1,0 +1,43 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 01:40:19 
+🏷️  Version: v0.13.0 → v0.13.1 
+📊 Type: patch 
+💬 Message: Tooltips alignement + titre + Micro en haut 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (5) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_01h36m15s_v0.13.0.txt
+ M package.json
+ M src/components/AlignmentDisplay.jsx
+ M src/pages/Game.jsx
+ M src/styles/alignment.css
+ M src/styles/game.css
+?? logs/deploys/2025-12-22_01h40m19s_v0.13.1.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |   8 ++
+ api/games/[gameId].js                         |  16 +++-
+ api/games/check-finished.js                   |  88 ++++++++++++++++++++
+ api/games/index.js                            |   6 +-
+ api/games/sync-inventory.js                   | 113 ++++++++++++++++++++++++++
+ logs/deploys/2025-12-22_01h08m48s_v0.12.0.txt |   3 +
+ logs/deploys/2025-12-22_01h36m15s_v0.13.0.txt |  51 ++++++++++++
+ package.json                                  |   2 +-
+ src/components/AlignmentDisplay.jsx           |  44 +++++-----
+ src/lib/api.js                                |  15 ++++
+ src/pages/Dashboard.jsx                       |  69 ++++++++++++++--
+ src/pages/Game.jsx                            |  13 ++-
+ src/styles/alignment.css                      |  19 +++++
+ src/styles/dashboard.css                      |  31 +++++++
+ src/styles/game.css                           |  50 +++++++++++-
+ 15 files changed, 487 insertions(+), 41 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 
