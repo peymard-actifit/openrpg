@@ -2,83 +2,36 @@
   RAPPORT DE DEPLOIEMENT - OpenRPG 
 ================================================== 
  
-📅 Date: 22/12/2025 13:06:04 
-🏷️  Version: v0.15.1 → v0.15.2 
-📊 Type: patch 
-💬 Message: Amelioration affichage des des et animation 
+📅 Date: 22/12/2025 13:28:54 
+🏷️  Version: v0.15.2 → v0.16.0 
+📊 Type: minor 
+💬 Message: Mode multijoueur - invitations, participants, chat temps reel 
  
 -------------------------------------------------- 
-  FICHIERS MODIFIES (62) 
+  FICHIERS MODIFIES (14) 
 -------------------------------------------------- 
- M CONSIGNES.txt
- M DEPLOYS.md
- M PROMPTS.md
- M README.md
- M api/admin/toggle.js
- M api/auth/login.js
- M api/auth/me.js
- M api/auth/register.js
- M api/chat.js
- M api/games/[gameId].js
- M api/games/[gameId]/messages.js
- M api/games/all.js
- M api/games/check-finished.js
  M api/games/index.js
- M api/games/sync-inventory.js
- M api/generate-image.js
- M api/lib/auth.js
- M api/lib/mongodb.js
- M api/profile.js
- M api/speak.js
- M api/transcribe.js
- M deploy.cmd
- M env.example.txt
- M index.html
- M logs/deploys/2025-12-22_02h29m27s_v0.15.1.txt
+ M logs/deploys/2025-12-22_13h06m04s_v0.15.2.txt
  M package.json
- M scripts/deploy.ps1
- M scripts/deploy.sh
- M src/App.jsx
- M src/components/AlignmentDisplay.jsx
- M src/components/Dice.jsx
- M src/components/Inventory.jsx
- M src/components/LevelUpModal.jsx
- M src/components/RerollPrompt.jsx
- M src/components/StatsPanel.jsx
- M src/components/VoiceControls.jsx
- M src/contexts/AuthContext.jsx
  M src/lib/api.js
- M src/lib/openai.js
- M src/main.jsx
- M src/pages/Archive.jsx
- M src/pages/CreateProfile.jsx
  M src/pages/Dashboard.jsx
  M src/pages/Game.jsx
- M src/pages/Landing.jsx
- M src/pages/Login.jsx
- M src/pages/Register.jsx
- M src/styles/alignment.css
- M src/styles/archive.css
- M src/styles/auth.css
- M src/styles/create-profile.css
- M src/styles/dashboard.css
- M src/styles/dice.css
- M src/styles/game.css
- M src/styles/global.css
- M src/styles/inventory.css
- M src/styles/landing.css
- M src/styles/levelup.css
- M src/styles/reroll.css
- M src/styles/voice.css
- M vercel.json
- M vite.config.js
-?? logs/deploys/2025-12-22_13h06m04s_v0.15.2.txt
+?? api/games/chat.js
+?? api/games/participants.js
+?? api/invitations/
+?? api/presence/
+?? logs/deploys/2025-12-22_13h28m54s_v0.16.0.txt
+?? src/components/GameChat.jsx
+?? src/components/InvitationNotifications.jsx
+?? src/components/InviteModal.jsx
+?? src/components/ParticipantsPanel.jsx
+?? src/styles/multiplayer.css
  
 -------------------------------------------------- 
   STATISTIQUES GIT 
 -------------------------------------------------- 
  DEPLOYS.md                                    |  15 +++-
- PROMPTS.md                                    |  96 ++++++++++++---------
+ PROMPTS.md                                    |   9 ++
  api/admin/toggle.js                           |   1 +
  api/auth/login.js                             |   1 +
  api/auth/me.js                                |   1 +
@@ -86,39 +39,39 @@
  api/games/[gameId]/messages.js                |   1 +
  api/games/all.js                              |   1 +
  api/games/check-finished.js                   |   1 +
+ api/games/index.js                            |  19 ++--
  api/games/sync-inventory.js                   |   1 +
  api/generate-image.js                         |   1 +
  api/lib/auth.js                               |   1 +
  api/lib/mongodb.js                            |   1 +
  api/speak.js                                  |   1 +
  api/transcribe.js                             |   1 +
- deploy.cmd                                    |  14 +++
- logs/deploys/2025-12-22_02h22m26s_v0.15.0.txt |   3 +
- logs/deploys/2025-12-22_02h29m27s_v0.15.1.txt |  41 +++++++++
+ logs/deploys/2025-12-22_02h29m27s_v0.15.1.txt |   3 +
+ logs/deploys/2025-12-22_13h06m04s_v0.15.2.txt | 124 ++++++++++++++++++++++++++
  package.json                                  |   2 +-
  scripts/deploy.sh                             |   1 +
  src/App.jsx                                   |   1 +
- src/components/Dice.jsx                       | 104 +++++++++++++++-------
+ src/components/Dice.jsx                       | 104 ++++++++++++++-------
  src/components/LevelUpModal.jsx               |   1 +
  src/components/RerollPrompt.jsx               |   1 +
  src/components/StatsPanel.jsx                 |   1 +
  src/components/VoiceControls.jsx              |   1 +
+ src/lib/api.js                                |  70 +++++++++++++++
  src/lib/openai.js                             |   1 +
  src/main.jsx                                  |   1 +
+ src/pages/Dashboard.jsx                       |  29 +++++-
+ src/pages/Game.jsx                            |  47 ++++++++++
  src/pages/Landing.jsx                         |   1 +
  src/pages/Login.jsx                           |   1 +
  src/pages/Register.jsx                        |   1 +
  src/styles/archive.css                        |   1 +
  src/styles/auth.css                           |   1 +
- src/styles/dice.css                           | 120 +++++++++++++++++++++++---
+ src/styles/dice.css                           | 120 ++++++++++++++++++++++---
  src/styles/reroll.css                         |   1 +
  src/styles/voice.css                          |   1 +
  vite.config.js                                |   1 +
- 37 files changed, 338 insertions(+), 86 deletions(-)
+ 40 files changed, 520 insertions(+), 51 deletions(-)
  
 ================================================== 
   DEPLOIEMENT REUSSI 
 ================================================== 
- 
-🔗 Commit: be87313 
-🏷️  Tag: v0.15.2 

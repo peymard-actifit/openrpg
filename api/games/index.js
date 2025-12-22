@@ -2,18 +2,23 @@ import { getCollection } from '../lib/mongodb.js'
 import { getUserIdFromRequest } from '../lib/auth.js'
 
 export default async function handler(req, res) {
-  const userId = getUserIdFromRequest(req)
-  if (!userId) {
+  const currentUserId = getUserIdFromRequest(req)
+  if (!currentUserId) {
     return res.status(401).json({ error: 'Non authentifié' })
   }
 
   const games = await getCollection('games')
 
-  // GET - Liste des parties
+  // GET - Liste des parties (propres + invité)
   if (req.method === 'GET') {
     try {
       const userGames = await games
-        .find({ userId })
+        .find({ 
+          $or: [
+            { userId: currentUserId },
+            { 'participants.userId': currentUserId, 'participants.status': { $ne: 'removed' } }
+          ]
+        })
         .sort({ createdAt: -1 })
         .toArray()
 
@@ -40,7 +45,8 @@ export default async function handler(req, res) {
       }
 
       const game = {
-        userId,
+        userId: currentUserId,
+        ownerId: currentUserId,
         title,
         initialPrompt,
         status: 'active',
@@ -52,6 +58,9 @@ export default async function handler(req, res) {
         victory: false,
         victoryReason: null,
         deathReason: null,
+        isMultiplayer: false,
+        participants: [],
+        masterOnlyWatch: false,
         createdAt: new Date(),
         updatedAt: new Date()
       }

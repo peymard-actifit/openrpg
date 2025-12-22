@@ -8,6 +8,9 @@ import LevelUpModal from '../components/LevelUpModal'
 import RerollPrompt from '../components/RerollPrompt'
 import StatsPanel from '../components/StatsPanel'
 import { VoiceInput, VoiceOutput, useTextToSpeech } from '../components/VoiceControls'
+import ParticipantsPanel from '../components/ParticipantsPanel'
+import GameChat from '../components/GameChat'
+import InviteModal from '../components/InviteModal'
 import '../styles/game.css'
 
 export default function Game() {
@@ -38,11 +41,29 @@ export default function Game() {
   const [rerolls, setRerolls] = useState(0)
   const [pendingDiceResult, setPendingDiceResult] = useState(null)
   const [showRerollPrompt, setShowRerollPrompt] = useState(false)
+  const [showInviteModal, setShowInviteModal] = useState(false)
+  const [isOwner, setIsOwner] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState(null)
   
   const { speak, stop: stopSpeaking } = useTextToSpeech()
 
   useEffect(() => {
     fetchGame()
+    
+    // Heartbeat de présence
+    api.sendHeartbeat()
+    const heartbeatInterval = setInterval(() => {
+      api.sendHeartbeat()
+    }, 20000)
+    
+    // Récupérer l'ID utilisateur courant
+    api.getMe().then(data => {
+      if (data.user) {
+        setCurrentUserId(data.user.id)
+      }
+    }).catch(() => {})
+    
+    return () => clearInterval(heartbeatInterval)
   }, [gameId])
 
   useEffect(() => {
@@ -121,6 +142,13 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       setInventory(gameData.inventory || [])
       setAlignment(gameData.alignment || { goodEvil: 0, lawChaos: 0 })
       setRerolls(gameData.rerolls || 0)
+      
+      // Vérifier si l'utilisateur est le propriétaire
+      const meData = await api.getMe()
+      if (meData.user) {
+        setCurrentUserId(meData.user.id)
+        setIsOwner(gameData.ownerId === meData.user.id || gameData.userId === meData.user.id)
+      }
 
       const messagesData = await api.getMessages(gameId)
       setMessages(messagesData || [])
@@ -455,6 +483,12 @@ PNJ & STORYTELLING
           </div>
         </div>
         <div className="game-controls">
+          <ParticipantsPanel 
+            gameId={gameId}
+            currentUserId={currentUserId}
+            isOwner={isOwner}
+            onInviteClick={() => setShowInviteModal(true)}
+          />
           <VoiceInput onTranscript={handleVoiceTranscript} disabled={sending} />
           <VoiceOutput 
             enabled={voiceOutputEnabled} 
@@ -583,6 +617,19 @@ PNJ & STORYTELLING
           rerollsAvailable={rerolls}
           onReroll={handleReroll}
           onKeep={handleKeepResult}
+        />
+      )}
+
+      {/* Multi-joueur */}
+      {game?.isMultiplayer && currentUserId && (
+        <GameChat gameId={gameId} currentUserId={currentUserId} />
+      )}
+
+      {showInviteModal && (
+        <InviteModal
+          gameId={gameId}
+          onClose={() => setShowInviteModal(false)}
+          onInviteSent={() => {}}
         />
       )}
     </div>

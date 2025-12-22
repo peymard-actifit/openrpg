@@ -162,6 +162,76 @@ export async function syncInventory(gameId) {
   })
 }
 
+// ==========================================
+// MULTI-JOUEUR
+// ==========================================
+
+// Présence - Heartbeat
+export async function sendHeartbeat() {
+  return apiCall('/presence/heartbeat', { method: 'POST' })
+}
+
+// Présence - Joueurs en ligne
+export async function getOnlinePlayers() {
+  return apiCall('/presence/online')
+}
+
+// Invitations - Liste des invitations reçues
+export async function getInvitations() {
+  return apiCall('/invitations')
+}
+
+// Invitations - Envoyer une invitation
+export async function sendInvitation(gameId, toUserId, mode = 'sync') {
+  return apiCall('/invitations', {
+    method: 'POST',
+    body: JSON.stringify({ gameId, toUserId, mode })
+  })
+}
+
+// Invitations - Répondre (accepter/refuser)
+export async function respondInvitation(invitationId, action) {
+  return apiCall(`/invitations/${invitationId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action })
+  })
+}
+
+// Participants - Récupérer la liste
+export async function getParticipants(gameId) {
+  return apiCall(`/games/participants?gameId=${gameId}`)
+}
+
+// Participants - Actions (changeMode, remove, reinvite, pause, resume)
+export async function updateParticipant(gameId, action, targetUserId, mode) {
+  return apiCall(`/games/participants?gameId=${gameId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ action, targetUserId, mode })
+  })
+}
+
+// Participants - Mode maître regarde seulement
+export async function setMasterOnlyWatch(gameId, masterOnlyWatch) {
+  return apiCall(`/games/participants?gameId=${gameId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ masterOnlyWatch })
+  })
+}
+
+// Chat de partie
+export async function getGameChat(gameId, since) {
+  const params = since ? `?gameId=${gameId}&since=${since}` : `?gameId=${gameId}`
+  return apiCall(`/games/chat${params}`)
+}
+
+// Chat - Envoyer un message
+export async function sendGameChat(gameId, content, isSystem = false) {
+  return apiCall(`/games/chat?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ content, isSystem })
+  })
+}
+
 export function isAuthenticated() {
   return !!authToken
 }

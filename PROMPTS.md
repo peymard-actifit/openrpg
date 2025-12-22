@@ -116,3 +116,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 62 
  
+ 
+--- 
+ 
+### v0.16.0 - 22/12/2025 13:28:54 
+ 
+> Mode multijoueur - invitations, participants, chat temps reel 
+ 
+**Type**: minor | **Fichiers**: 14 
+ 

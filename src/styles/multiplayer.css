@@ -1,0 +1,677 @@
+/* ==========================================
+   MULTI-JOUEUR STYLES
+   ========================================== */
+
+/* ---- Modal d'invitation ---- */
+.modal-invite {
+  max-width: 500px;
+  width: 90%;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+}
+
+.invite-content {
+  padding: 1rem 0;
+}
+
+/* Mode selector */
+.mode-selector {
+  margin-bottom: 1.5rem;
+}
+
+.mode-selector label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.mode-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn:hover {
+  border-color: var(--gold-dim);
+}
+
+.mode-btn.active {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.mode-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Search box */
+.search-box {
+  margin-bottom: 1rem;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Players list */
+.players-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.player-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.player-row:hover {
+  background: var(--bg-elevated);
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.player-status {
+  font-size: 0.5rem;
+}
+
+.player-status.online {
+  color: #22c55e;
+}
+
+.player-name {
+  font-weight: 500;
+}
+
+.invite-btn {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.invite-btn:hover:not(:disabled) {
+  background: var(--gold);
+  color: var(--bg-primary);
+}
+
+.invite-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.no-players, .loading-players {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+.modal-footer {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---- Notifications d'invitation ---- */
+.notification-badge {
+  position: relative;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold);
+  cursor: pointer;
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+}
+
+.invitations-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.invitations-list {
+  padding: 0.5rem;
+}
+
+.invitation-card {
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.invitation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.inviter {
+  font-weight: 500;
+}
+
+.mode-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.mode-badge.sync {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.mode-badge.async {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.invitation-game {
+  margin-bottom: 0.75rem;
+}
+
+.invitation-game strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.game-prompt {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.invitation-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.btn-danger {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.btn-danger:hover {
+  background: #ef4444;
+  color: white;
+}
+
+/* ---- Chat de partie ---- */
+.game-chat {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 100;
+}
+
+.chat-toggle {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-toggle:hover {
+  border-color: var(--gold);
+}
+
+.chat-unread {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--bg-primary);
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.chat-panel {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 0.5rem;
+  width: 320px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+
+.chat-header h4 {
+  margin: 0;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem;
+}
+
+.chat-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 2rem;
+}
+
+.chat-message {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  max-width: 85%;
+}
+
+.chat-message.own {
+  margin-left: auto;
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.chat-message.system {
+  text-align: center;
+  max-width: 100%;
+  background: rgba(59, 130, 246, 0.1);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.chat-author {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--gold);
+  margin-bottom: 0.25rem;
+}
+
+.chat-content {
+  font-size: 0.9rem;
+}
+
+.chat-input {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.chat-input button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  background: var(--gold);
+  color: var(--bg-primary);
+  cursor: pointer;
+}
+
+.chat-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Panel des participants ---- */
+.participants-panel {
+  position: relative;
+}
+
+.participants-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.participants-toggle:hover {
+  border-color: var(--gold-dim);
+}
+
+.solo-badge {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.participants-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 280px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.participants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.participants-header h4 {
+  margin: 0;
+}
+
+.invite-small-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.invite-small-btn:hover {
+  background: var(--gold);
+  color: var(--bg-primary);
+}
+
+.master-controls {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.participants-list {
+  padding: 0.5rem;
+}
+
+.no-participants {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-muted);
+}
+
+.no-participants .btn {
+  margin-top: 0.5rem;
+}
+
+.participant-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.participant-row:hover {
+  background: var(--bg-elevated);
+}
+
+.participant-row.paused {
+  opacity: 0.6;
+}
+
+.participant-row.removed {
+  opacity: 0.4;
+}
+
+.participant-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6b7280;
+}
+
+.status-dot.active {
+  background: #22c55e;
+}
+
+.status-dot.paused {
+  background: #f59e0b;
+}
+
+.mode-tag {
+  font-size: 0.8rem;
+}
+
+.self-controls {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.mode-toggle {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.mode-toggle.active {
+  opacity: 1;
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.remove-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.removed-section {
+  padding: 0.75rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.removed-section h5 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.reinvite-btn {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gold);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.reinvite-btn:hover {
+  background: var(--gold);
+  color: var(--bg-primary);
+}
+
+/* ---- Tuiles avec participants ---- */
+.game-card .participants-avatars {
+  display: flex;
+  gap: -8px;
+  margin-top: 0.5rem;
+}
+
+.participant-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 2px solid var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  margin-left: -8px;
+}
+
+.participant-avatar:first-child {
+  margin-left: 0;
+}
+
+.participant-avatar.owner {
+  border-color: var(--gold);
+}
+
+.multiplayer-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(212, 175, 55, 0.2);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .invitations-panel {
+    width: calc(100vw - 2rem);
+    right: -1rem;
+  }
+  
+  .chat-panel {
+    width: calc(100vw - 2rem);
+    right: -0.5rem;
+  }
+  
+  .participants-dropdown {
+    width: calc(100vw - 2rem);
+    right: -1rem;
+  }
+  
+  .mode-options {
+    grid-template-columns: 1fr;
+  }
+}
+

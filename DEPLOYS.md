@@ -194,3 +194,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 62 
 - **Rapport**: [2025-12-22_13h06m04s_v0.15.2.txt](logs/deploys/2025-12-22_13h06m04s_v0.15.2.txt) 
  
+ 
+## v0.16.0 - 22/12/2025 13:28:54 
+ 
+- **Type**: minor 
+- **Message**: Mode multijoueur - invitations, participants, chat temps reel 
+- **Fichiers modifiés**: 14 
+- **Rapport**: [2025-12-22_13h28m54s_v0.16.0.txt](logs/deploys/2025-12-22_13h28m54s_v0.16.0.txt) 
+ 

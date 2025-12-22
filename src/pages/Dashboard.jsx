@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import * as api from '../lib/api'
+import InvitationNotifications from '../components/InvitationNotifications'
 import '../styles/dashboard.css'
 
 const STAT_ICONS = [
@@ -52,6 +53,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     initDashboard()
+    
+    // Heartbeat de présence
+    api.sendHeartbeat()
+    const heartbeatInterval = setInterval(() => {
+      api.sendHeartbeat()
+    }, 20000) // Toutes les 20 secondes
+    
+    return () => clearInterval(heartbeatInterval)
   }, [])
 
   useEffect(() => {
@@ -329,6 +338,7 @@ export default function Dashboard() {
           ⚔️ OpenRPG
         </Link>
         <div className="header-right">
+          <InvitationNotifications />
           <div className="user-menu-wrapper">
             <button 
               className={`user-menu-btn ${isAdmin ? 'admin' : ''}`}
@@ -430,19 +440,36 @@ export default function Dashboard() {
               {activeGames.map(game => (
                 <div 
                   key={game.id} 
-                  className="game-card"
+                  className={`game-card ${game.isMultiplayer ? 'multiplayer' : ''}`}
                   onClick={() => navigate(`/game/${game.id}`)}
                   title={game.initialPrompt}
                   draggable
                   onDragStart={(e) => handleDragStart(e, game)}
                   onDragEnd={handleDragEnd}
                 >
+                  {game.isMultiplayer && <span className="multiplayer-badge">👥</span>}
                   <span className="game-icon">📜</span>
                   <div className="game-info">
                     <h3>{game.title}</h3>
                     <span className="game-level">Niveau {game.level || 1}</span>
                     {game.inventory?.length > 0 && (
                       <span className="game-inventory">🎒 {game.inventory.length}</span>
+                    )}
+                    {game.participants?.length > 0 && (
+                      <div className="participants-avatars">
+                        {game.participants.slice(0, 4).map((p, i) => (
+                          <span 
+                            key={i} 
+                            className={`participant-avatar ${p.userId === game.ownerId ? 'owner' : ''}`}
+                            title={p.characterName}
+                          >
+                            {p.characterName?.charAt(0) || '?'}
+                          </span>
+                        ))}
+                        {game.participants.length > 4 && (
+                          <span className="participant-avatar">+{game.participants.length - 4}</span>
+                        )}
+                      </div>
                     )}
                   </div>
                   <div className="card-actions">
