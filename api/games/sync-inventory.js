@@ -27,12 +27,18 @@ export default async function handler(req, res) {
     const games = await getCollection('games')
     const messagesCol = await getCollection('messages')
 
+    // Chercher la partie (propriétaire OU participant)
     const game = await games.findOne({ 
       _id: new ObjectId(gameId),
-      userId 
+      $or: [
+        { userId },
+        { ownerId: userId },
+        { 'participants.userId': userId }
+      ]
     })
 
     if (!game) {
+      console.log('Partie non trouvée pour userId:', userId, 'gameId:', gameId)
       return res.status(404).json({ error: 'Partie non trouvée' })
     }
 
@@ -42,12 +48,14 @@ export default async function handler(req, res) {
       .sort({ createdAt: 1 })
       .toArray()
 
+    console.log(`Sync inventory: ${allMessages.length} messages trouvés pour gameId ${gameId}`)
+
     if (allMessages.length === 0) {
       return res.status(200).json({ inventory: game.inventory || [], synced: false })
     }
 
-    // Construire l'historique pour l'analyse
-    const history = allMessages.map(m => `${m.role === 'user' ? 'JOUEUR' : 'MJ'}: ${m.content}`).join('\n\n')
+    // Construire l'historique pour l'analyse (limiter à 5000 caractères)
+    const history = allMessages.map(m => `${m.role === 'user' ? 'JOUEUR' : 'MJ'}: ${m.content}`).join('\n\n').slice(0, 5000)
 
     // Demander à l'IA d'analyser l'inventaire
     const completion = await openai.chat.completions.create({
@@ -55,37 +63,43 @@ export default async function handler(req, res) {
       messages: [
         {
           role: 'system',
-          content: `Tu es un système d'analyse d'inventaire pour un JDR.
+          content: `Tu es un système d'extraction d'inventaire pour un JDR.
 
-Analyse l'historique de cette partie et liste TOUS les objets que le joueur devrait avoir dans son inventaire actuellement.
+MISSION: Extraire TOUS les objets que le joueur POSSÈDE actuellement.
 
-Pour chaque objet, utilise ce format EXACT:
-[OBJET:nom|icône|description courte|valeur estimée]
+FORMAT OBLIGATOIRE pour chaque objet:
+[OBJET:nom|icône|description|valeur]
 
-Règles:
-- Inclus TOUS les objets mentionnés comme trouvés, reçus, achetés
-- EXCLUS les objets mentionnés comme utilisés, vendus, perdus, donnés, détruits
-- L'or/argent compte comme objet (ex: [OBJET:50 pièces d'or|💰|Monnaie|50])
-- Armes, armures, potions, clés, documents, tout doit être listé
-- Si rien n'est à inventorier, ne réponds rien
+EXEMPLES:
+[OBJET:Bâton en bois|🪵|Arme simple, dégâts 1D6|5]
+[OBJET:Potion de soin|🧪|Restaure 10 points de vie|25]
+[OBJET:Sac à dos|🎒|Permet de transporter des objets|15]
+[OBJET:50 pièces d'or|💰|Monnaie|50]
 
-Réponds UNIQUEMENT avec les balises [OBJET:...], une par ligne.`
+ICÔNES POSSIBLES: 🪵 🗡️ ⚔️ 🛡️ 🧪 💰 🔑 📜 💍 📿 🧥 👢 🧤 🎒 🏹 📖 🗺️
+
+RÈGLES:
+- Liste TOUS les équipements de départ mentionnés
+- Liste TOUS les objets trouvés/reçus
+- EXCLUS les objets utilisés/perdus/vendus
+- Réponds UNIQUEMENT avec les balises, RIEN d'autre`
         },
         {
           role: 'user',
-          content: `Contexte initial: ${game.initialPrompt}\n\nHistorique:\n${history}`
+          content: `CONTEXTE: ${game.initialPrompt}\n\nHISTORIQUE:\n${history}\n\nListe les objets possédés:`
         }
       ],
-      temperature: 0.3,
-      max_tokens: 1000
+      temperature: 0.2,
+      max_tokens: 800
     })
 
     const content = completion.choices[0].message.content || ''
+    console.log('Réponse IA sync-inventory:', content)
     
-    // Parser les objets
+    // Parser les objets - format avec valeur
     const newInventory = []
-    const matches = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^|]+)\|(\d+)\]/g)
-    for (const match of matches) {
+    const matchesWithValue = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^|]+)\|(\d+)\]/g)
+    for (const match of matchesWithValue) {
       newInventory.push({
         name: match[1].trim(),
         icon: match[2].trim(),
@@ -93,6 +107,22 @@ Réponds UNIQUEMENT avec les balises [OBJET:...], une par ligne.`
         value: parseInt(match[4]) || 0
       })
     }
+    
+    // Parser aussi format sans valeur (au cas où)
+    const matchesNoValue = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^\]|]+)\](?!\d)/g)
+    for (const match of matchesNoValue) {
+      const name = match[1].trim()
+      if (!newInventory.some(i => i.name === name)) {
+        newInventory.push({
+          name,
+          icon: match[2].trim(),
+          description: match[3].trim(),
+          value: 0
+        })
+      }
+    }
+
+    console.log('Objets extraits:', newInventory.length, newInventory.map(i => i.name))
 
     // Mettre à jour la partie
     await games.updateOne(
@@ -107,7 +137,7 @@ Réponds UNIQUEMENT avec les balises [OBJET:...], une par ligne.`
     })
   } catch (error) {
     console.error('Sync inventory error:', error)
-    return res.status(500).json({ error: 'Erreur serveur' })
+    return res.status(500).json({ error: 'Erreur serveur', details: error.message })
   }
 }
 

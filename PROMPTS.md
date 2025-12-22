@@ -215,3 +215,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.9 - 22/12/2025 14:13:18 
+ 
+> API sync-inventory amelioree - meilleur prompt et logs 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

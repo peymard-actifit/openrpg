@@ -282,3 +282,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-22_14h10m51s_v0.17.8.txt](logs/deploys/2025-12-22_14h10m51s_v0.17.8.txt) 
  
+ 
+## v0.17.9 - 22/12/2025 14:13:18 
+ 
+- **Type**: patch 
+- **Message**: API sync-inventory amelioree - meilleur prompt et logs 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-22_14h13m18s_v0.17.9.txt](logs/deploys/2025-12-22_14h13m18s_v0.17.9.txt) 
+ 

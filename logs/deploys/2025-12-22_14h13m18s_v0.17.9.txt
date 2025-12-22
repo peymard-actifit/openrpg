@@ -1,0 +1,32 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 14:13:18 
+🏷️  Version: v0.17.8 → v0.17.9 
+📊 Type: patch 
+💬 Message: API sync-inventory amelioree - meilleur prompt et logs 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M api/games/sync-inventory.js
+ M logs/deploys/2025-12-22_14h10m51s_v0.17.8.txt
+ M package.json
+?? logs/deploys/2025-12-22_14h13m18s_v0.17.9.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |   8 ++
+ PROMPTS.md                                    |   9 ++
+ api/games/sync-inventory.js                   |  72 +++++++++----
+ logs/deploys/2025-12-22_14h08m26s_v0.17.7.txt |   3 +
+ logs/deploys/2025-12-22_14h10m51s_v0.17.8.txt |  34 ++++++
+ package.json                                  |   2 +-
+ src/pages/Game.jsx                            | 147 +++++---------------------
+ 7 files changed, 130 insertions(+), 145 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 
