@@ -8,6 +8,27 @@ import Dashboard from './pages/Dashboard'
 import Game from './pages/Game'
 import Archive from './pages/Archive'
 
+// Route publique - redirige vers dashboard si déjà connecté
+function PublicRoute({ children }) {
+  const { user, loading, profile } = useAuth()
+  
+  if (loading) {
+    return <div className="loading-screen">Chargement...</div>
+  }
+  
+  // Si l'utilisateur est connecté et a un profil, rediriger vers dashboard
+  if (user && profile) {
+    return <Navigate to="/dashboard" replace />
+  }
+  
+  // Si l'utilisateur est connecté mais n'a pas de profil, rediriger vers création
+  if (user && !profile) {
+    return <Navigate to="/create-profile" replace />
+  }
+  
+  return children
+}
+
 function ProtectedRoute({ children }) {
   const { user, loading, profile } = useAuth()
   
@@ -30,9 +51,21 @@ function App() {
   return (
     <div className="app">
       <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/" element={
+          <PublicRoute>
+            <Landing />
+          </PublicRoute>
+        } />
+        <Route path="/login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+        <Route path="/register" element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        } />
         <Route path="/create-profile" element={
           <ProtectedRoute>
             <CreateProfile />

@@ -218,3 +218,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 9 
 - **Rapport**: [2025-12-22_13h45m51s_v0.17.0.txt](logs/deploys/2025-12-22_13h45m51s_v0.17.0.txt) 
  
+ 
+## v0.17.1 - 22/12/2025 13:48:54 
+ 
+- **Type**: patch 
+- **Message**: Redirection auto vers dashboard si utilisateur connecte 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-22_13h48m54s_v0.17.1.txt](logs/deploys/2025-12-22_13h48m54s_v0.17.1.txt) 
+ 

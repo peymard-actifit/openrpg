@@ -1,0 +1,39 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 13:48:54 
+🏷️  Version: v0.17.0 → v0.17.1 
+📊 Type: patch 
+💬 Message: Redirection auto vers dashboard si utilisateur connecte 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_13h45m51s_v0.17.0.txt
+ M package.json
+ M src/App.jsx
+?? logs/deploys/2025-12-22_13h48m54s_v0.17.1.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |   8 +
+ PROMPTS.md                                    |   9 +
+ api/chat.js                                   | 267 ++++++++++++++++------
+ api/games/shared-inventory.js                 | 212 ++++++++++++++++++
+ api/games/sync-groups.js                      | 310 ++++++++++++++++++++++++++
+ api/games/votes.js                            | 222 ++++++++++++++++++
+ logs/deploys/2025-12-22_13h34m14s_v0.16.1.txt |   3 +
+ logs/deploys/2025-12-22_13h45m51s_v0.17.0.txt |  48 ++++
+ package.json                                  |   2 +-
+ src/App.jsx                                   |  39 +++-
+ src/components/SyncGroupsPanel.jsx            | 223 ++++++++++++++++++
+ src/lib/api.js                                | 115 ++++++++++
+ src/pages/Game.jsx                            |   7 +
+ src/styles/multiplayer.css                    | 228 +++++++++++++++++++
+ 14 files changed, 1622 insertions(+), 71 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

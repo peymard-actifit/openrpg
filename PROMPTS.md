@@ -143,3 +143,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: minor | **Fichiers**: 9 
  
+ 
+--- 
+ 
+### v0.17.1 - 22/12/2025 13:48:54 
+ 
+> Redirection auto vers dashboard si utilisateur connecte 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 
