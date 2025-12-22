@@ -1,0 +1,33 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 13:57:19 
+🏷️  Version: v0.17.2 → v0.17.3 
+📊 Type: patch 
+💬 Message: Inventaire mis a jour en temps reel - objets de depart et au fil de laventure 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_13h51m11s_v0.17.2.txt
+ M package.json
+ M src/pages/Game.jsx
+?? logs/deploys/2025-12-22_13h57m19s_v0.17.3.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |  8 ++++
+ PROMPTS.md                                    |  9 ++++
+ logs/deploys/2025-12-22_13h48m54s_v0.17.1.txt |  3 ++
+ logs/deploys/2025-12-22_13h51m11s_v0.17.2.txt | 37 ++++++++++++++++
+ package.json                                  |  2 +-
+ src/pages/Dashboard.jsx                       |  3 +-
+ src/pages/Game.jsx                            | 64 ++++++++++++++++++---------
+ src/styles/dashboard.css                      | 14 ++++++
+ 8 files changed, 116 insertions(+), 24 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -161,3 +161,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 3 
  
+ 
+--- 
+ 
+### v0.17.3 - 22/12/2025 13:57:19 
+ 
+> Inventaire mis a jour en temps reel - objets de depart et au fil de laventure 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

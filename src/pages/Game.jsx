@@ -259,7 +259,7 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       
       const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Contexte: ${game.initialPrompt}. Lance l'aventure. Liste les objets de départ si pertinent.` }
+        { role: 'user', content: `Contexte: ${game.initialPrompt}. Lance l'aventure. IMPORTANT: Si le personnage possède des objets de départ (équipement, or, armes, potions, etc.), utilise OBLIGATOIREMENT les balises [OBJET:nom|icône|description|valeur] pour chacun d'eux.` }
       ], { game, profile, stats: game.currentStats })
 
       const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
@@ -267,7 +267,8 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       setGameStarted(true)
       setInventoryChecked(true)
       
-      processAIResponse(response)
+      // Passer l'inventaire courant (vide au démarrage)
+      processAIResponse(response, false, [])
     } catch (err) {
       console.error('Erreur démarrage:', err)
     } finally {
@@ -329,7 +330,8 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       const aiMsg = await api.addMessage(gameId, 'assistant', response.content)
       setMessages(prev => [...prev, aiMsg])
 
-      processAIResponse(response)
+      // Passer l'inventaire actuel pour éviter les problèmes de closure
+      processAIResponse(response, false, inventory)
     } catch (err) {
       console.error('Erreur envoi:', err)
     } finally {
@@ -337,40 +339,57 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
     }
   }
 
-  function processAIResponse(response, silent = false) {
+  function processAIResponse(response, silent = false, currentInventory = null) {
     checkForDiceRequest(response.content)
 
+    // Utiliser l'inventaire passé ou l'état actuel
+    let workingInventory = currentInventory !== null ? currentInventory : inventory
+
+    // Ajouter les nouveaux objets
     if (response.newItems && response.newItems.length > 0) {
-      const updatedInventory = [...inventory, ...response.newItems]
-      setInventory(updatedInventory)
-      api.updateGame(gameId, { inventory: updatedInventory })
+      workingInventory = [...workingInventory, ...response.newItems]
+      setInventory(workingInventory)
+      api.updateGame(gameId, { inventory: workingInventory })
+      
+      if (!silent) {
+        console.log('📦 Objets ajoutés:', response.newItems.map(i => i.name).join(', '))
+      }
     }
 
+    // Retirer les objets utilisés
     if (response.removedItems && response.removedItems.length > 0) {
-      const updatedInventory = inventory.filter(item => 
+      workingInventory = workingInventory.filter(item => 
         !response.removedItems.some(removed => 
           item.name.toLowerCase().includes(removed.toLowerCase()) ||
           removed.toLowerCase().includes(item.name.toLowerCase())
         )
       )
-      setInventory(updatedInventory)
-      api.updateGame(gameId, { inventory: updatedInventory })
+      setInventory(workingInventory)
+      api.updateGame(gameId, { inventory: workingInventory })
+      
+      if (!silent) {
+        console.log('🗑️ Objets retirés:', response.removedItems.join(', '))
+      }
     }
 
     if (response.alignmentChange) {
-      const newAlignment = {
-        goodEvil: Math.max(-100, Math.min(100, alignment.goodEvil + (response.alignmentChange.goodEvil || 0))),
-        lawChaos: Math.max(-100, Math.min(100, alignment.lawChaos + (response.alignmentChange.lawChaos || 0)))
-      }
-      setAlignment(newAlignment)
-      api.updateGame(gameId, { alignment: newAlignment })
+      setAlignment(prev => {
+        const newAlignment = {
+          goodEvil: Math.max(-100, Math.min(100, prev.goodEvil + (response.alignmentChange.goodEvil || 0))),
+          lawChaos: Math.max(-100, Math.min(100, prev.lawChaos + (response.alignmentChange.lawChaos || 0)))
+        }
+        api.updateGame(gameId, { alignment: newAlignment })
+        return newAlignment
+      })
     }
 
     // Bonus de relance
     if (response.bonusReroll) {
-      const newRerolls = rerolls + 1
-      setRerolls(newRerolls)
-      api.updateGame(gameId, { rerolls: newRerolls })
+      setRerolls(prev => {
+        const newRerolls = prev + 1
+        api.updateGame(gameId, { rerolls: newRerolls })
+        return newRerolls
+      })
     }
 
     if (response.playerDied) {
@@ -431,9 +450,10 @@ RÈGLES
    [LANCER_D6] Actions simples risquées
    [LANCER_D100] Événements rares
 
-📦 OBJETS - Butin régulier:
-   [OBJET:nom|icône|description|valeur]
-   [RETIRER:nom]
+📦 OBJETS - OBLIGATOIRE pour TOUT objet:
+   Quand le joueur OBTIENT un objet: [OBJET:nom|icône|description|valeur]
+   Quand le joueur UTILISE/PERD un objet: [RETIRER:nom]
+   ⚠️ TOUJOURS utiliser ces balises, même pour l'or, les clés, etc.
 
 ⚖️ ALIGNEMENT: [ALIGN:goodEvil,lawChaos]
 

@@ -234,3 +234,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 3 
 - **Rapport**: [2025-12-22_13h51m11s_v0.17.2.txt](logs/deploys/2025-12-22_13h51m11s_v0.17.2.txt) 
  
+ 
+## v0.17.3 - 22/12/2025 13:57:19 
+ 
+- **Type**: patch 
+- **Message**: Inventaire mis a jour en temps reel - objets de depart et au fil de laventure 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-22_13h57m19s_v0.17.3.txt](logs/deploys/2025-12-22_13h57m19s_v0.17.3.txt) 
+ 
