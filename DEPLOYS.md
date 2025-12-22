@@ -169,3 +169,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 6 
 - **Rapport**: [2025-12-22_02h10m08s_v0.14.0.txt](logs/deploys/2025-12-22_02h10m08s_v0.14.0.txt) 
  
+ 
+## v0.15.0 - 22/12/2025 02:22:26 
+ 
+- **Type**: minor 
+- **Message**: Suppression parties + continuation archivees v2 + mode admin 
+- **Fichiers modifiés**: 7 
+- **Rapport**: [2025-12-22_02h22m26s_v0.15.0.txt](logs/deploys/2025-12-22_02h22m26s_v0.15.0.txt) 
+ 

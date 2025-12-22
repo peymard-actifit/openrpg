@@ -256,6 +256,53 @@
   color: var(--gold);
 }
 
+/* Zone admin */
+.admin-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-card);
+  border: 2px solid var(--mana-blue);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 60px;
+}
+
+.admin-zone:hover,
+.admin-zone.active {
+  background: rgba(65, 105, 225, 0.1);
+  box-shadow: 0 0 15px rgba(65, 105, 225, 0.3);
+}
+
+.admin-icon {
+  font-size: 1.3rem;
+}
+
+.admin-count {
+  font-family: var(--font-medieval);
+  font-size: 0.85rem;
+  color: var(--mana-blue);
+}
+
+.admin-arrow {
+  font-size: 0.6rem;
+  color: var(--mana-blue);
+}
+
+/* Admin badge */
+.user-menu-btn.admin {
+  border-color: var(--mana-blue);
+  background: rgba(65, 105, 225, 0.1);
+}
+
+.admin-badge {
+  font-size: 0.9rem;
+}
+
 /* Games Section */
 .games-section {
   margin-bottom: var(--space-xl);
@@ -375,24 +422,49 @@
   display: block;
 }
 
-.sync-btn {
+/* Actions sur les cartes */
+.card-actions {
   position: absolute;
   top: var(--space-xs);
   right: var(--space-xs);
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.game-card:hover .card-actions {
+  opacity: 1;
+}
+
+.delete-btn,
+.sync-btn {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 1px solid var(--gold-dim);
+  border: 1px solid;
   background: var(--bg-elevated);
-  color: var(--gold);
   cursor: pointer;
-  font-size: 0.7rem;
-  opacity: 0;
-  transition: opacity 0.2s, background 0.2s;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.game-card:hover .sync-btn {
-  opacity: 1;
+.delete-btn {
+  border-color: var(--crimson);
+  color: var(--crimson-bright);
+}
+
+.delete-btn:hover {
+  background: var(--crimson);
+  color: white;
+}
+
+.sync-btn {
+  border-color: var(--gold-dim);
+  color: var(--gold);
 }
 
 .sync-btn:hover {
@@ -442,6 +514,36 @@
   font-size: 0.9rem;
   color: var(--text-secondary);
   margin-bottom: var(--space-sm);
+}
+
+/* Section toutes les parties (admin) */
+.games-section.all-games {
+  background: rgba(65, 105, 225, 0.05);
+  border: 1px solid rgba(65, 105, 225, 0.2);
+  border-radius: 10px;
+  padding: var(--space-md);
+}
+
+.games-section.all-games h2 {
+  font-size: 1rem;
+  color: var(--mana-blue);
+  margin-bottom: var(--space-md);
+}
+
+.game-card.admin-view {
+  border-color: rgba(65, 105, 225, 0.3);
+  cursor: default;
+}
+
+.game-player {
+  font-size: 0.75rem;
+  color: var(--mana-blue);
+  display: block;
+}
+
+/* Modal small */
+.modal.modal-small {
+  max-width: 350px;
 }
 
 .archive-actions {

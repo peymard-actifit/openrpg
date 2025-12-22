@@ -17,11 +17,16 @@ export default function Dashboard() {
   const { user, profile, signOut, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [games, setGames] = useState([])
+  const [allGames, setAllGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [showNewGame, setShowNewGame] = useState(false)
   const [showArchives, setShowArchives] = useState(false)
+  const [showAllGames, setShowAllGames] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showEditProfile, setShowEditProfile] = useState(false)
+  const [showAdminPrompt, setShowAdminPrompt] = useState(false)
+  const [adminCode, setAdminCode] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
   const [newGameTitle, setNewGameTitle] = useState('')
   const [newGamePrompt, setNewGamePrompt] = useState('')
   const [creating, setCreating] = useState(false)
@@ -29,7 +34,6 @@ export default function Dashboard() {
   const [draggedGame, setDraggedGame] = useState(null)
   const [dragOverArchive, setDragOverArchive] = useState(false)
   
-  // État pour l'édition du profil
   const [editProfile, setEditProfile] = useState({
     characterName: '',
     age: '',
@@ -70,6 +74,12 @@ export default function Dashboard() {
     }
   }, [profile])
 
+  useEffect(() => {
+    if (isAdmin) {
+      fetchAllGames()
+    }
+  }, [isAdmin])
+
   async function initDashboard() {
     try {
       setChecking(true)
@@ -100,6 +110,15 @@ export default function Dashboard() {
     }
   }
 
+  async function fetchAllGames() {
+    try {
+      const data = await api.getAllGames()
+      setAllGames(data || [])
+    } catch (err) {
+      console.error('Erreur chargement toutes parties:', err)
+    }
+  }
+
   async function handleCreateGame(e) {
     e.preventDefault()
     if (!newGameTitle.trim() || !newGamePrompt.trim()) return
@@ -126,6 +145,18 @@ export default function Dashboard() {
     }
   }
 
+  async function handleDeleteGame(gameId, e) {
+    e.stopPropagation()
+    if (!confirm('Supprimer cette partie définitivement ?')) return
+    
+    try {
+      await api.deleteGame(gameId)
+      fetchGames()
+    } catch (err) {
+      console.error('Erreur suppression:', err)
+    }
+  }
+
   async function handleSaveProfile() {
     try {
       await api.updateProfile(editProfile)
@@ -139,17 +170,38 @@ export default function Dashboard() {
 
   async function handleContinueArchived(game) {
     try {
+      // Déterminer la version
+      let version = 2
+      const vMatch = game.title.match(/v(\d+)$/)
+      if (vMatch) {
+        version = parseInt(vMatch[1]) + 1
+      }
+      
+      // Créer le nouveau titre
+      let baseTitle = game.title.replace(/\s*v\d+$/, '')
+      const newTitle = `${baseTitle} v${version}`
+      
+      // Créer la nouvelle partie avec le même prompt
       const newGame = await api.createGame(
-        `${game.title} (Suite)`,
+        newTitle,
         game.initialPrompt,
         profile?.stats || game.currentStats
       )
+      
+      // Copier l'état de la partie archivée
       await api.updateGame(newGame.id, {
         inventory: game.inventory || [],
         alignment: game.alignment || { goodEvil: 0, lawChaos: 0 },
         level: game.level || 1,
         rerolls: game.rerolls || 0
       })
+      
+      // Copier tous les messages de l'ancienne partie
+      const oldMessages = await api.getMessages(game.id)
+      for (const msg of oldMessages) {
+        await api.addMessage(newGame.id, msg.role, msg.content)
+      }
+      
       navigate(`/game/${newGame.id}`)
     } catch (err) {
       console.error('Erreur continuation:', err)
@@ -169,6 +221,36 @@ export default function Dashboard() {
     }
   }
 
+  async function handleToggleAdmin() {
+    if (isAdmin) {
+      try {
+        await api.toggleAdmin(null, true)
+        setIsAdmin(false)
+        setAllGames([])
+        setShowAllGames(false)
+      } catch (err) {
+        console.error('Erreur désactivation admin:', err)
+      }
+    } else {
+      setShowAdminPrompt(true)
+    }
+    setShowUserMenu(false)
+  }
+
+  async function handleAdminCode() {
+    try {
+      const result = await api.toggleAdmin(adminCode)
+      if (result.isAdmin) {
+        setIsAdmin(true)
+        setShowAdminPrompt(false)
+        setAdminCode('')
+        fetchAllGames()
+      }
+    } catch (err) {
+      alert('Code incorrect')
+    }
+  }
+
   function handleStatChange(key, value) {
     const numVal = parseInt(value) || 0
     const clampedVal = Math.max(0, Math.min(20, numVal))
@@ -178,7 +260,6 @@ export default function Dashboard() {
     }))
   }
 
-  // Drag & Drop handlers
   function handleDragStart(e, game) {
     setDraggedGame(game)
     e.dataTransfer.effectAllowed = 'move'
@@ -250,9 +331,10 @@ export default function Dashboard() {
         <div className="header-right">
           <div className="user-menu-wrapper">
             <button 
-              className="user-menu-btn"
+              className={`user-menu-btn ${isAdmin ? 'admin' : ''}`}
               onClick={() => setShowUserMenu(!showUserMenu)}
             >
+              {isAdmin && <span className="admin-badge">👑</span>}
               👤 {profile?.characterName || 'Menu'}
               <span className="menu-arrow">{showUserMenu ? '▲' : '▼'}</span>
             </button>
@@ -260,6 +342,9 @@ export default function Dashboard() {
               <div className="user-menu-dropdown">
                 <button onClick={() => { setShowEditProfile(true); setShowUserMenu(false); }}>
                   ⚙️ Modifier le personnage
+                </button>
+                <button onClick={handleToggleAdmin}>
+                  {isAdmin ? '🔓 Désactiver Admin' : '🔐 Mode Admin'}
                 </button>
                 <button onClick={handleLogout}>
                   🚪 Déconnexion
@@ -271,7 +356,7 @@ export default function Dashboard() {
       </header>
 
       <div className="dashboard-content">
-        {/* Barre personnage + archives */}
+        {/* Barre personnage + archives + admin */}
         <div className="character-bar">
           <div 
             className="character-card"
@@ -309,6 +394,18 @@ export default function Dashboard() {
             <span className="archive-count">{archivedGames.length}</span>
             {showArchives && <span className="archive-arrow">▲</span>}
           </div>
+
+          {/* Zone admin */}
+          {isAdmin && (
+            <div 
+              className={`admin-zone ${showAllGames ? 'active' : ''}`}
+              onClick={() => setShowAllGames(!showAllGames)}
+            >
+              <span className="admin-icon">👁️</span>
+              <span className="admin-count">{allGames.length}</span>
+              {showAllGames && <span className="admin-arrow">▲</span>}
+            </div>
+          )}
         </div>
 
         {/* Section parties en cours */}
@@ -348,13 +445,22 @@ export default function Dashboard() {
                       <span className="game-inventory">🎒 {game.inventory.length}</span>
                     )}
                   </div>
-                  <button 
-                    className="sync-btn"
-                    onClick={(e) => handleSyncInventory(game.id, e)}
-                    title="Synchroniser l'inventaire"
-                  >
-                    🔄
-                  </button>
+                  <div className="card-actions">
+                    <button 
+                      className="delete-btn"
+                      onClick={(e) => handleDeleteGame(game.id, e)}
+                      title="Supprimer la partie"
+                    >
+                      🗑️
+                    </button>
+                    <button 
+                      className="sync-btn"
+                      onClick={(e) => handleSyncInventory(game.id, e)}
+                      title="Synchroniser l'inventaire"
+                    >
+                      🔄
+                    </button>
+                  </div>
                   <div className="drag-hint">⋮⋮</div>
                 </div>
               ))}
@@ -362,7 +468,7 @@ export default function Dashboard() {
           )}
         </section>
 
-        {/* Archives déroulées */}
+        {/* Archives */}
         {showArchives && archivedGames.length > 0 && (
           <section className="games-section archives">
             {victoryGames.length > 0 && (
@@ -396,8 +502,9 @@ export default function Dashboard() {
                             e.stopPropagation()
                             handleContinueArchived(game)
                           }}
+                          title="Continuer cette aventure"
                         >
-                          ➕
+                          ▶️
                         </button>
                       </div>
                     </div>
@@ -427,6 +534,29 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
+          </section>
+        )}
+
+        {/* Toutes les parties (Admin) */}
+        {isAdmin && showAllGames && allGames.length > 0 && (
+          <section className="games-section all-games">
+            <h2>👁️ Toutes les parties en cours ({allGames.length})</h2>
+            <div className="games-grid">
+              {allGames.map(game => (
+                <div 
+                  key={game.id} 
+                  className="game-card admin-view"
+                  title={game.initialPrompt}
+                >
+                  <span className="game-icon">📜</span>
+                  <div className="game-info">
+                    <h3>{game.title}</h3>
+                    <span className="game-player">👤 {game.playerName}</span>
+                    <span className="game-level">Niveau {game.level || 1}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </section>
         )}
       </div>
@@ -588,6 +718,46 @@ export default function Dashboard() {
                 onClick={handleSaveProfile}
               >
                 💾 Sauvegarder
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal code admin */}
+      {showAdminPrompt && (
+        <div className="modal-overlay" onClick={() => setShowAdminPrompt(false)}>
+          <div className="modal modal-small" onClick={e => e.stopPropagation()}>
+            <h2>🔐 Mode Admin</h2>
+            <p className="modal-hint">
+              Entrez le code administrateur pour accéder à toutes les parties.
+            </p>
+
+            <div className="input-group">
+              <label>Code Admin</label>
+              <input
+                type="password"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                placeholder="••••••••"
+                onKeyDown={(e) => e.key === 'Enter' && handleAdminCode()}
+              />
+            </div>
+
+            <div className="modal-actions">
+              <button 
+                type="button" 
+                className="btn btn-secondary"
+                onClick={() => { setShowAdminPrompt(false); setAdminCode(''); }}
+              >
+                Annuler
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-primary"
+                onClick={handleAdminCode}
+              >
+                Valider
               </button>
             </div>
           </div>

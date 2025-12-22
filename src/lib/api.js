@@ -110,6 +110,23 @@ export async function updateGame(gameId, updates) {
   })
 }
 
+export async function deleteGame(gameId) {
+  return apiCall(`/games/${gameId}`, {
+    method: 'DELETE'
+  })
+}
+
+export async function getAllGames() {
+  return apiCall('/games/all')
+}
+
+export async function toggleAdmin(code, disable = false) {
+  return apiCall('/admin/toggle', {
+    method: 'POST',
+    body: JSON.stringify({ code, disable })
+  })
+}
+
 // Messages
 export async function getMessages(gameId) {
   return apiCall(`/games/${gameId}/messages`)

@@ -89,5 +89,28 @@ export default async function handler(req, res) {
     }
   }
 
+  // DELETE - Supprimer une partie
+  if (req.method === 'DELETE') {
+    try {
+      // Supprimer aussi les messages associés
+      const messages = await getCollection('messages')
+      await messages.deleteMany({ gameId })
+      
+      const result = await games.deleteOne({ 
+        _id: new ObjectId(gameId), 
+        userId 
+      })
+
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'Partie non trouvée' })
+      }
+
+      return res.status(200).json({ success: true })
+    } catch (error) {
+      console.error('Delete game error:', error)
+      return res.status(500).json({ error: 'Erreur lors de la suppression' })
+    }
+  }
+
   return res.status(405).json({ error: 'Method not allowed' })
 }
