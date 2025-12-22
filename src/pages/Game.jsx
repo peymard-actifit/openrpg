@@ -533,7 +533,7 @@ PNJ & STORYTELLING
               <div className="input-container">
                 <Dice 
                   diceType={diceType}
-                  requested={diceRequested && !sending}
+                  requested={diceRequested}
                   onRoll={handleDiceRoll}
                 />
                 

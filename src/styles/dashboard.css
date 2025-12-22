@@ -246,6 +246,79 @@
   color: var(--bg-dark);
 }
 
+/* Drag hint */
+.drag-hint {
+  position: absolute;
+  top: 50%;
+  right: var(--space-sm);
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+  cursor: grab;
+}
+
+.game-card:hover .drag-hint {
+  opacity: 0.5;
+}
+
+.game-card.dragging {
+  opacity: 0.5;
+  transform: rotate(3deg);
+}
+
+/* Archive Dropzone */
+.archive-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  margin: var(--space-lg) 0;
+  border: 2px dashed var(--gold-dim);
+  border-radius: 10px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.archive-dropzone:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.archive-dropzone.visible {
+  border-color: var(--gold);
+  animation: dropPulse 1s ease-in-out infinite;
+}
+
+.archive-dropzone.drag-over {
+  border-color: var(--emerald);
+  background: rgba(34, 139, 34, 0.1);
+  transform: scale(1.02);
+}
+
+@keyframes dropPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(212, 175, 55, 0); }
+  50% { box-shadow: 0 0 20px var(--gold-glow); }
+}
+
+.dropzone-icon {
+  font-size: 1.5rem;
+}
+
+.dropzone-text {
+  font-family: var(--font-display);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.dropzone-arrow {
+  color: var(--gold);
+  font-size: 0.8rem;
+}
+
 .archive-reason {
   display: block;
   font-size: 0.75rem;

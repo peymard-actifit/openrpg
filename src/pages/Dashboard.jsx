@@ -24,6 +24,8 @@ export default function Dashboard() {
   const [newGamePrompt, setNewGamePrompt] = useState('')
   const [creating, setCreating] = useState(false)
   const [checking, setChecking] = useState(false)
+  const [draggedGame, setDraggedGame] = useState(null)
+  const [dragOverArchive, setDragOverArchive] = useState(false)
 
   useEffect(() => {
     initDashboard()
@@ -31,7 +33,6 @@ export default function Dashboard() {
 
   async function initDashboard() {
     try {
-      // D'abord vérifier les parties terminées
       setChecking(true)
       try {
         const checkResult = await api.checkFinishedGames()
@@ -42,8 +43,6 @@ export default function Dashboard() {
         console.error('Erreur vérification parties:', err)
       }
       setChecking(false)
-
-      // Puis charger les parties
       await fetchGames()
     } catch (err) {
       console.error('Erreur initialisation:', err)
@@ -120,6 +119,49 @@ export default function Dashboard() {
     }
   }
 
+  // Drag & Drop handlers
+  function handleDragStart(e, game) {
+    setDraggedGame(game)
+    e.dataTransfer.effectAllowed = 'move'
+    e.currentTarget.classList.add('dragging')
+  }
+
+  function handleDragEnd(e) {
+    e.currentTarget.classList.remove('dragging')
+    setDraggedGame(null)
+    setDragOverArchive(false)
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDragOverArchive(true)
+  }
+
+  function handleDragLeave() {
+    setDragOverArchive(false)
+  }
+
+  async function handleDrop(e) {
+    e.preventDefault()
+    setDragOverArchive(false)
+    
+    if (draggedGame && draggedGame.status === 'active') {
+      try {
+        await api.updateGame(draggedGame.id, {
+          status: 'archived',
+          victory: true,
+          victoryReason: 'Archivée manuellement'
+        })
+        fetchGames()
+        setShowArchives(true)
+      } catch (err) {
+        console.error('Erreur archivage:', err)
+      }
+    }
+    setDraggedGame(null)
+  }
+
   function handleLogout() {
     signOut()
     navigate('/')
@@ -128,7 +170,7 @@ export default function Dashboard() {
   const activeGames = games.filter(g => g.status === 'active')
   const archivedGames = games.filter(g => g.status === 'archived')
   const victoryGames = archivedGames.filter(g => g.victory === true)
-  const deathGames = archivedGames.filter(g => g.victory === false || g.deathReason)
+  const deathGames = archivedGames.filter(g => g.victory === false || (g.deathReason && !g.victory))
 
   if (loading) {
     return (
@@ -179,12 +221,6 @@ export default function Dashboard() {
             <h2>🎮 Parties en cours ({activeGames.length})</h2>
             <div className="section-actions">
               <button 
-                className="btn btn-secondary btn-sm"
-                onClick={() => setShowArchives(!showArchives)}
-              >
-                📁 Archives ({archivedGames.length})
-              </button>
-              <button 
                 className="btn btn-primary"
                 onClick={() => setShowNewGame(true)}
               >
@@ -206,6 +242,9 @@ export default function Dashboard() {
                   className="game-card"
                   onClick={() => navigate(`/game/${game.id}`)}
                   title={game.initialPrompt}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, game)}
+                  onDragEnd={handleDragEnd}
                 >
                   <span className="game-icon">📜</span>
                   <div className="game-info">
@@ -222,17 +261,31 @@ export default function Dashboard() {
                   >
                     🔄
                   </button>
+                  <div className="drag-hint">⋮⋮</div>
                 </div>
               ))}
             </div>
           )}
         </section>
 
+        {/* Zone de drop pour archiver */}
+        <div 
+          className={`archive-dropzone ${dragOverArchive ? 'drag-over' : ''} ${draggedGame ? 'visible' : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={() => setShowArchives(!showArchives)}
+        >
+          <span className="dropzone-icon">📁</span>
+          <span className="dropzone-text">
+            {draggedGame ? 'Déposez pour archiver' : `Archives (${archivedGames.length})`}
+          </span>
+          {!draggedGame && <span className="dropzone-arrow">{showArchives ? '▲' : '▼'}</span>}
+        </div>
+
         {/* Archives */}
         {showArchives && archivedGames.length > 0 && (
           <section className="games-section archives">
-            <h2>📁 Archives</h2>
-            
             {victoryGames.length > 0 && (
               <div className="archive-group">
                 <h3>🏆 Victoires ({victoryGames.length})</h3>
@@ -259,7 +312,7 @@ export default function Dashboard() {
                             navigate(`/archive/${game.id}`)
                           }}
                         >
-                          👁️ Voir
+                          👁️
                         </button>
                         <button 
                           className="btn btn-sm btn-primary"
@@ -268,7 +321,7 @@ export default function Dashboard() {
                             handleContinueArchived(game)
                           }}
                         >
-                          ➕ Suite
+                          ➕
                         </button>
                       </div>
                     </div>

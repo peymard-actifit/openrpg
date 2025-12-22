@@ -1,0 +1,41 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 01:57:09 
+🏷️  Version: v0.13.1 → v0.13.2 
+📊 Type: patch 
+💬 Message: Fix dǸs + Drag  
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (6) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_01h40m19s_v0.13.1.txt
+ M package.json
+ M src/components/Dice.jsx
+ M src/pages/Dashboard.jsx
+ M src/pages/Game.jsx
+ M src/styles/dashboard.css
+ M src/styles/dice.css
+?? logs/deploys/2025-12-22_01h57m09s_v0.13.2.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |  8 +++
+ logs/deploys/2025-12-22_01h36m15s_v0.13.0.txt |  3 +
+ logs/deploys/2025-12-22_01h40m19s_v0.13.1.txt | 46 +++++++++++++
+ package.json                                  |  2 +-
+ src/components/AlignmentDisplay.jsx           | 44 +++++++------
+ src/components/Dice.jsx                       | 41 +++++++++---
+ src/pages/Dashboard.jsx                       | 81 +++++++++++++++++++----
+ src/pages/Game.jsx                            | 15 +++--
+ src/styles/alignment.css                      | 19 ++++++
+ src/styles/dashboard.css                      | 73 +++++++++++++++++++++
+ src/styles/dice.css                           | 93 ++++++++++++++++++++++-----
+ src/styles/game.css                           | 50 +++++++++++++-
+ 12 files changed, 406 insertions(+), 69 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

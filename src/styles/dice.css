@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  position: relative;
 }
 
 .dice-btn {
@@ -17,7 +18,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .dice-btn:hover {
@@ -29,16 +30,55 @@
   transform: scale(0.95);
 }
 
-/* Quand demandé */
+/* Quand demandé - TRÈS VISIBLE */
 .dice-btn.requested {
   border-color: var(--gold);
-  box-shadow: 0 0 20px var(--gold-glow);
-  animation: diceGlow 1s ease-in-out infinite alternate;
+  background: rgba(212, 175, 55, 0.2);
+  box-shadow: 0 0 30px var(--gold-glow), 0 0 60px rgba(212, 175, 55, 0.3);
+  animation: diceGlow 0.8s ease-in-out infinite alternate;
 }
 
 @keyframes diceGlow {
-  from { box-shadow: 0 0 15px var(--gold-glow); }
-  to { box-shadow: 0 0 30px var(--gold), 0 0 50px var(--gold-glow); }
+  from { 
+    box-shadow: 0 0 20px var(--gold-glow), 0 0 40px rgba(212, 175, 55, 0.2);
+    transform: scale(1);
+  }
+  to { 
+    box-shadow: 0 0 40px var(--gold), 0 0 80px var(--gold-glow);
+    transform: scale(1.05);
+  }
+}
+
+/* Ping animé */
+.dice-ping {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 14px;
+  height: 14px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: ping 1s ease-in-out infinite;
+}
+
+.dice-ping::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: var(--gold);
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: pingRing 1s ease-out infinite;
+}
+
+@keyframes ping {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes pingRing {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
 }
 
 /* Inner */
@@ -52,28 +92,42 @@
   font-size: 1.8rem;
 }
 
+.dice-btn.requested .dice-face {
+  font-size: 1.5rem;
+  font-family: var(--font-medieval);
+  color: var(--gold);
+  font-weight: bold;
+}
+
 /* Animation de rotation */
+.dice-btn.rolling {
+  animation: shake 0.08s infinite;
+}
+
 .dice-btn.rolling .dice-inner {
-  animation: diceRotate 0.1s linear infinite;
+  animation: diceRotate 0.08s linear infinite;
 }
 
 .dice-spinning {
   font-size: 2rem;
-  filter: blur(1px);
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
 }
 
 @keyframes diceRotate {
-  0% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(90deg) scale(1.1); }
-  50% { transform: rotate(180deg) scale(1); }
-  75% { transform: rotate(270deg) scale(1.1); }
-  100% { transform: rotate(360deg) scale(1); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Résultat */
 .dice-btn.has-result {
   border-color: var(--emerald);
   background: rgba(34, 139, 34, 0.2);
+  animation: none;
+  box-shadow: 0 0 20px rgba(34, 139, 34, 0.4);
 }
 
 .dice-result {
@@ -92,16 +146,23 @@
   color: var(--text-muted);
 }
 
+.dice-btn.requested .dice-label {
+  color: var(--gold);
+  font-weight: bold;
+}
+
 /* Prompt */
 .dice-prompt {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--gold);
-  animation: blink 0.8s ease-in-out infinite;
+  font-weight: bold;
+  animation: blink 0.6s ease-in-out infinite;
+  text-shadow: 0 0 5px var(--gold-glow);
 }
 
 @keyframes blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.4; }
 }
 
 /* Responsive */
