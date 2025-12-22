@@ -44,8 +44,19 @@ export default async function handler(req, res) {
     try {
       const updates = req.body
       
-      // Ne permettre que certains champs
-      const allowedUpdates = ['status', 'level', 'currentStats', 'deathReason']
+      // Champs autorisés pour mise à jour
+      const allowedUpdates = [
+        'status', 
+        'level', 
+        'currentStats', 
+        'deathReason',
+        'victory',
+        'victoryReason',
+        'inventory',
+        'alignment',
+        'rerolls'
+      ]
+      
       const filteredUpdates = {}
       
       for (const key of allowedUpdates) {
@@ -80,4 +91,3 @@ export default async function handler(req, res) {
 
   return res.status(405).json({ error: 'Method not allowed' })
 }
-

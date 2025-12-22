@@ -123,6 +123,21 @@ export async function sendToAI(messages, gameContext) {
   })
 }
 
+// Vérifier les parties terminées
+export async function checkFinishedGames() {
+  return apiCall('/games/check-finished', {
+    method: 'POST'
+  })
+}
+
+// Synchroniser l'inventaire d'une partie
+export async function syncInventory(gameId) {
+  return apiCall('/games/sync-inventory', {
+    method: 'POST',
+    body: JSON.stringify({ gameId })
+  })
+}
+
 export function isAuthenticated() {
   return !!authToken
 }

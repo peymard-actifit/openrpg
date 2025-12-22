@@ -215,6 +215,37 @@
   display: block;
 }
 
+.game-inventory {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: block;
+}
+
+.sync-btn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: var(--bg-elevated);
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.game-card:hover .sync-btn {
+  opacity: 1;
+}
+
+.sync-btn:hover {
+  background: var(--gold);
+  color: var(--bg-dark);
+}
+
 .archive-reason {
   display: block;
   font-size: 0.75rem;

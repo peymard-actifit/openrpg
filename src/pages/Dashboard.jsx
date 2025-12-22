@@ -23,10 +23,33 @@ export default function Dashboard() {
   const [newGameTitle, setNewGameTitle] = useState('')
   const [newGamePrompt, setNewGamePrompt] = useState('')
   const [creating, setCreating] = useState(false)
+  const [checking, setChecking] = useState(false)
 
   useEffect(() => {
-    fetchGames()
+    initDashboard()
   }, [])
+
+  async function initDashboard() {
+    try {
+      // D'abord vérifier les parties terminées
+      setChecking(true)
+      try {
+        const checkResult = await api.checkFinishedGames()
+        if (checkResult.archived > 0) {
+          console.log(`${checkResult.archived} partie(s) archivée(s) automatiquement`)
+        }
+      } catch (err) {
+        console.error('Erreur vérification parties:', err)
+      }
+      setChecking(false)
+
+      // Puis charger les parties
+      await fetchGames()
+    } catch (err) {
+      console.error('Erreur initialisation:', err)
+      setLoading(false)
+    }
+  }
 
   async function fetchGames() {
     try {
@@ -66,22 +89,34 @@ export default function Dashboard() {
   }
 
   async function handleContinueArchived(game) {
-    // Créer un doublon de la partie terminée
     try {
       const newGame = await api.createGame(
         `${game.title} (Suite)`,
         game.initialPrompt,
         game.currentStats || profile?.stats
       )
-      // Copier l'inventaire et l'alignement
       await api.updateGame(newGame.id, {
         inventory: game.inventory || [],
         alignment: game.alignment || { goodEvil: 0, lawChaos: 0 },
-        level: game.level || 1
+        level: game.level || 1,
+        rerolls: game.rerolls || 0
       })
       navigate(`/game/${newGame.id}`)
     } catch (err) {
       console.error('Erreur continuation:', err)
+    }
+  }
+
+  async function handleSyncInventory(gameId, e) {
+    e.stopPropagation()
+    try {
+      const result = await api.syncInventory(gameId)
+      if (result.synced) {
+        alert(`Inventaire synchronisé : ${result.itemCount} objet(s)`)
+        fetchGames()
+      }
+    } catch (err) {
+      console.error('Erreur sync inventaire:', err)
     }
   }
 
@@ -92,11 +127,17 @@ export default function Dashboard() {
 
   const activeGames = games.filter(g => g.status === 'active')
   const archivedGames = games.filter(g => g.status === 'archived')
-  const victoryGames = archivedGames.filter(g => g.victory)
-  const deathGames = archivedGames.filter(g => !g.victory)
+  const victoryGames = archivedGames.filter(g => g.victory === true)
+  const deathGames = archivedGames.filter(g => g.victory === false || g.deathReason)
 
   if (loading) {
-    return <div className="dashboard"><div className="loading">Chargement...</div></div>
+    return (
+      <div className="dashboard">
+        <div className="loading">
+          {checking ? '🔍 Vérification des parties...' : 'Chargement...'}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -170,7 +211,17 @@ export default function Dashboard() {
                   <div className="game-info">
                     <h3>{game.title}</h3>
                     <span className="game-level">Niveau {game.level || 1}</span>
+                    {game.inventory?.length > 0 && (
+                      <span className="game-inventory">🎒 {game.inventory.length}</span>
+                    )}
                   </div>
+                  <button 
+                    className="sync-btn"
+                    onClick={(e) => handleSyncInventory(game.id, e)}
+                    title="Synchroniser l'inventaire"
+                  >
+                    🔄
+                  </button>
                 </div>
               ))}
             </div>
@@ -184,7 +235,7 @@ export default function Dashboard() {
             
             {victoryGames.length > 0 && (
               <div className="archive-group">
-                <h3>🏆 Victoires</h3>
+                <h3>🏆 Victoires ({victoryGames.length})</h3>
                 <div className="games-grid">
                   {victoryGames.map(game => (
                     <div 
@@ -228,7 +279,7 @@ export default function Dashboard() {
 
             {deathGames.length > 0 && (
               <div className="archive-group">
-                <h3>💀 Tombés au combat</h3>
+                <h3>💀 Tombés au combat ({deathGames.length})</h3>
                 <div className="games-grid">
                   {deathGames.map(game => (
                     <div 

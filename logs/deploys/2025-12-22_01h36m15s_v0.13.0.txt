@@ -1,0 +1,48 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 01:36:15 
+🏷️  Version: v0.12.0 → v0.13.0 
+📊 Type: minor 
+💬 Message: Inventaire persistant + VǸrification parties terminǸes + Sync inventaire 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (8) 
+-------------------------------------------------- 
+ M api/games/[gameId].js
+ M api/games/index.js
+ M logs/deploys/2025-12-22_01h08m48s_v0.12.0.txt
+ M package.json
+ M src/lib/api.js
+ M src/pages/Dashboard.jsx
+ M src/styles/dashboard.css
+?? api/games/check-finished.js
+?? api/games/sync-inventory.js
+?? logs/deploys/2025-12-22_01h36m15s_v0.13.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ CONSIGNES.txt                                 |  16 ++-
+ DEPLOYS.md                                    |   8 ++
+ api/chat.js                                   |  10 +-
+ api/games/[gameId].js                         |  16 ++-
+ api/games/index.js                            |   6 +-
+ logs/deploys/2025-12-22_00h56m44s_v0.11.1.txt |   3 +
+ logs/deploys/2025-12-22_01h08m48s_v0.12.0.txt |  45 +++++++
+ package.json                                  |   2 +-
+ src/components/Dice.jsx                       |  76 +++++------
+ src/components/RerollPrompt.jsx               |  40 ++++++
+ src/lib/api.js                                |  15 +++
+ src/pages/Dashboard.jsx                       |  69 ++++++++--
+ src/pages/Game.jsx                            | 176 +++++++++++++++++---------
+ src/styles/dashboard.css                      |  31 +++++
+ src/styles/dice.css                           | 134 +++++++++-----------
+ src/styles/game.css                           |  37 +++++-
+ src/styles/reroll.css                         |  71 +++++++++++
+ 17 files changed, 557 insertions(+), 198 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

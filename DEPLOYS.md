@@ -137,3 +137,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 9 
 - **Rapport**: [2025-12-22_01h08m48s_v0.12.0.txt](logs/deploys/2025-12-22_01h08m48s_v0.12.0.txt) 
  
+ 
+## v0.13.0 - 22/12/2025 01:36:15 
+ 
+- **Type**: minor 
+- **Message**: Inventaire persistant + VǸrification parties terminǸes + Sync inventaire 
+- **Fichiers modifiés**: 8 
+- **Rapport**: [2025-12-22_01h36m15s_v0.13.0.txt](logs/deploys/2025-12-22_01h36m15s_v0.13.0.txt) 
+ 

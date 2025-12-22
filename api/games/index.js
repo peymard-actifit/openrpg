@@ -46,6 +46,11 @@ export default async function handler(req, res) {
         status: 'active',
         level: 1,
         currentStats: currentStats || {},
+        inventory: [],
+        alignment: { goodEvil: 0, lawChaos: 0 },
+        rerolls: 0,
+        victory: false,
+        victoryReason: null,
         deathReason: null,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -65,4 +70,3 @@ export default async function handler(req, res) {
 
   return res.status(405).json({ error: 'Method not allowed' })
 }
-
