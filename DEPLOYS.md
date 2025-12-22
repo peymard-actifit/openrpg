@@ -250,3 +250,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-22_13h59m40s_v0.17.4.txt](logs/deploys/2025-12-22_13h59m40s_v0.17.4.txt) 
  
+ 
+## v0.17.5 - 22/12/2025 14:01:52 
+ 
+- **Type**: patch 
+- **Message**: Prompt IA renforce - balises OBJET obligatoires avec exemples 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-22_14h01m52s_v0.17.5.txt](logs/deploys/2025-12-22_14h01m52s_v0.17.5.txt) 
+ 

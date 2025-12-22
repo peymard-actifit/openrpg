@@ -179,3 +179,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.5 - 22/12/2025 14:01:52 
+ 
+> Prompt IA renforce - balises OBJET obligatoires avec exemples 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

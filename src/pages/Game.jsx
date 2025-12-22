@@ -303,7 +303,18 @@ Réponds UNIQUEMENT avec les balises nécessaires, rien d'autre.`
       
       const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Contexte: ${game.initialPrompt}. Lance l'aventure. IMPORTANT: Si le personnage possède des objets de départ (équipement, or, armes, potions, etc.), utilise OBLIGATOIREMENT les balises [OBJET:nom|icône|description|valeur] pour chacun d'eux.` }
+        { role: 'user', content: `Contexte: ${game.initialPrompt}
+
+LANCE L'AVENTURE avec les équipements de départ.
+
+⚠️ RAPPEL CRITIQUE: Pour CHAQUE objet de départ, tu DOIS écrire:
+[OBJET:nom|icône|description|valeur]
+
+Exemple si le personnage a un bâton et une potion:
+[OBJET:Bâton|🪵|Arme simple|10]
+[OBJET:Potion de soin|🧪|Restaure 10 PV|25]
+
+Commence l'histoire et liste les objets avec leurs balises.` }
       ], { game, profile, stats: game.currentStats })
 
       const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
@@ -486,39 +497,36 @@ INVENTAIRE (${inventory.length})
 ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name} (${i.value || 0}💰)`).join(', ') : 'Vide'}
 
 ═══════════════════════════════════════════
-RÈGLES
+⚠️ RÈGLE CRITIQUE - OBJETS ⚠️
 ═══════════════════════════════════════════
+CHAQUE FOIS qu'un objet est mentionné, tu DOIS utiliser les balises:
 
-🎲 DÉS - Quand le résultat est incertain:
-   [LANCER_D20] Combat, actions majeures
-   [LANCER_D6] Actions simples risquées
-   [LANCER_D100] Événements rares
+✅ OBTENIR → [OBJET:nom|icône|description|valeur]
+✅ PERDRE  → [RETIRER:nom]
 
-📦 OBJETS - OBLIGATOIRE pour TOUT objet:
-   Quand le joueur OBTIENT un objet: [OBJET:nom|icône|description|valeur]
-   Quand le joueur UTILISE/PERD un objet: [RETIRER:nom]
-   ⚠️ TOUJOURS utiliser ces balises, même pour l'or, les clés, etc.
+EXEMPLES OBLIGATOIRES:
+- Bâton → [OBJET:Bâton en bois|🪵|Arme simple, dégâts 1D6|5]
+- Potion → [OBJET:Potion de soin|🧪|Restaure 10 PV|25]
+- Or → [OBJET:50 pièces d'or|💰|Monnaie|50]
+- Clé → [OBJET:Clé rouillée|🔑|Ouvre une porte inconnue|2]
 
+❌ INTERDIT: Mentionner un objet SANS sa balise [OBJET:...]
+❌ INTERDIT: Dire "vous recevez une épée" sans [OBJET:Épée|⚔️|...|...]
+
+═══════════════════════════════════════════
+AUTRES RÈGLES
+═══════════════════════════════════════════
+🎲 DÉS (action incertaine): [LANCER_D20] ou [LANCER_D6] ou [LANCER_D100]
 ⚖️ ALIGNEMENT: [ALIGN:goodEvil,lawChaos]
-
-⬆️ NIVEAU - Après exploit ou victoire significative:
-   [LEVEL_UP]
-
-🔄 BONUS RELANCE - Récompense occasionnelle:
-   [BONUS_REROLL]
+⬆️ NIVEAU (après exploit): [LEVEL_UP]
+🔄 BONUS RELANCE: [BONUS_REROLL]
+💀 MORT: [MORT:description]
+🏆 VICTOIRE: [VICTOIRE:accomplissement]
 
 ═══════════════════════════════════════════
-FIN DE PARTIE
+STORYTELLING
 ═══════════════════════════════════════════
-💀 MORT (danger mortel réel): [MORT:description]
-🏆 VICTOIRE (objectif atteint): [VICTOIRE:accomplissement]
-
-═══════════════════════════════════════════
-PNJ & STORYTELLING
-═══════════════════════════════════════════
-• Crée des PNJ mémorables avec personnalité
-• Tension, retournements, dilemmes
-• Objets avec valeur pour le commerce
+• PNJ mémorables, tension, retournements
 • N'utilise JAMAIS [IMAGE:]`
   }
 
