@@ -297,7 +297,7 @@
 /* Confirmation message */
 .confirm-message {
   background: var(--bg-elevated);
-  border: 1px solid var(--gold-dim);
+  border: 1px solid var(--gold);
   border-radius: 8px;
   padding: var(--space-md);
   margin-bottom: var(--space-sm);
@@ -305,12 +305,19 @@
 
 .confirm-text {
   font-style: italic;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
   padding: var(--space-sm);
   background: var(--bg-input);
   border-radius: 4px;
-  font-size: 0.95rem;
+  font-size: 1rem;
+}
+
+.confirm-hint {
+  font-size: 0.8rem;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: var(--space-sm);
 }
 
 .confirm-actions {
@@ -322,6 +329,28 @@
 .confirm-actions .btn {
   padding: var(--space-xs) var(--space-md);
   font-size: 0.85rem;
+}
+
+/* Badge relances */
+.reroll-badge {
+  padding: var(--space-xs) var(--space-sm);
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: var(--gold);
+}
+
+/* Bonus notice */
+.bonus-notice {
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid var(--gold);
+  padding: var(--space-sm);
+  border-radius: 6px;
+  text-align: center;
+  color: var(--gold);
+  font-size: 0.95rem;
+  margin: var(--space-sm) 0;
 }
 
 .input-container {

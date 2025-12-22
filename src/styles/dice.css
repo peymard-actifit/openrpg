@@ -1,133 +1,117 @@
-.dice-btn {
-  width: 54px;
-  height: 54px;
-  border-radius: 10px;
-  border: 2px solid var(--gold-dim);
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
+.dice-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4px;
+}
+
+.dice-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  border: 2px solid var(--gold-dim);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   position: relative;
+  overflow: hidden;
 }
 
 .dice-btn:hover {
   border-color: var(--gold);
   transform: scale(1.05);
-  background: rgba(212, 175, 55, 0.1);
 }
 
 .dice-btn:active {
   transform: scale(0.95);
 }
 
-/* Quand demandé par l'IA */
+/* Quand demandé */
 .dice-btn.requested {
   border-color: var(--gold);
-  animation: dicePulse 1s ease-in-out infinite;
   box-shadow: 0 0 20px var(--gold-glow);
+  animation: diceGlow 1s ease-in-out infinite alternate;
 }
 
-.dice-btn.requested:hover {
-  animation: none;
-  box-shadow: 0 0 30px var(--gold-glow);
+@keyframes diceGlow {
+  from { box-shadow: 0 0 15px var(--gold-glow); }
+  to { box-shadow: 0 0 30px var(--gold), 0 0 50px var(--gold-glow); }
 }
 
-/* Animation ping pour attirer l'attention */
-.dice-ping {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 12px;
-  height: 12px;
-  background: var(--gold);
-  border-radius: 50%;
-  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+/* Inner */
+.dice-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.dice-ping::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gold);
-  border-radius: 50%;
-  animation: pingRing 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+.dice-face {
+  font-size: 1.8rem;
 }
 
-@keyframes ping {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+/* Animation de rotation */
+.dice-btn.rolling .dice-inner {
+  animation: diceRotate 0.1s linear infinite;
 }
 
-@keyframes pingRing {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
+.dice-spinning {
+  font-size: 2rem;
+  filter: blur(1px);
 }
 
-/* Résultat affiché */
-.dice-btn.result {
+@keyframes diceRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1); }
+  75% { transform: rotate(270deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Résultat */
+.dice-btn.has-result {
   border-color: var(--emerald);
   background: rgba(34, 139, 34, 0.2);
 }
 
-.dice-btn.result .dice-face {
-  color: var(--gold);
-  font-weight: bold;
-  font-size: 1.8rem;
-}
-
-/* Animation de roulement */
-.dice-btn.rolling {
-  animation: shake 0.1s infinite;
-}
-
-.dice-btn.rolling .dice-face {
-  animation: flash 0.1s infinite;
-}
-
-@keyframes dicePulse {
-  0%, 100% { box-shadow: 0 0 15px var(--gold-glow); }
-  50% { box-shadow: 0 0 30px var(--gold-glow); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: rotate(-8deg) scale(1.05); }
-  50% { transform: rotate(8deg) scale(1.05); }
-}
-
-@keyframes flash {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-.dice-face {
-  font-weight: bold;
-  line-height: 1;
+.dice-result {
   font-family: var(--font-medieval);
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--gold);
+  text-shadow: 0 0 10px var(--gold-glow);
 }
 
-.dice-type {
-  font-size: 0.6rem;
+/* Label */
+.dice-label {
   position: absolute;
-  bottom: 3px;
+  bottom: 2px;
+  font-size: 0.6rem;
   color: var(--text-muted);
-  font-family: var(--font-body);
+}
+
+/* Prompt */
+.dice-prompt {
+  font-size: 0.7rem;
+  color: var(--gold);
+  animation: blink 0.8s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 /* Responsive */
 @media (max-width: 480px) {
   .dice-btn {
-    width: 48px;
-    height: 48px;
-    font-size: 1.3rem;
+    width: 50px;
+    height: 50px;
   }
   
-  .dice-btn.result .dice-face {
+  .dice-face, .dice-result {
     font-size: 1.5rem;
   }
 }

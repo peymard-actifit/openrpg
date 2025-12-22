@@ -1,61 +1,61 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import '../styles/dice.css'
 
-export default function Dice({ onRoll, disabled, diceType = 6, requested = false }) {
+const DICE_FACES = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
+
+export default function Dice({ diceType = 6, requested = false, onRoll }) {
   const [rolling, setRolling] = useState(false)
-  const [lastValue, setLastValue] = useState(null)
-  const [showResult, setShowResult] = useState(false)
+  const [currentFace, setCurrentFace] = useState(0)
+  const [result, setResult] = useState(null)
 
   function roll() {
     if (rolling) return
     
     setRolling(true)
-    setShowResult(false)
+    setResult(null)
     
-    // Animation de roulement
-    let count = 0
+    // Animation rapide de rotation
+    let ticks = 0
+    const maxTicks = 20
     const interval = setInterval(() => {
-      setLastValue(Math.floor(Math.random() * diceType) + 1)
-      count++
-      if (count > 12) {
+      setCurrentFace(Math.floor(Math.random() * 6))
+      ticks++
+      
+      if (ticks >= maxTicks) {
         clearInterval(interval)
         const finalValue = Math.floor(Math.random() * diceType) + 1
-        setLastValue(finalValue)
+        setResult(finalValue)
         setRolling(false)
-        setShowResult(true)
         
-        // Si c'était demandé par l'IA, envoyer le résultat
+        // Si demandé par l'IA, envoyer le résultat
         if (requested && onRoll) {
-          setTimeout(() => {
-            onRoll(finalValue, diceType)
-            setShowResult(false)
-            setLastValue(null)
-          }, 1000)
+          onRoll(finalValue, diceType)
         }
       }
-    }, 70)
-  }
-
-  function getDiceEmoji() {
-    if (diceType <= 6) return '🎲'
-    if (diceType <= 10) return '🔟'
-    if (diceType <= 20) return '🎯'
-    return '💯'
+    }, 50)
   }
 
   return (
-    <button 
-      className={`dice-btn ${rolling ? 'rolling' : ''} ${requested ? 'requested' : ''} ${showResult ? 'result' : ''}`}
-      onClick={roll}
-      title={requested ? `Lancez le D${diceType} !` : `D${diceType} (pour le fun)`}
-    >
-      <span className="dice-face">
-        {rolling ? '?' : (showResult && lastValue ? lastValue : getDiceEmoji())}
-      </span>
-      <span className="dice-type">D{diceType}</span>
-      {requested && !rolling && !showResult && (
-        <span className="dice-ping"></span>
+    <div className="dice-container">
+      <button 
+        className={`dice-btn ${rolling ? 'rolling' : ''} ${requested ? 'requested' : ''} ${result ? 'has-result' : ''}`}
+        onClick={roll}
+        title={requested ? `Lancez le D${diceType} !` : 'Lancer pour le fun'}
+      >
+        <div className="dice-inner">
+          {rolling ? (
+            <span className="dice-spinning">{DICE_FACES[currentFace]}</span>
+          ) : result ? (
+            <span className="dice-result">{result}</span>
+          ) : (
+            <span className="dice-face">{diceType <= 6 ? '🎲' : `D${diceType}`}</span>
+          )}
+        </div>
+        <span className="dice-label">D{diceType}</span>
+      </button>
+      {requested && !rolling && !result && (
+        <div className="dice-prompt">Cliquez !</div>
       )}
-    </button>
+    </div>
   )
 }

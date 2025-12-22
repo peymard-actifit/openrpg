@@ -1,0 +1,42 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 01:08:48 
+🏷️  Version: v0.11.1 → v0.12.0 
+📊 Type: minor 
+💬 Message: DǸs amǸliorǸs + Syst��me relances + Validation EntrǸe 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (9) 
+-------------------------------------------------- 
+ M CONSIGNES.txt
+ M api/chat.js
+ M logs/deploys/2025-12-22_00h56m44s_v0.11.1.txt
+ M package.json
+ M src/components/Dice.jsx
+ M src/pages/Game.jsx
+ M src/styles/dice.css
+ M src/styles/game.css
+?? logs/deploys/2025-12-22_01h08m48s_v0.12.0.txt
+?? src/components/RerollPrompt.jsx
+?? src/styles/reroll.css
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ CONSIGNES.txt                                 |  16 ++-
+ DEPLOYS.md                                    |   8 ++
+ api/chat.js                                   |  10 +-
+ logs/deploys/2025-12-22_00h53m13s_v0.11.0.txt |   3 +
+ logs/deploys/2025-12-22_00h56m44s_v0.11.1.txt |  42 ++++++
+ package.json                                  |   2 +-
+ src/components/Dice.jsx                       |  71 +++++++----
+ src/pages/Game.jsx                            | 176 +++++++++++++++++---------
+ src/styles/dice.css                           | 111 +++++++++++-----
+ src/styles/game.css                           |  37 +++++-
+ 10 files changed, 345 insertions(+), 131 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

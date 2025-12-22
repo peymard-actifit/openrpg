@@ -5,6 +5,7 @@ import * as api from '../lib/api'
 import Dice from '../components/Dice'
 import Inventory, { InventoryPreview } from '../components/Inventory'
 import LevelUpModal from '../components/LevelUpModal'
+import RerollPrompt from '../components/RerollPrompt'
 import StatsPanel from '../components/StatsPanel'
 import { VoiceInput, VoiceOutput, useTextToSpeech } from '../components/VoiceControls'
 import '../styles/game.css'
@@ -15,6 +16,7 @@ export default function Game() {
   const navigate = useNavigate()
   const messagesContainerRef = useRef(null)
   const lastMessageRef = useRef(null)
+  const inputRef = useRef(null)
   
   const [game, setGame] = useState(null)
   const [messages, setMessages] = useState([])
@@ -33,8 +35,11 @@ export default function Game() {
   const [alignment, setAlignment] = useState({ goodEvil: 0, lawChaos: 0 })
   const [pendingMessage, setPendingMessage] = useState(null)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [rerolls, setRerolls] = useState(0)
+  const [pendingDiceResult, setPendingDiceResult] = useState(null)
+  const [showRerollPrompt, setShowRerollPrompt] = useState(false)
   
-  const { speak, stop: stopSpeaking, isSpeaking } = useTextToSpeech()
+  const { speak, stop: stopSpeaking } = useTextToSpeech()
 
   useEffect(() => {
     fetchGame()
@@ -60,6 +65,13 @@ export default function Game() {
       checkInventoryConsistency()
     }
   }, [gameStarted, messages, inventoryChecked])
+
+  // Focus sur input après fermeture de la confirmation
+  useEffect(() => {
+    if (!showConfirm && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [showConfirm])
 
   async function checkInventoryConsistency() {
     if (inventoryChecked || messages.length < 3) return
@@ -91,10 +103,7 @@ INVENTAIRE ACTUEL: ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.na
 Analyse l'historique. Pour chaque objet mentionné comme obtenu mais absent:
 [OBJET:nom|icône|description courte|valeur en pièces]
 
-Exemple: [OBJET:Épée rouillée|⚔️|Vieille épée ébréchée|15]
-
-Inclus TOUT: or (pièces d'or → 💰), armes, armures, potions, clés, etc.
-Pour l'or/argent, indique la quantité dans le nom.
+Inclus TOUT: or, armes, armures, potions, clés, etc.
 
 Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
   }
@@ -111,6 +120,7 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       setGame(gameData)
       setInventory(gameData.inventory || [])
       setAlignment(gameData.alignment || { goodEvil: 0, lawChaos: 0 })
+      setRerolls(gameData.rerolls || 0)
 
       const messagesData = await api.getMessages(gameId)
       setMessages(messagesData || [])
@@ -129,7 +139,6 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
   }
 
   function checkForDiceRequest(content) {
-    // Cherche [LANCER_Dx] où x est le type de dé
     const diceMatch = content.match(/\[LANCER_D(\d+)\]/)
     if (diceMatch) {
       setDiceType(parseInt(diceMatch[1]))
@@ -137,12 +146,44 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
     } else if (content.includes('[LANCER_DE]')) {
       setDiceType(6)
       setDiceRequested(true)
+    } else {
+      setDiceRequested(false)
+      setDiceType(6)
     }
   }
 
   function handleDiceRoll(value, type) {
+    const threshold = Math.floor(type / 3)
+    
+    // Si résultat faible et relances disponibles, proposer de relancer
+    if (value <= threshold && rerolls > 0) {
+      setPendingDiceResult({ value, type })
+      setShowRerollPrompt(true)
+    } else {
+      finalizeDiceRoll(value, type)
+    }
+  }
+
+  function handleReroll() {
+    setShowRerollPrompt(false)
+    setRerolls(prev => prev - 1)
+    api.updateGame(gameId, { rerolls: rerolls - 1 })
+    
+    // Relancer le dé
+    const newValue = Math.floor(Math.random() * pendingDiceResult.type) + 1
+    finalizeDiceRoll(newValue, pendingDiceResult.type)
+    setPendingDiceResult(null)
+  }
+
+  function handleKeepResult() {
+    setShowRerollPrompt(false)
+    finalizeDiceRoll(pendingDiceResult.value, pendingDiceResult.type)
+    setPendingDiceResult(null)
+  }
+
+  function finalizeDiceRoll(value, type) {
     setDiceRequested(false)
-    confirmAndSend(`🎲 D${type}: ${value}`)
+    sendMessageDirect(`🎲 D${type}: ${value}`)
   }
 
   function handleVoiceTranscript(text) {
@@ -159,9 +200,14 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
     const newStats = { ...game.currentStats }
     newStats[statKey] = (newStats[statKey] || 10) + 1
     
+    // Gagner une relance à chaque niveau
+    const newRerolls = rerolls + 1
+    setRerolls(newRerolls)
+    
     await api.updateGame(gameId, { 
       level: pendingLevel,
-      currentStats: newStats
+      currentStats: newStats,
+      rerolls: newRerolls
     })
     
     setGame(prev => ({
@@ -181,7 +227,7 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       
       const response = await api.sendToAI([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Contexte: ${game.initialPrompt}. Lance l'aventure. Si le personnage commence avec des objets, liste-les tous.` }
+        { role: 'user', content: `Contexte: ${game.initialPrompt}. Lance l'aventure. Liste les objets de départ si pertinent.` }
       ], { game, profile, stats: game.currentStats })
 
       const aiMessage = await api.addMessage(gameId, 'assistant', response.content)
@@ -209,19 +255,14 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
     setShowConfirm(false)
   }
 
-  function confirmAndSend(overrideMessage = null) {
-    const msg = overrideMessage || pendingMessage
+  function confirmAndSend() {
     setShowConfirm(false)
+    setInput('')
+    sendMessageDirect(pendingMessage)
     setPendingMessage(null)
-    if (overrideMessage) {
-      sendMessage(msg)
-    } else {
-      setInput('')
-      sendMessage(msg)
-    }
   }
 
-  async function sendMessage(messageToSend) {
+  async function sendMessageDirect(messageToSend) {
     if (!messageToSend || sending) return
     
     setSending(true)
@@ -280,7 +321,13 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       api.updateGame(gameId, { alignment: newAlignment })
     }
 
-    // Mort du joueur
+    // Bonus de relance
+    if (response.bonusReroll) {
+      const newRerolls = rerolls + 1
+      setRerolls(newRerolls)
+      api.updateGame(gameId, { rerolls: newRerolls })
+    }
+
     if (response.playerDied) {
       api.updateGame(gameId, { 
         status: 'archived',
@@ -290,7 +337,6 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
       setTimeout(() => navigate(`/archive/${gameId}`), 4000)
     }
 
-    // Victoire !
     if (response.victory) {
       api.updateGame(gameId, { 
         status: 'archived',
@@ -312,22 +358,22 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
     return `Tu es le Maître du Jeu d'OpenRPG, un jeu de rôle textuel immersif.
 
 ═══════════════════════════════════════════
-CONTEXTE DE L'AVENTURE
+CONTEXTE
 ═══════════════════════════════════════════
 ${game?.initialPrompt}
 
-Utilise tes connaissances de cet univers pour enrichir l'histoire.
+Utilise tes connaissances de cet univers.
 
 ═══════════════════════════════════════════
 PERSONNAGE - ${profile?.characterName} (Niveau ${game?.level}, Tour ${turnCount + 1})
 ═══════════════════════════════════════════
 FOR: ${game?.currentStats?.strength} | INT: ${game?.currentStats?.intelligence} | SAG: ${game?.currentStats?.wisdom}
 DEX: ${game?.currentStats?.dexterity} | CON: ${game?.currentStats?.constitution} | MANA: ${game?.currentStats?.mana}
-
 Alignement: ${alignment.goodEvil > 30 ? 'Bon' : alignment.goodEvil < -30 ? 'Mauvais' : 'Neutre'} / ${alignment.lawChaos > 30 ? 'Loyal' : alignment.lawChaos < -30 ? 'Chaotique' : 'Neutre'}
+Relances disponibles: ${rerolls}
 
 ═══════════════════════════════════════════
-INVENTAIRE
+INVENTAIRE (${inventory.length})
 ═══════════════════════════════════════════
 ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name} (${i.value || 0}💰)`).join(', ') : 'Vide'}
 
@@ -335,55 +381,46 @@ ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name} (${i.value || 0
 RÈGLES
 ═══════════════════════════════════════════
 
-🎲 DÉS - Seulement quand le résultat est vraiment incertain:
+🎲 DÉS - Quand le résultat est incertain:
    [LANCER_D20] Combat, actions majeures
-   [LANCER_D6] Actions simples
-   [LANCER_D100] Événements très rares
-   Ne demande PAS de dé pour des actions triviales ou évidentes.
+   [LANCER_D6] Actions simples risquées
+   [LANCER_D100] Événements rares
 
-📦 OBJETS:
-   [OBJET:nom|icône|description|valeur] pour ajouter
-   [RETIRER:nom] pour retirer
+📦 OBJETS - Butin régulier:
+   [OBJET:nom|icône|description|valeur]
+   [RETIRER:nom]
 
 ⚖️ ALIGNEMENT: [ALIGN:goodEvil,lawChaos]
 
-⬆️ NIVEAU: [LEVEL_UP] (tous les 6-8 tours ou exploit)
+⬆️ NIVEAU - Après exploit ou victoire significative:
+   [LEVEL_UP]
+
+🔄 BONUS RELANCE - Récompense occasionnelle:
+   [BONUS_REROLL]
 
 ═══════════════════════════════════════════
 FIN DE PARTIE
 ═══════════════════════════════════════════
-
-💀 MORT - Si le joueur est en danger MORTEL réel:
-   [MORT:description de la mort]
-   Sois juste: la mort doit être méritée par les actions/échecs.
-
-🏆 VICTOIRE - Si l'objectif du prompt initial est ATTEINT:
-   [VICTOIRE:description de l'accomplissement]
-   Vérifie que la quête principale est vraiment accomplie.
+💀 MORT (danger mortel réel): [MORT:description]
+🏆 VICTOIRE (objectif atteint): [VICTOIRE:accomplissement]
 
 ═══════════════════════════════════════════
-PNJ (Personnages Non-Joueurs)
+PNJ & STORYTELLING
 ═══════════════════════════════════════════
-Tu peux créer et gérer des PNJ:
-• Alliés, marchands, informateurs, ennemis
-• Ils ont leur personnalité et motivations
-• Ils se souviennent des interactions passées
-• Ils peuvent trahir, aider, évoluer
-• Les antagonistes peuvent revenir
-
-═══════════════════════════════════════════
-STORYTELLING
-═══════════════════════════════════════════
-• Crée tension, retournements, dilemmes
-• Les actions ont des conséquences durables
-• Objets avec valeur pour vente aux marchands
+• Crée des PNJ mémorables avec personnalité
+• Tension, retournements, dilemmes
+• Objets avec valeur pour le commerce
 • N'utilise JAMAIS [IMAGE:]`
   }
 
-  function handleKeyPress(e) {
+  function handleKeyDown(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      prepareMessage()
+      if (showConfirm) {
+        confirmAndSend()
+      } else if (input.trim()) {
+        prepareMessage()
+      }
     }
   }
 
@@ -402,6 +439,11 @@ STORYTELLING
             </button>
             <InventoryPreview items={inventory} />
           </div>
+          {rerolls > 0 && (
+            <span className="reroll-badge" title="Relances disponibles">
+              🔄 {rerolls}
+            </span>
+          )}
         </div>
         <div className="game-title">
           <h1>{game?.title}</h1>
@@ -470,11 +512,12 @@ STORYTELLING
               {showConfirm && (
                 <div className="confirm-message">
                   <div className="confirm-text">"{pendingMessage}"</div>
+                  <div className="confirm-hint">Appuyez sur Entrée pour confirmer</div>
                   <div className="confirm-actions">
                     <button className="btn btn-secondary" onClick={cancelMessage}>
                       ✏️ Modifier
                     </button>
-                    <button className="btn btn-primary" onClick={() => confirmAndSend()}>
+                    <button className="btn btn-primary" onClick={confirmAndSend}>
                       ✓ Envoyer
                     </button>
                   </div>
@@ -483,16 +526,17 @@ STORYTELLING
               
               <div className="input-container">
                 <Dice 
-                  onRoll={handleDiceRoll} 
-                  requested={diceRequested && !sending}
                   diceType={diceType}
+                  requested={diceRequested && !sending}
+                  onRoll={handleDiceRoll}
                 />
                 
                 <div className="input-wrapper">
                   <textarea
+                    ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyDown}
                     placeholder="Que faites-vous ?"
                     disabled={sending || showConfirm}
                     rows={1}
@@ -526,6 +570,16 @@ STORYTELLING
         currentStats={game?.currentStats}
         onChoose={handleLevelUpChoice}
       />
+
+      {showRerollPrompt && pendingDiceResult && (
+        <RerollPrompt
+          diceResult={pendingDiceResult.value}
+          diceType={pendingDiceResult.type}
+          rerollsAvailable={rerolls}
+          onReroll={handleReroll}
+          onKeep={handleKeepResult}
+        />
+      )}
     </div>
   )
 }
@@ -533,10 +587,10 @@ STORYTELLING
 function formatMessage(content) {
   let formatted = content
 
-  // Retirer les tags système
   formatted = formatted.replace(/\[OBJET:[^\]]+\]/g, '')
   formatted = formatted.replace(/\[RETIRER:[^\]]+\]/g, '')
   formatted = formatted.replace(/\[ALIGN:[^\]]+\]/g, '')
+  formatted = formatted.replace(/\[BONUS_REROLL\]/g, '<div class="bonus-notice">🔄 +1 Relance !</div>')
   formatted = formatted.replace(/\[LANCER_D\d+\]/g, '<span class="dice-inline">🎲</span>')
   formatted = formatted.replace(/\[LANCER_DE\]/g, '<span class="dice-inline">🎲</span>')
   formatted = formatted.replace(/\[MORT:\s*([^\]]+)\]/g, '<div class="death-notice">💀 MORT — $1</div>')

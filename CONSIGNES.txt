@@ -201,6 +201,19 @@ Utilise tes connaissances pour enrichir l'aventure:
 - Vocabulaire et ambiance appropriés
 
 ═══════════════════════════════════════════════════════════════════════════════
+11. SYSTÈME DE RELANCES
+═══════════════════════════════════════════════════════════════════════════════
+
+Le joueur peut accumuler des relances:
+- +1 relance à chaque montée de niveau
+- L'IA peut donner des bonus avec [BONUS_REROLL]
+
+Quand utiliser une relance:
+- Si le résultat du dé est ≤ tiers de la valeur max (ex: 1-2 sur D6, 1-6 sur D20)
+- Le programme propose automatiquement de relancer
+- Le joueur choisit de garder ou relancer
+
+═══════════════════════════════════════════════════════════════════════════════
 RÉSUMÉ DES BALISES
 ═══════════════════════════════════════════════════════════════════════════════
 
@@ -208,7 +221,8 @@ RÉSUMÉ DES BALISES
 [OBJET:nom|icône|description|valeur]  → Ajouter objet à l'inventaire
 [RETIRER:nom]                         → Retirer objet de l'inventaire
 [ALIGN:goodEvil,lawChaos]             → Modifier alignement
-[LEVEL_UP]                            → Montée de niveau
+[LEVEL_UP]                            → Montée de niveau (+1 relance)
+[BONUS_REROLL]                        → Bonus de relance
 [MORT:raison]                         → Fin de partie (mort)
 [VICTOIRE:accomplissement]            → Fin de partie (succès)
 

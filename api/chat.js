@@ -27,6 +27,7 @@ export default async function handler(req, res) {
     const playerDied = content.includes('[MORT:')
     const levelUp = content.includes('[LEVEL_UP')
     const victory = content.includes('[VICTOIRE:')
+    const bonusReroll = content.includes('[BONUS_REROLL]')
     
     let deathReason = null
     if (playerDied) {
@@ -40,9 +41,8 @@ export default async function handler(req, res) {
       if (match) victoryReason = match[1]
     }
 
-    // Extraire les objets [OBJET:nom|icône|description|valeur]
+    // Extraire les objets
     const newItems = []
-    // Format avec valeur
     const itemMatchesWithValue = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^|]+)\|(\d+)\]/g)
     for (const match of itemMatchesWithValue) {
       newItems.push({
@@ -52,7 +52,6 @@ export default async function handler(req, res) {
         value: parseInt(match[4]) || 0
       })
     }
-    // Format sans valeur (rétrocompatibilité)
     const itemMatchesNoValue = content.matchAll(/\[OBJET:([^|]+)\|([^|]+)\|([^\]|]+)\](?!\d)/g)
     for (const match of itemMatchesNoValue) {
       const alreadyAdded = newItems.some(item => item.name === match[1].trim())
@@ -66,14 +65,14 @@ export default async function handler(req, res) {
       }
     }
 
-    // Extraire les objets RETIRÉS [RETIRER:nom]
+    // Objets retirés
     const removedItems = []
     const removeMatches = content.matchAll(/\[RETIRER:\s*([^\]]+)\]/g)
     for (const match of removeMatches) {
       removedItems.push(match[1].trim())
     }
 
-    // Extraire les changements d'alignement [ALIGN:goodEvil,lawChaos]
+    // Alignement
     let alignmentChange = null
     const alignMatch = content.match(/\[ALIGN:\s*([+-]?\d+)\s*,\s*([+-]?\d+)\s*\]/)
     if (alignMatch) {
@@ -90,6 +89,7 @@ export default async function handler(req, res) {
       victory,
       victoryReason,
       levelUp,
+      bonusReroll,
       newItems,
       removedItems,
       alignmentChange

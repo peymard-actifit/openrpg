@@ -129,3 +129,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 4 
 - **Rapport**: [2025-12-22_00h56m44s_v0.11.1.txt](logs/deploys/2025-12-22_00h56m44s_v0.11.1.txt) 
  
+ 
+## v0.12.0 - 22/12/2025 01:08:48 
+ 
+- **Type**: minor 
+- **Message**: DǸs amǸliorǸs + Syst��me relances + Validation EntrǸe 
+- **Fichiers modifiés**: 9 
+- **Rapport**: [2025-12-22_01h08m48s_v0.12.0.txt](logs/deploys/2025-12-22_01h08m48s_v0.12.0.txt) 
+ 
