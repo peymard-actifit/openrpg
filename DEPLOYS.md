@@ -266,3 +266,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 4 
 - **Rapport**: [2025-12-22_14h04m20s_v0.17.6.txt](logs/deploys/2025-12-22_14h04m20s_v0.17.6.txt) 
  
+ 
+## v0.17.7 - 22/12/2025 14:08:26 
+ 
+- **Type**: patch 
+- **Message**: Extraction auto objets du texte narratif sans balises + sync au chargement 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-22_14h08m26s_v0.17.7.txt](logs/deploys/2025-12-22_14h08m26s_v0.17.7.txt) 
+ 

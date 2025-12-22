@@ -197,3 +197,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 4 
  
+ 
+--- 
+ 
+### v0.17.7 - 22/12/2025 14:08:26 
+ 
+> Extraction auto objets du texte narratif sans balises + sync au chargement 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

@@ -1,6 +1,6 @@
 {
   "name": "openrpg",
-  "version": "0.17.6",
+  "version": "0.17.7",
   "description": "Jeux de rôles ouvert - Plateforme de JDR alimentée par l'IA",
   "type": "module",
   "scripts": {

@@ -107,37 +107,35 @@ export default function Game() {
     // Analyser les 3 dernières interactions (6 derniers messages)
     const recentMessages = messages.slice(-6)
     
-    // Vérifier s'il y a des mentions d'objets dans les messages récents
-    const hasObjectMentions = recentMessages.some(m => 
-      m.role === 'assistant' && (
-        m.content.includes('[OBJET:') ||
-        m.content.includes('[RETIRER:') ||
-        /(?:trouv|reçoi|obtien|prend|récupèr|donn|achet|perd|utilis|consomm)/i.test(m.content)
-      )
-    )
-
-    if (!hasObjectMentions && inventory.length > 0) {
-      // Pas de changements récents, inventaire probablement à jour
-      return
-    }
+    if (recentMessages.length === 0) return
 
     try {
-      console.log('🔍 Vérification inventaire au chargement...')
+      console.log('🔍 Synchronisation inventaire au chargement...')
       
       const response = await api.sendToAI([
         { role: 'system', content: buildInventoryCheckPrompt(recentMessages) },
-        { role: 'user', content: '[SYSTÈME] Analyse ces 3 dernières interactions et mets à jour l\'inventaire.' }
+        { role: 'user', content: 'Analyse le texte et liste TOUS les objets que le joueur devrait avoir.' }
       ], { game, profile, inventory })
 
-      if (response.newItems?.length > 0 || response.removedItems?.length > 0) {
-        console.log('📦 Mise à jour inventaire:', {
-          ajoutés: response.newItems?.map(i => i.name) || [],
-          retirés: response.removedItems || []
-        })
-        processAIResponse(response, true, inventory)
+      if (response.newItems?.length > 0) {
+        const updatedInventory = [...inventory, ...response.newItems]
+        setInventory(updatedInventory)
+        api.updateGame(gameId, { inventory: updatedInventory })
+        console.log('📦 Objets synchronisés:', response.newItems.map(i => i.name).join(', '))
+      }
+      
+      if (response.removedItems?.length > 0) {
+        const filteredInventory = inventory.filter(item => 
+          !response.removedItems.some(removed => 
+            item.name.toLowerCase().includes(removed.toLowerCase())
+          )
+        )
+        setInventory(filteredInventory)
+        api.updateGame(gameId, { inventory: filteredInventory })
+        console.log('🗑️ Objets retirés:', response.removedItems.join(', '))
       }
     } catch (err) {
-      console.error('Erreur vérification inventaire:', err)
+      console.error('Erreur synchronisation inventaire:', err)
     }
   }
 
@@ -149,33 +147,38 @@ export default function Game() {
     return `Tu es le système de synchronisation d'inventaire d'OpenRPG.
 
 ═══════════════════════════════════════════
-INVENTAIRE ACTUEL DU JOUEUR
+INVENTAIRE ACTUEL (peut être incomplet)
 ═══════════════════════════════════════════
-${inventory.length > 0 ? inventory.map(i => `• ${i.icon} ${i.name} (${i.value}💰)`).join('\n') : '(Vide)'}
+${inventory.length > 0 ? inventory.map(i => `• ${i.icon} ${i.name}`).join('\n') : '(Vide)'}
 
 ═══════════════════════════════════════════
-3 DERNIÈRES INTERACTIONS
+HISTORIQUE RÉCENT (3 dernières interactions)
 ═══════════════════════════════════════════
 ${recentHistory}
 
 ═══════════════════════════════════════════
-MISSION
+MISSION CRITIQUE
 ═══════════════════════════════════════════
-Compare l'inventaire actuel avec les 3 dernières interactions.
+Lis ATTENTIVEMENT l'historique. Identifie TOUS les objets que le joueur:
+- A reçu au début de l'aventure (équipements de départ)
+- A trouvé, acheté, ou reçu en cours de jeu
+- A utilisé, vendu, ou perdu
 
-OBJETS À AJOUTER (mentionnés comme obtenus mais absents):
-[OBJET:nom|icône|description|valeur]
+Pour chaque objet POSSÉDÉ qui N'EST PAS dans l'inventaire actuel:
+[OBJET:nom exact|icône|description|valeur estimée]
 
-OBJETS À RETIRER (mentionnés comme utilisés/perdus mais présents):
+Pour chaque objet UTILISÉ/PERDU qui EST dans l'inventaire:
 [RETIRER:nom]
 
-⚠️ RÈGLES:
-- Ajoute UNIQUEMENT les objets CLAIREMENT obtenus dans ces interactions
-- Retire UNIQUEMENT les objets CLAIREMENT utilisés/perdus
-- Or/argent = objet (ex: [OBJET:100 pièces d'or|💰|Monnaie|100])
-- Si l'inventaire est à jour, ne réponds RIEN
+ICÔNES: 🪵 🗡️ ⚔️ 🛡️ 🧪 💰 🔑 📜 💍 📿 🧥 👢 🧤 🎒 🏹 📖 🗺️ 🔦 🪢 🍖
 
-Réponds UNIQUEMENT avec les balises nécessaires, rien d'autre.`
+⚠️ IMPORTANT:
+- Bâton en bois → [OBJET:Bâton en bois|🪵|Arme simple|5]
+- Potion de soin → [OBJET:Potion de soin|🧪|Restaure 10 PV|25]
+- Sac à dos → [OBJET:Sac à dos|🎒|Permet de transporter des objets|15]
+- Or → [OBJET:X pièces d'or|💰|Monnaie|X]
+
+Réponds UNIQUEMENT avec les balises, RIEN d'autre.`
   }
 
   async function fetchGame() {
@@ -401,7 +404,7 @@ Commence l'histoire et liste les objets avec leurs balises.` }
     // Utiliser l'inventaire passé ou l'état actuel
     let workingInventory = currentInventory !== null ? currentInventory : inventory
 
-    // Ajouter les nouveaux objets
+    // Ajouter les nouveaux objets (depuis balises)
     if (response.newItems && response.newItems.length > 0) {
       workingInventory = [...workingInventory, ...response.newItems]
       setInventory(workingInventory)
@@ -410,6 +413,9 @@ Commence l'histoire et liste les objets avec leurs balises.` }
       if (!silent) {
         console.log('📦 Objets ajoutés:', response.newItems.map(i => i.name).join(', '))
       }
+    } else if (!silent && response.content) {
+      // Pas de balises détectées - lancer extraction automatique du texte
+      extractItemsFromText(response.content, workingInventory)
     }
 
     // Retirer les objets utilisés
@@ -469,6 +475,50 @@ Commence l'histoire et liste les objets avec leurs balises.` }
     if (response.levelUp) {
       setPendingLevel(game.level + 1)
       setLevelUpPending(true)
+    }
+  }
+
+  // Extraire les objets du texte narratif (sans balises)
+  async function extractItemsFromText(text, currentInventory) {
+    // Vérifier si le texte mentionne des objets/équipements
+    const itemKeywords = /(?:équipement|objet|arme|armure|potion|bâton|épée|bouclier|sac|or|pièce|clé|parchemin|anneau|amulette|cape|botte|gant|casque|dague|arc|flèche|fiole|livre|carte|torche|corde|ration|tente|lanterne)/i
+    
+    if (!itemKeywords.test(text)) {
+      return // Pas de mention d'objets
+    }
+
+    console.log('🔍 Extraction automatique des objets du texte...')
+
+    try {
+      const extractResponse = await api.sendToAI([
+        { 
+          role: 'system', 
+          content: `Tu es un extracteur d'objets pour un jeu de rôle.
+
+INVENTAIRE ACTUEL: ${currentInventory.length > 0 ? currentInventory.map(i => i.name).join(', ') : 'Vide'}
+
+Analyse ce texte et identifie TOUS les objets que le joueur POSSÈDE ou REÇOIT.
+
+Pour chaque objet trouvé qui N'EST PAS déjà dans l'inventaire, génère:
+[OBJET:nom|icône|description courte|valeur]
+
+Icônes possibles: 🪵 🗡️ ⚔️ 🛡️ 🧪 💰 🔑 📜 💍 📿 🧥 👢 🧤 ⛑️ 🗡️ 🏹 🧴 📖 🗺️ 🔦 🪢 🍖 ⛺ 🏮
+
+⚠️ N'ajoute PAS les objets déjà présents dans l'inventaire.
+⚠️ Réponds UNIQUEMENT avec les balises [OBJET:...], rien d'autre.
+⚠️ Si aucun nouvel objet, ne réponds RIEN.`
+        },
+        { role: 'user', content: text }
+      ], { game, profile })
+
+      if (extractResponse.newItems && extractResponse.newItems.length > 0) {
+        const updatedInventory = [...currentInventory, ...extractResponse.newItems]
+        setInventory(updatedInventory)
+        api.updateGame(gameId, { inventory: updatedInventory })
+        console.log('📦 Objets extraits:', extractResponse.newItems.map(i => i.name).join(', '))
+      }
+    } catch (err) {
+      console.error('Erreur extraction objets:', err)
     }
   }
 
