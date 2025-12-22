@@ -107,3 +107,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 3 
  
+ 
+--- 
+ 
+### v0.15.2 - 22/12/2025 13:06:04 
+ 
+> Amelioration affichage des des et animation 
+ 
+**Type**: patch | **Fichiers**: 62 
+ 

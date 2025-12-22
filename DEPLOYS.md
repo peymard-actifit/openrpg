@@ -45,7 +45,7 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 ## v0.5.0 - 21/12/2025 22:24:33 
  
 - **Type**: minor 
-- **Message**: Version jouable compl��te - Auth, JDR, dǸ d6, mode vocal 
+- **Message**: Version jouable compl��te - Auth, JDR, dǸ d6, mode vocal 
 - **Fichiers modifiés**: 0 
 - **Rapport**: [2025-12-21_22h24m33s_v0.5.0.txt](logs/deploys/2025-12-21_22h24m33s_v0.5.0.txt) 
  
@@ -117,7 +117,7 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 ## v0.11.0 - 22/12/2025 00:53:13 
  
 - **Type**: minor 
-- **Message**: Dashboard stats ic��nes + Archives + Victoire + PNJ + CONSIGNES.txt 
+- **Message**: Dashboard stats ic��nes + Archives + Victoire + PNJ + CONSIGNES.txt 
 - **Fichiers modifiés**: 7 
 - **Rapport**: [2025-12-22_00h53m13s_v0.11.0.txt](logs/deploys/2025-12-22_00h53m13s_v0.11.0.txt) 
  
@@ -133,7 +133,7 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 ## v0.12.0 - 22/12/2025 01:08:48 
  
 - **Type**: minor 
-- **Message**: DǸs amǸliorǸs + Syst��me relances + Validation EntrǸe 
+- **Message**: DǸs amǸliorǸs + Syst��me relances + Validation EntrǸe 
 - **Fichiers modifiés**: 9 
 - **Rapport**: [2025-12-22_01h08m48s_v0.12.0.txt](logs/deploys/2025-12-22_01h08m48s_v0.12.0.txt) 
  
@@ -184,4 +184,13 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Message**: Script deploy met a jour PROMPTS.md automatiquement 
 - **Fichiers modifiés**: 3 
 - **Rapport**: [2025-12-22_02h29m27s_v0.15.1.txt](logs/deploys/2025-12-22_02h29m27s_v0.15.1.txt) 
+ 
+
+ 
+## v0.15.2 - 22/12/2025 13:06:04 
+ 
+- **Type**: patch 
+- **Message**: Amelioration affichage des des et animation 
+- **Fichiers modifiés**: 62 
+- **Rapport**: [2025-12-22_13h06m04s_v0.15.2.txt](logs/deploys/2025-12-22_13h06m04s_v0.15.2.txt) 
  
