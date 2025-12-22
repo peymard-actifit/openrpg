@@ -242,3 +242,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-22_13h57m19s_v0.17.3.txt](logs/deploys/2025-12-22_13h57m19s_v0.17.3.txt) 
  
+ 
+## v0.17.4 - 22/12/2025 13:59:40 
+ 
+- **Type**: patch 
+- **Message**: Sync inventaire au chargement basee sur les 3 dernieres interactions 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-22_13h59m40s_v0.17.4.txt](logs/deploys/2025-12-22_13h59m40s_v0.17.4.txt) 
+ 

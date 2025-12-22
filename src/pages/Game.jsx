@@ -85,11 +85,12 @@ export default function Game() {
     }
   }, [messages, voiceOutputEnabled])
 
+  // Vérifier l'inventaire au chargement si la partie a déjà des messages
   useEffect(() => {
-    if (gameStarted && messages.length > 0 && !inventoryChecked && !sending) {
-      checkInventoryConsistency()
+    if (gameStarted && messages.length >= 2 && !inventoryChecked && !sending && !loading) {
+      checkInventoryOnLoad()
     }
-  }, [gameStarted, messages, inventoryChecked])
+  }, [gameStarted, messages, inventoryChecked, loading])
 
   // Focus sur input après fermeture de la confirmation
   useEffect(() => {
@@ -98,39 +99,82 @@ export default function Game() {
     }
   }, [showConfirm])
 
-  async function checkInventoryConsistency() {
-    if (inventoryChecked || messages.length < 3) return
+  async function checkInventoryOnLoad() {
+    if (inventoryChecked) return
     setInventoryChecked(true)
 
-    const historyForCheck = messages.slice(-20).map(m => ({
-      role: m.role,
-      content: m.content
-    }))
+    // Analyser les 3 dernières interactions (6 derniers messages)
+    const recentMessages = messages.slice(-6)
+    
+    // Vérifier s'il y a des mentions d'objets dans les messages récents
+    const hasObjectMentions = recentMessages.some(m => 
+      m.role === 'assistant' && (
+        m.content.includes('[OBJET:') ||
+        m.content.includes('[RETIRER:') ||
+        /(?:trouv|reçoi|obtien|prend|récupèr|donn|achet|perd|utilis|consomm)/i.test(m.content)
+      )
+    )
+
+    if (!hasObjectMentions && inventory.length > 0) {
+      // Pas de changements récents, inventaire probablement à jour
+      return
+    }
 
     try {
+      console.log('🔍 Vérification inventaire au chargement...')
+      
       const response = await api.sendToAI([
-        { role: 'system', content: buildInventoryCheckPrompt() },
-        ...historyForCheck,
-        { role: 'user', content: '[SYSTÈME] Analyse l\'historique. Ajoute les objets manquants avec leur valeur estimée.' }
+        { role: 'system', content: buildInventoryCheckPrompt(recentMessages) },
+        { role: 'user', content: '[SYSTÈME] Analyse ces 3 dernières interactions et mets à jour l\'inventaire.' }
       ], { game, profile, inventory })
 
-      processAIResponse(response, true)
+      if (response.newItems?.length > 0 || response.removedItems?.length > 0) {
+        console.log('📦 Mise à jour inventaire:', {
+          ajoutés: response.newItems?.map(i => i.name) || [],
+          retirés: response.removedItems || []
+        })
+        processAIResponse(response, true, inventory)
+      }
     } catch (err) {
       console.error('Erreur vérification inventaire:', err)
     }
   }
 
-  function buildInventoryCheckPrompt() {
-    return `Tu es le système de gestion d'inventaire d'OpenRPG.
-    
-INVENTAIRE ACTUEL: ${inventory.length > 0 ? inventory.map(i => `${i.icon} ${i.name}`).join(', ') : 'Vide'}
+  function buildInventoryCheckPrompt(recentMessages) {
+    const recentHistory = recentMessages.map(m => 
+      `${m.role === 'user' ? 'JOUEUR' : 'MJ'}: ${m.content}`
+    ).join('\n\n')
 
-Analyse l'historique. Pour chaque objet mentionné comme obtenu mais absent:
-[OBJET:nom|icône|description courte|valeur en pièces]
+    return `Tu es le système de synchronisation d'inventaire d'OpenRPG.
 
-Inclus TOUT: or, armes, armures, potions, clés, etc.
+═══════════════════════════════════════════
+INVENTAIRE ACTUEL DU JOUEUR
+═══════════════════════════════════════════
+${inventory.length > 0 ? inventory.map(i => `• ${i.icon} ${i.name} (${i.value}💰)`).join('\n') : '(Vide)'}
 
-Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
+═══════════════════════════════════════════
+3 DERNIÈRES INTERACTIONS
+═══════════════════════════════════════════
+${recentHistory}
+
+═══════════════════════════════════════════
+MISSION
+═══════════════════════════════════════════
+Compare l'inventaire actuel avec les 3 dernières interactions.
+
+OBJETS À AJOUTER (mentionnés comme obtenus mais absents):
+[OBJET:nom|icône|description|valeur]
+
+OBJETS À RETIRER (mentionnés comme utilisés/perdus mais présents):
+[RETIRER:nom]
+
+⚠️ RÈGLES:
+- Ajoute UNIQUEMENT les objets CLAIREMENT obtenus dans ces interactions
+- Retire UNIQUEMENT les objets CLAIREMENT utilisés/perdus
+- Or/argent = objet (ex: [OBJET:100 pièces d'or|💰|Monnaie|100])
+- Si l'inventaire est à jour, ne réponds RIEN
+
+Réponds UNIQUEMENT avec les balises nécessaires, rien d'autre.`
   }
 
   async function fetchGame() {

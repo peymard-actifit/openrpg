@@ -170,3 +170,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.4 - 22/12/2025 13:59:40 
+ 
+> Sync inventaire au chargement basee sur les 3 dernieres interactions 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

@@ -1,0 +1,31 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 13:59:40 
+🏷️  Version: v0.17.3 → v0.17.4 
+📊 Type: patch 
+💬 Message: Sync inventaire au chargement basee sur les 3 dernieres interactions 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_13h57m19s_v0.17.3.txt
+ M package.json
+ M src/pages/Game.jsx
+?? logs/deploys/2025-12-22_13h59m40s_v0.17.4.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |   8 ++
+ PROMPTS.md                                    |   9 ++
+ logs/deploys/2025-12-22_13h51m11s_v0.17.2.txt |   3 +
+ logs/deploys/2025-12-22_13h57m19s_v0.17.3.txt |  36 +++++++
+ package.json                                  |   2 +-
+ src/pages/Game.jsx                            | 150 ++++++++++++++++++--------
+ 6 files changed, 164 insertions(+), 44 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 
