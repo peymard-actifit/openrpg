@@ -290,3 +290,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-22_14h13m18s_v0.17.9.txt](logs/deploys/2025-12-22_14h13m18s_v0.17.9.txt) 
  
+ 
+## v0.17.10 - 22/12/2025 16:13:45 
+ 
+- **Type**: patch 
+- **Message**: Sync inventaire APRES chaque reponse IA sans balises 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-22_16h13m45s_v0.17.10.txt](logs/deploys/2025-12-22_16h13m45s_v0.17.10.txt) 
+ 

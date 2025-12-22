@@ -352,13 +352,16 @@ Commence l'histoire et liste les objets avec leurs balises.` }
       if (!silent) {
         console.log('📦 Objets ajoutés:', response.newItems.map(i => i.name).join(', '))
       }
-    } else if (!silent && response.content && workingInventory.length === 0) {
-      // Pas de balises et inventaire vide - forcer sync
-      console.log('⚠️ Aucune balise détectée, sync forcée...')
+    } else if (!silent && response.content) {
+      // Pas de balises détectées - forcer sync pour vérifier les changements
+      console.log('🔄 Aucune balise [OBJET:] détectée, sync automatique...')
       api.syncInventory(gameId).then(result => {
-        if (result.synced && result.inventory?.length > 0) {
-          setInventory(result.inventory)
-          console.log('✅ Inventaire synchronisé:', result.inventory.map(i => i.name).join(', '))
+        if (result.synced && result.inventory) {
+          // Mettre à jour seulement si l'inventaire a changé
+          if (result.inventory.length !== workingInventory.length) {
+            setInventory(result.inventory)
+            console.log('✅ Inventaire synchronisé:', result.inventory.map(i => i.name).join(', '))
+          }
         }
       }).catch(err => console.error('Erreur sync:', err))
     }

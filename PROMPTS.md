@@ -224,3 +224,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.10 - 22/12/2025 16:13:45 
+ 
+> Sync inventaire APRES chaque reponse IA sans balises 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

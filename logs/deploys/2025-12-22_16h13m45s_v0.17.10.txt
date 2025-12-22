@@ -1,0 +1,32 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 16:13:45 
+🏷️  Version: v0.17.9 → v0.17.10 
+📊 Type: patch 
+💬 Message: Sync inventaire APRES chaque reponse IA sans balises 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_14h13m18s_v0.17.9.txt
+ M package.json
+ M src/pages/Game.jsx
+?? logs/deploys/2025-12-22_16h13m45s_v0.17.10.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |  8 +++
+ PROMPTS.md                                    |  9 ++++
+ api/games/sync-inventory.js                   | 72 +++++++++++++++++++--------
+ logs/deploys/2025-12-22_14h10m51s_v0.17.8.txt |  3 ++
+ logs/deploys/2025-12-22_14h13m18s_v0.17.9.txt | 35 +++++++++++++
+ package.json                                  |  2 +-
+ src/pages/Game.jsx                            | 15 +++---
+ 7 files changed, 116 insertions(+), 28 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 
