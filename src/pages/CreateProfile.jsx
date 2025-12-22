@@ -45,15 +45,10 @@ export default function CreateProfile() {
       const { error } = await createProfile({
         characterName,
         age,
-        gender,
+        sex: gender === 'male' ? 'M' : gender === 'female' ? 'F' : 'X',
         height,
         weight,
-        strength: stats.strength,
-        intelligence: stats.intelligence,
-        wisdom: stats.wisdom,
-        dexterity: stats.dexterity,
-        constitution: stats.constitution,
-        mana: stats.mana
+        stats
       })
       
       if (error) throw error

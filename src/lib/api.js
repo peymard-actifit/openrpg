@@ -80,6 +80,13 @@ export async function createProfile(profileData) {
   })
 }
 
+export async function updateProfile(profileData) {
+  return apiCall('/profile', {
+    method: 'PUT',
+    body: JSON.stringify(profileData)
+  })
+}
+
 // Games
 export async function getGames() {
   return apiCall('/games')

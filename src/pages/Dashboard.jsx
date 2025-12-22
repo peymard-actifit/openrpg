@@ -5,31 +5,70 @@ import * as api from '../lib/api'
 import '../styles/dashboard.css'
 
 const STAT_ICONS = [
-  { key: 'strength', icon: '💪' },
-  { key: 'intelligence', icon: '🧠' },
-  { key: 'wisdom', icon: '🦉' },
-  { key: 'dexterity', icon: '🏃' },
-  { key: 'constitution', icon: '❤️' },
-  { key: 'mana', icon: '✨' }
+  { key: 'strength', icon: '💪', name: 'Force' },
+  { key: 'intelligence', icon: '🧠', name: 'Intelligence' },
+  { key: 'wisdom', icon: '🦉', name: 'Sagesse' },
+  { key: 'dexterity', icon: '🏃', name: 'Dextérité' },
+  { key: 'constitution', icon: '❤️', name: 'Constitution' },
+  { key: 'mana', icon: '✨', name: 'Mana' }
 ]
 
 export default function Dashboard() {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, signOut, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [showNewGame, setShowNewGame] = useState(false)
   const [showArchives, setShowArchives] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const [showEditProfile, setShowEditProfile] = useState(false)
   const [newGameTitle, setNewGameTitle] = useState('')
   const [newGamePrompt, setNewGamePrompt] = useState('')
   const [creating, setCreating] = useState(false)
   const [checking, setChecking] = useState(false)
   const [draggedGame, setDraggedGame] = useState(null)
   const [dragOverArchive, setDragOverArchive] = useState(false)
+  
+  // État pour l'édition du profil
+  const [editProfile, setEditProfile] = useState({
+    characterName: '',
+    age: '',
+    sex: '',
+    height: '',
+    weight: '',
+    stats: {
+      strength: 10,
+      intelligence: 10,
+      wisdom: 10,
+      dexterity: 10,
+      constitution: 10,
+      mana: 10
+    }
+  })
 
   useEffect(() => {
     initDashboard()
   }, [])
+
+  useEffect(() => {
+    if (profile) {
+      setEditProfile({
+        characterName: profile.characterName || '',
+        age: profile.age || '',
+        sex: profile.sex || '',
+        height: profile.height || '',
+        weight: profile.weight || '',
+        stats: profile.stats || {
+          strength: 10,
+          intelligence: 10,
+          wisdom: 10,
+          dexterity: 10,
+          constitution: 10,
+          mana: 10
+        }
+      })
+    }
+  }, [profile])
 
   async function initDashboard() {
     try {
@@ -87,12 +126,23 @@ export default function Dashboard() {
     }
   }
 
+  async function handleSaveProfile() {
+    try {
+      await api.updateProfile(editProfile)
+      await refreshProfile()
+      setShowEditProfile(false)
+      setShowUserMenu(false)
+    } catch (err) {
+      console.error('Erreur sauvegarde profil:', err)
+    }
+  }
+
   async function handleContinueArchived(game) {
     try {
       const newGame = await api.createGame(
         `${game.title} (Suite)`,
         game.initialPrompt,
-        game.currentStats || profile?.stats
+        profile?.stats || game.currentStats
       )
       await api.updateGame(newGame.id, {
         inventory: game.inventory || [],
@@ -117,6 +167,15 @@ export default function Dashboard() {
     } catch (err) {
       console.error('Erreur sync inventaire:', err)
     }
+  }
+
+  function handleStatChange(key, value) {
+    const numVal = parseInt(value) || 0
+    const clampedVal = Math.max(0, Math.min(20, numVal))
+    setEditProfile(prev => ({
+      ...prev,
+      stats: { ...prev.stats, [key]: clampedVal }
+    }))
   }
 
   // Drag & Drop handlers
@@ -185,33 +244,70 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <Link to="/" className="logo-small">⚔️ OpenRPG</Link>
+        <Link to="/" className="logo-small" title="Un jeu de rôle sans limites, sans règles et dans tous les univers ! A vous de jouer">
+          ⚔️ OpenRPG
+        </Link>
         <div className="header-right">
-          <button onClick={handleLogout} className="btn btn-secondary btn-sm">
-            Déconnexion
-          </button>
+          <div className="user-menu-wrapper">
+            <button 
+              className="user-menu-btn"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
+              👤 {profile?.characterName || 'Menu'}
+              <span className="menu-arrow">{showUserMenu ? '▲' : '▼'}</span>
+            </button>
+            {showUserMenu && (
+              <div className="user-menu-dropdown">
+                <button onClick={() => { setShowEditProfile(true); setShowUserMenu(false); }}>
+                  ⚙️ Modifier le personnage
+                </button>
+                <button onClick={handleLogout}>
+                  🚪 Déconnexion
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
       <div className="dashboard-content">
-        {/* Résumé du personnage */}
-        <div className="character-card">
-          <div className="character-identity">
-            <h2>{profile?.characterName || 'Aventurier'}</h2>
-            <div className="character-physical">
-              {profile?.age && <span>🎂 {profile.age} ans</span>}
-              {profile?.sex && <span>{profile.sex === 'M' ? '♂️' : profile.sex === 'F' ? '♀️' : '⚧️'}</span>}
-              {profile?.height && <span>📏 {profile.height} cm</span>}
-              {profile?.weight && <span>⚖️ {profile.weight} kg</span>}
+        {/* Barre personnage + archives */}
+        <div className="character-bar">
+          <div 
+            className="character-card"
+            onClick={() => setShowEditProfile(true)}
+            title="Cliquez pour modifier"
+          >
+            <div className="character-identity">
+              <h2>{profile?.characterName || 'Aventurier'}</h2>
+              <div className="character-physical">
+                {profile?.age && <span>🎂 {profile.age}</span>}
+                {profile?.sex && <span>{profile.sex === 'M' ? '♂️' : profile.sex === 'F' ? '♀️' : '⚧️'}</span>}
+                {profile?.height && <span>📏 {profile.height}cm</span>}
+                {profile?.weight && <span>⚖️ {profile.weight}kg</span>}
+              </div>
+            </div>
+            <div className="character-stats-row">
+              {STAT_ICONS.map(stat => (
+                <div key={stat.key} className="stat-chip" title={stat.name}>
+                  <span className="stat-icon">{stat.icon}</span>
+                  <span className="stat-val">{profile?.stats?.[stat.key] || 10}</span>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="character-stats-row">
-            {STAT_ICONS.map(stat => (
-              <div key={stat.key} className="stat-chip">
-                <span className="stat-icon">{stat.icon}</span>
-                <span className="stat-val">{profile?.stats?.[stat.key] || 10}</span>
-              </div>
-            ))}
+
+          {/* Zone archive compacte */}
+          <div 
+            className={`archive-zone ${dragOverArchive ? 'drag-over' : ''} ${draggedGame ? 'visible' : ''}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => setShowArchives(!showArchives)}
+          >
+            <span className="archive-icon">📁</span>
+            <span className="archive-count">{archivedGames.length}</span>
+            {showArchives && <span className="archive-arrow">▲</span>}
           </div>
         </div>
 
@@ -219,14 +315,12 @@ export default function Dashboard() {
         <section className="games-section">
           <div className="section-header">
             <h2>🎮 Parties en cours ({activeGames.length})</h2>
-            <div className="section-actions">
-              <button 
-                className="btn btn-primary"
-                onClick={() => setShowNewGame(true)}
-              >
-                + Nouvelle Aventure
-              </button>
-            </div>
+            <button 
+              className="btn btn-primary"
+              onClick={() => setShowNewGame(true)}
+            >
+              + Nouvelle Aventure
+            </button>
           </div>
 
           {activeGames.length === 0 ? (
@@ -268,22 +362,7 @@ export default function Dashboard() {
           )}
         </section>
 
-        {/* Zone de drop pour archiver */}
-        <div 
-          className={`archive-dropzone ${dragOverArchive ? 'drag-over' : ''} ${draggedGame ? 'visible' : ''}`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={() => setShowArchives(!showArchives)}
-        >
-          <span className="dropzone-icon">📁</span>
-          <span className="dropzone-text">
-            {draggedGame ? 'Déposez pour archiver' : `Archives (${archivedGames.length})`}
-          </span>
-          {!draggedGame && <span className="dropzone-arrow">{showArchives ? '▲' : '▼'}</span>}
-        </div>
-
-        {/* Archives */}
+        {/* Archives déroulées */}
         {showArchives && archivedGames.length > 0 && (
           <section className="games-section archives">
             {victoryGames.length > 0 && (
@@ -300,9 +379,6 @@ export default function Dashboard() {
                       <div className="game-info">
                         <h3>{game.title}</h3>
                         <span className="game-level">Niveau {game.level || 1}</span>
-                        {game.victoryReason && (
-                          <span className="archive-reason">{game.victoryReason}</span>
-                        )}
                       </div>
                       <div className="archive-actions">
                         <button 
@@ -332,7 +408,7 @@ export default function Dashboard() {
 
             {deathGames.length > 0 && (
               <div className="archive-group">
-                <h3>💀 Tombés au combat ({deathGames.length})</h3>
+                <h3>💀 Tombés ({deathGames.length})</h3>
                 <div className="games-grid">
                   {deathGames.map(game => (
                     <div 
@@ -345,9 +421,6 @@ export default function Dashboard() {
                       <div className="game-info">
                         <h3>{game.title}</h3>
                         <span className="game-level">Niveau {game.level || 1}</span>
-                        {game.deathReason && (
-                          <span className="death-reason">{game.deathReason}</span>
-                        )}
                       </div>
                     </div>
                   ))}
@@ -384,7 +457,7 @@ export default function Dashboard() {
                 <textarea
                   value={newGamePrompt}
                   onChange={(e) => setNewGamePrompt(e.target.value)}
-                  placeholder="Ex: Je suis un chevalier dans un royaume médiéval fantastique. Je dois retrouver l'épée légendaire volée par un dragon..."
+                  placeholder="Ex: Je suis un chevalier dans un royaume médiéval fantastique..."
                   rows={5}
                   required
                 />
@@ -411,6 +484,112 @@ export default function Dashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal édition profil */}
+      {showEditProfile && (
+        <div className="modal-overlay" onClick={() => setShowEditProfile(false)}>
+          <div className="modal modal-profile" onClick={e => e.stopPropagation()}>
+            <h2>👤 Modifier le Personnage</h2>
+            <p className="modal-hint">
+              Ces caractéristiques sont vos stats de départ pour toutes les aventures.
+            </p>
+
+            <div className="profile-form">
+              <div className="form-row">
+                <div className="input-group">
+                  <label>Nom du personnage</label>
+                  <input
+                    type="text"
+                    value={editProfile.characterName}
+                    onChange={(e) => setEditProfile(prev => ({ ...prev, characterName: e.target.value }))}
+                    placeholder="Votre nom d'aventurier"
+                  />
+                </div>
+              </div>
+
+              <div className="form-row physical-row">
+                <div className="input-group small">
+                  <label>Âge</label>
+                  <input
+                    type="number"
+                    value={editProfile.age}
+                    onChange={(e) => setEditProfile(prev => ({ ...prev, age: e.target.value }))}
+                    placeholder="25"
+                  />
+                </div>
+                <div className="input-group small">
+                  <label>Sexe</label>
+                  <select
+                    value={editProfile.sex}
+                    onChange={(e) => setEditProfile(prev => ({ ...prev, sex: e.target.value }))}
+                  >
+                    <option value="">-</option>
+                    <option value="M">♂️ M</option>
+                    <option value="F">♀️ F</option>
+                    <option value="X">⚧️ X</option>
+                  </select>
+                </div>
+                <div className="input-group small">
+                  <label>Taille (cm)</label>
+                  <input
+                    type="number"
+                    value={editProfile.height}
+                    onChange={(e) => setEditProfile(prev => ({ ...prev, height: e.target.value }))}
+                    placeholder="175"
+                  />
+                </div>
+                <div className="input-group small">
+                  <label>Poids (kg)</label>
+                  <input
+                    type="number"
+                    value={editProfile.weight}
+                    onChange={(e) => setEditProfile(prev => ({ ...prev, weight: e.target.value }))}
+                    placeholder="70"
+                  />
+                </div>
+              </div>
+
+              <div className="stats-section">
+                <h3>Caractéristiques (0-20)</h3>
+                <div className="stats-grid">
+                  {STAT_ICONS.map(stat => (
+                    <div key={stat.key} className="stat-input-group">
+                      <label>
+                        <span className="stat-icon">{stat.icon}</span>
+                        {stat.name}
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={editProfile.stats[stat.key]}
+                        onChange={(e) => handleStatChange(stat.key, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button 
+                type="button" 
+                className="btn btn-secondary"
+                onClick={() => setShowEditProfile(false)}
+              >
+                Annuler
+              </button>
+              <button 
+                type="button" 
+                className="btn btn-primary"
+                onClick={handleSaveProfile}
+              >
+                💾 Sauvegarder
+              </button>
+            </div>
           </div>
         </div>
       )}

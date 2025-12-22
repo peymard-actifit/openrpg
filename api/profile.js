@@ -18,9 +18,24 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: 'Profil non trouvé' })
       }
 
+      // Normaliser les stats
+      const stats = profile.stats || {
+        strength: profile.strength || 10,
+        intelligence: profile.intelligence || 10,
+        wisdom: profile.wisdom || 10,
+        dexterity: profile.dexterity || 10,
+        constitution: profile.constitution || 10,
+        mana: profile.mana || 10
+      }
+
       return res.status(200).json({
-        ...profile,
-        _id: profile._id.toString()
+        _id: profile._id.toString(),
+        characterName: profile.characterName,
+        age: profile.age,
+        sex: profile.sex || profile.gender,
+        height: profile.height,
+        weight: profile.weight,
+        stats
       })
     } catch (error) {
       console.error('Get profile error:', error)
@@ -36,37 +51,30 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Profil déjà existant' })
       }
 
-      const {
-        characterName,
-        age,
-        gender,
-        height,
-        weight,
-        strength,
-        intelligence,
-        wisdom,
-        dexterity,
-        constitution,
-        mana
-      } = req.body
+      const { characterName, age, sex, gender, height, weight, stats } = req.body
+      const finalSex = sex || gender
 
-      if (!characterName || !gender) {
-        return res.status(400).json({ error: 'Nom et sexe requis' })
+      if (!characterName) {
+        return res.status(400).json({ error: 'Nom requis' })
+      }
+
+      const finalStats = stats || {
+        strength: req.body.strength || 10,
+        intelligence: req.body.intelligence || 10,
+        wisdom: req.body.wisdom || 10,
+        dexterity: req.body.dexterity || 10,
+        constitution: req.body.constitution || 10,
+        mana: req.body.mana || 10
       }
 
       const profile = {
         userId,
         characterName,
         age: age || 25,
-        gender,
+        sex: finalSex || 'X',
         height: height || 170,
         weight: weight || 70,
-        strength: strength || 10,
-        intelligence: intelligence || 10,
-        wisdom: wisdom || 10,
-        dexterity: dexterity || 10,
-        constitution: constitution || 10,
-        mana: mana || 10,
+        stats: finalStats,
         createdAt: new Date()
       }
 
@@ -82,6 +90,48 @@ export default async function handler(req, res) {
     }
   }
 
+  // PUT - Mettre à jour le profil
+  if (req.method === 'PUT') {
+    try {
+      const existingProfile = await profiles.findOne({ userId })
+      if (!existingProfile) {
+        return res.status(404).json({ error: 'Profil non trouvé' })
+      }
+
+      const { characterName, age, sex, height, weight, stats } = req.body
+
+      const updateData = {
+        updatedAt: new Date()
+      }
+
+      if (characterName !== undefined) updateData.characterName = characterName
+      if (age !== undefined) updateData.age = age
+      if (sex !== undefined) updateData.sex = sex
+      if (height !== undefined) updateData.height = height
+      if (weight !== undefined) updateData.weight = weight
+      if (stats !== undefined) updateData.stats = stats
+
+      await profiles.updateOne(
+        { userId },
+        { $set: updateData }
+      )
+
+      const updatedProfile = await profiles.findOne({ userId })
+
+      return res.status(200).json({
+        _id: updatedProfile._id.toString(),
+        characterName: updatedProfile.characterName,
+        age: updatedProfile.age,
+        sex: updatedProfile.sex,
+        height: updatedProfile.height,
+        weight: updatedProfile.weight,
+        stats: updatedProfile.stats
+      })
+    } catch (error) {
+      console.error('Update profile error:', error)
+      return res.status(500).json({ error: 'Erreur lors de la mise à jour du profil' })
+    }
+  }
+
   return res.status(405).json({ error: 'Method not allowed' })
 }
-

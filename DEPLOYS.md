@@ -161,3 +161,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 6 
 - **Rapport**: [2025-12-22_01h57m09s_v0.13.2.txt](logs/deploys/2025-12-22_01h57m09s_v0.13.2.txt) 
  
+ 
+## v0.14.0 - 22/12/2025 02:10:08 
+ 
+- **Type**: minor 
+- **Message**: Menu utilisateur + edition profil persistant + zone archive compacte 
+- **Fichiers modifiés**: 6 
+- **Rapport**: [2025-12-22_02h10m08s_v0.14.0.txt](logs/deploys/2025-12-22_02h10m08s_v0.14.0.txt) 
+ 
