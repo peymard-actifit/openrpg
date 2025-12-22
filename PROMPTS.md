@@ -134,3 +134,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 9 
  
+ 
+--- 
+ 
+### v0.17.0 - 22/12/2025 13:45:51 
+ 
+> Sous-groupes sync, inventaire partage, systeme de vote 
+ 
+**Type**: minor | **Fichiers**: 9 
+ 

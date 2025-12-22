@@ -249,6 +249,121 @@ export async function checkOnlineStatus(gameId) {
   return apiCall(`/games/check-online?gameId=${gameId}`)
 }
 
+// ==========================================
+// GROUPES DE SYNCHRONISATION
+// ==========================================
+
+// Récupérer les groupes et le mode actuel
+export async function getSyncGroups(gameId) {
+  return apiCall(`/games/sync-groups?gameId=${gameId}`)
+}
+
+// Changer son mode de sync
+export async function changeSyncMode(gameId, newMode, groupId = null) {
+  return apiCall(`/games/sync-groups?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'changeMode', newMode, groupId })
+  })
+}
+
+// Créer un sous-groupe
+export async function createSyncGroup(gameId, groupName) {
+  return apiCall(`/games/sync-groups?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'createGroup', groupName })
+  })
+}
+
+// Rejoindre un sous-groupe
+export async function joinSyncGroup(gameId, groupId) {
+  return apiCall(`/games/sync-groups?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'joinGroup', groupId })
+  })
+}
+
+// Quitter un sous-groupe
+export async function leaveSyncGroup(gameId, returnMode = 'asyncIndependent') {
+  return apiCall(`/games/sync-groups?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'leaveGroup', returnMode })
+  })
+}
+
+// Inviter un joueur dans son groupe
+export async function inviteToSyncGroup(gameId, groupId, targetUserId) {
+  return apiCall(`/games/sync-groups?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'inviteToGroup', groupId, targetUserId })
+  })
+}
+
+// ==========================================
+// INVENTAIRE PARTAGÉ
+// ==========================================
+
+// Récupérer l'inventaire partagé
+export async function getSharedInventory(gameId) {
+  return apiCall(`/games/shared-inventory?gameId=${gameId}`)
+}
+
+// Ajouter un objet à l'inventaire partagé
+export async function addToSharedInventory(gameId, item) {
+  return apiCall(`/games/shared-inventory?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'add', item })
+  })
+}
+
+// Prendre un objet de l'inventaire partagé
+export async function takeFromSharedInventory(gameId, itemIndex) {
+  return apiCall(`/games/shared-inventory?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'take', itemIndex })
+  })
+}
+
+// Déposer un objet dans l'inventaire partagé
+export async function depositToSharedInventory(gameId, item) {
+  return apiCall(`/games/shared-inventory?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'deposit', item })
+  })
+}
+
+// ==========================================
+// SYSTÈME DE VOTE
+// ==========================================
+
+// Récupérer les votes
+export async function getVotes(gameId) {
+  return apiCall(`/games/votes?gameId=${gameId}`)
+}
+
+// Créer un vote
+export async function createVote(gameId, question, options, targetGroup = 'all') {
+  return apiCall(`/games/votes?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'create', question, options, targetGroup })
+  })
+}
+
+// Voter
+export async function submitVote(gameId, voteId, optionIndex) {
+  return apiCall(`/games/votes?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'vote', voteId, optionIndex })
+  })
+}
+
+// Fermer un vote
+export async function closeVote(gameId, voteId) {
+  return apiCall(`/games/votes?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'close', voteId })
+  })
+}
+
 export function isAuthenticated() {
   return !!authToken
 }

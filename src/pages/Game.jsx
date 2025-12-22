@@ -12,6 +12,7 @@ import ParticipantsPanel from '../components/ParticipantsPanel'
 import GameChat from '../components/GameChat'
 import InviteModal from '../components/InviteModal'
 import SyncStatus from '../components/SyncStatus'
+import SyncGroupsPanel from '../components/SyncGroupsPanel'
 import '../styles/game.css'
 
 export default function Game() {
@@ -499,6 +500,12 @@ PNJ & STORYTELLING
           </div>
         </div>
         <div className="game-controls">
+          {game?.isMultiplayer && (
+            <SyncGroupsPanel 
+              gameId={gameId}
+              currentUserId={currentUserId}
+            />
+          )}
           <ParticipantsPanel 
             gameId={gameId}
             currentUserId={currentUserId}

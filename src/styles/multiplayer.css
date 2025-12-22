@@ -838,6 +838,229 @@
   font-style: italic;
 }
 
+/* ---- Panel Groupes de Sync ---- */
+.sync-groups-panel {
+  position: relative;
+}
+
+.sync-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sync-mode-btn:hover {
+  border-color: var(--gold-dim);
+}
+
+.mode-icon {
+  font-size: 1.1rem;
+}
+
+.mode-label {
+  font-size: 0.85rem;
+}
+
+.dropdown-arrow {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.sync-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 300px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.sync-section {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sync-section:last-child {
+  border-bottom: none;
+}
+
+.sync-section h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.mode-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.mode-option:hover {
+  border-color: var(--gold-dim);
+}
+
+.mode-option.active {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.mode-option span {
+  font-weight: 500;
+}
+
+.mode-option small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.master-info {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.master-info span {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.master-info small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+}
+
+.group-item.current {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.group-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-name {
+  font-weight: 500;
+}
+
+.group-members {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.create-group-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.create-group-form input {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.create-group-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.create-group-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.sync-help {
+  padding: 0.75rem 1rem;
+  background: var(--bg-elevated);
+  font-size: 0.75rem;
+}
+
+.sync-help p {
+  margin: 0.25rem 0;
+  color: var(--text-muted);
+}
+
+.btn-sm {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+}
+
+.btn-sm.btn-primary {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-sm.btn-primary:hover {
+  background: var(--gold);
+  color: var(--bg-primary);
+}
+
+.btn-sm.btn-secondary {
+  color: var(--text-muted);
+}
+
+.btn-sm.btn-secondary:hover {
+  border-color: var(--text-muted);
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 480px) {
   .invitations-panel {
@@ -851,6 +1074,11 @@
   }
   
   .participants-dropdown {
+    width: calc(100vw - 2rem);
+    right: -1rem;
+  }
+  
+  .sync-dropdown {
     width: calc(100vw - 2rem);
     right: -1rem;
   }

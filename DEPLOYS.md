@@ -210,3 +210,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 9 
 - **Rapport**: [2025-12-22_13h34m14s_v0.16.1.txt](logs/deploys/2025-12-22_13h34m14s_v0.16.1.txt) 
  
+ 
+## v0.17.0 - 22/12/2025 13:45:51 
+ 
+- **Type**: minor 
+- **Message**: Sous-groupes sync, inventaire partage, systeme de vote 
+- **Fichiers modifiés**: 9 
+- **Rapport**: [2025-12-22_13h45m51s_v0.17.0.txt](logs/deploys/2025-12-22_13h45m51s_v0.17.0.txt) 
+ 
