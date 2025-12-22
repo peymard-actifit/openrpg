@@ -202,3 +202,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 14 
 - **Rapport**: [2025-12-22_13h28m54s_v0.16.0.txt](logs/deploys/2025-12-22_13h28m54s_v0.16.0.txt) 
  
+ 
+## v0.16.1 - 22/12/2025 13:34:14 
+ 
+- **Type**: patch 
+- **Message**: Multijoueur ameliore - sync/async, pause auto, statut en ligne 
+- **Fichiers modifiés**: 9 
+- **Rapport**: [2025-12-22_13h34m14s_v0.16.1.txt](logs/deploys/2025-12-22_13h34m14s_v0.16.1.txt) 
+ 

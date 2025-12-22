@@ -1,0 +1,53 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 13:34:14 
+🏷️  Version: v0.16.0 → v0.16.1 
+📊 Type: patch 
+💬 Message: Multijoueur ameliore - sync/async, pause auto, statut en ligne 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (9) 
+-------------------------------------------------- 
+ M api/chat.js
+ M logs/deploys/2025-12-22_13h28m54s_v0.16.0.txt
+ M package.json
+ M src/lib/api.js
+ M src/pages/Dashboard.jsx
+ M src/pages/Game.jsx
+ M src/styles/multiplayer.css
+?? api/games/check-online.js
+?? api/games/pending-actions.js
+?? logs/deploys/2025-12-22_13h34m14s_v0.16.1.txt
+?? src/components/SyncStatus.jsx
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |   8 +
+ PROMPTS.md                                    |   9 +
+ api/chat.js                                   | 317 ++++++++--
+ api/games/chat.js                             |  77 +++
+ api/games/index.js                            |  19 +-
+ api/games/participants.js                     | 143 +++++
+ api/invitations/[invitationId].js             |  87 +++
+ api/invitations/index.js                      |  96 +++
+ api/presence/heartbeat.js                     |  46 ++
+ api/presence/online.js                        |  34 +
+ logs/deploys/2025-12-22_13h06m04s_v0.15.2.txt |   3 +
+ logs/deploys/2025-12-22_13h28m54s_v0.16.0.txt |  80 +++
+ package.json                                  |   2 +-
+ src/components/GameChat.jsx                   | 128 ++++
+ src/components/InvitationNotifications.jsx    |  92 +++
+ src/components/InviteModal.jsx                | 120 ++++
+ src/components/ParticipantsPanel.jsx          | 161 +++++
+ src/lib/api.js                                |  87 +++
+ src/pages/Dashboard.jsx                       |  58 +-
+ src/pages/Game.jsx                            |  87 +++
+ src/styles/multiplayer.css                    | 862 ++++++++++++++++++++++++++
+ 21 files changed, 2442 insertions(+), 74 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

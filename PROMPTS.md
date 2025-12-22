@@ -125,3 +125,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: minor | **Fichiers**: 14 
  
+ 
+--- 
+ 
+### v0.16.1 - 22/12/2025 13:34:14 
+ 
+> Multijoueur ameliore - sync/async, pause auto, statut en ligne 
+ 
+**Type**: patch | **Fichiers**: 9 
+ 

@@ -34,6 +34,7 @@ export default function Dashboard() {
   const [checking, setChecking] = useState(false)
   const [draggedGame, setDraggedGame] = useState(null)
   const [dragOverArchive, setDragOverArchive] = useState(false)
+  const [gamesOnlineStatus, setGamesOnlineStatus] = useState({})
   
   const [editProfile, setEditProfile] = useState({
     characterName: '',
@@ -112,10 +113,28 @@ export default function Dashboard() {
     try {
       const data = await api.getGames()
       setGames(data || [])
+      
+      // Vérifier le statut en ligne pour les parties multijoueur
+      const multiplayerGames = (data || []).filter(g => g.isMultiplayer && g.status === 'active')
+      for (const game of multiplayerGames) {
+        checkGameOnlineStatus(game.id)
+      }
     } catch (err) {
       console.error('Erreur chargement parties:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function checkGameOnlineStatus(gameId) {
+    try {
+      const status = await api.checkOnlineStatus(gameId)
+      setGamesOnlineStatus(prev => ({
+        ...prev,
+        [gameId]: status
+      }))
+    } catch (err) {
+      console.error('Erreur vérification statut:', err)
     }
   }
 
@@ -440,8 +459,16 @@ export default function Dashboard() {
               {activeGames.map(game => (
                 <div 
                   key={game.id} 
-                  className={`game-card ${game.isMultiplayer ? 'multiplayer' : ''}`}
-                  onClick={() => navigate(`/game/${game.id}`)}
+                  className={`game-card ${game.isMultiplayer ? 'multiplayer' : ''} ${
+                    game.isMultiplayer && gamesOnlineStatus[game.id] && !gamesOnlineStatus[game.id].canPlay ? 'unavailable' : ''
+                  }`}
+                  onClick={() => {
+                    if (game.isMultiplayer && gamesOnlineStatus[game.id] && !gamesOnlineStatus[game.id].canPlay) {
+                      alert('Le maître de cette partie n\'est pas en ligne. Attendez son retour.')
+                      return
+                    }
+                    navigate(`/game/${game.id}`)
+                  }}
                   title={game.initialPrompt}
                   draggable
                   onDragStart={(e) => handleDragStart(e, game)}

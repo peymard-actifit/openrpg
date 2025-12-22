@@ -11,6 +11,7 @@ import { VoiceInput, VoiceOutput, useTextToSpeech } from '../components/VoiceCon
 import ParticipantsPanel from '../components/ParticipantsPanel'
 import GameChat from '../components/GameChat'
 import InviteModal from '../components/InviteModal'
+import SyncStatus from '../components/SyncStatus'
 import '../styles/game.css'
 
 export default function Game() {
@@ -44,6 +45,8 @@ export default function Game() {
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [isOwner, setIsOwner] = useState(false)
   const [currentUserId, setCurrentUserId] = useState(null)
+  const [waitingForPlayers, setWaitingForPlayers] = useState(false)
+  const [lastSyncActions, setLastSyncActions] = useState(null)
   
   const { speak, stop: stopSpeaking } = useTextToSpeech()
 
@@ -309,6 +312,19 @@ Réponds UNIQUEMENT avec les balises. Si tout est ok, ne réponds rien.`
         ...history
       ], { game, profile, stats: game.currentStats, inventory, alignment })
 
+      // Mode sync en attente
+      if (response.waiting) {
+        setWaitingForPlayers(true)
+        return
+      }
+
+      setWaitingForPlayers(false)
+
+      // Actions synchronisées
+      if (response.syncComplete && response.playerActions) {
+        setLastSyncActions(response.playerActions)
+      }
+
       const aiMsg = await api.addMessage(gameId, 'assistant', response.content)
       setMessages(prev => [...prev, aiMsg])
 
@@ -506,6 +522,18 @@ PNJ & STORYTELLING
         alignment={alignment}
       />
 
+      {/* Statut sync multijoueur */}
+      {game?.isMultiplayer && waitingForPlayers && (
+        <SyncStatus 
+          gameId={gameId} 
+          isMultiplayer={game.isMultiplayer}
+          onAllReady={() => {
+            setWaitingForPlayers(false)
+            fetchGame() // Recharger pour récupérer la réponse
+          }}
+        />
+      )}
+
       <main className="game-main">
         {!gameStarted ? (
           <div className="game-intro">
@@ -524,6 +552,18 @@ PNJ & STORYTELLING
         ) : (
           <>
             <div className="messages-container" ref={messagesContainerRef}>
+              {/* Actions combinées si sync */}
+              {lastSyncActions && lastSyncActions.length > 1 && (
+                <div className="combined-actions">
+                  <h4>🎭 Actions des joueurs</h4>
+                  {lastSyncActions.map((action, i) => (
+                    <div key={i} className="action-item">
+                      <span className="action-player">{action.name}:</span>
+                      <span className="action-text">"{action.action}"</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               {messages.map((msg, index) => (
                 <div 
                   key={msg.id || index} 

@@ -232,6 +232,23 @@ export async function sendGameChat(gameId, content, isSystem = false) {
   })
 }
 
+// Actions en attente (mode sync)
+export async function getPendingActions(gameId) {
+  return apiCall(`/games/pending-actions?gameId=${gameId}`)
+}
+
+// Annuler son action en attente
+export async function cancelPendingAction(gameId) {
+  return apiCall(`/games/pending-actions?gameId=${gameId}`, {
+    method: 'DELETE'
+  })
+}
+
+// Vérifier le statut en ligne des joueurs
+export async function checkOnlineStatus(gameId) {
+  return apiCall(`/games/check-online?gameId=${gameId}`)
+}
+
 export function isAuthenticated() {
   return !!authToken
 }
