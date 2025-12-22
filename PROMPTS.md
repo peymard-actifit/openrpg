@@ -188,3 +188,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.6 - 22/12/2025 14:04:20 
+ 
+> Version affichee dans Game + contraste ameliore du badge 
+ 
+**Type**: patch | **Fichiers**: 4 
+ 

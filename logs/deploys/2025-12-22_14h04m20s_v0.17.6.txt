@@ -1,0 +1,35 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 14:04:20 
+🏷️  Version: v0.17.5 → v0.17.6 
+📊 Type: patch 
+💬 Message: Version affichee dans Game + contraste ameliore du badge 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (4) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_14h01m52s_v0.17.5.txt
+ M package.json
+ M src/pages/Game.jsx
+ M src/styles/dashboard.css
+ M src/styles/game.css
+?? logs/deploys/2025-12-22_14h04m20s_v0.17.6.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |  8 ++++
+ PROMPTS.md                                    |  9 +++++
+ logs/deploys/2025-12-22_13h59m40s_v0.17.4.txt |  3 ++
+ logs/deploys/2025-12-22_14h01m52s_v0.17.5.txt | 34 ++++++++++++++++
+ package.json                                  |  2 +-
+ src/pages/Game.jsx                            | 58 ++++++++++++++++-----------
+ src/styles/dashboard.css                      | 13 +++---
+ src/styles/game.css                           | 12 ++++++
+ 8 files changed, 108 insertions(+), 31 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

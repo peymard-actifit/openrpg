@@ -43,6 +43,18 @@
   line-height: 1;
 }
 
+.game-header .version-badge {
+  font-size: 0.7rem;
+  font-family: var(--font-body);
+  color: var(--gold);
+  background: rgba(212, 175, 55, 0.15);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--gold-dim);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
 .inventory-btn {
   font-size: 0.95rem;
   padding: var(--space-xs) var(--space-sm);

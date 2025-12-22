@@ -13,6 +13,7 @@ import GameChat from '../components/GameChat'
 import InviteModal from '../components/InviteModal'
 import SyncStatus from '../components/SyncStatus'
 import SyncGroupsPanel from '../components/SyncGroupsPanel'
+import packageJson from '../../package.json'
 import '../styles/game.css'
 
 export default function Game() {
@@ -550,6 +551,7 @@ STORYTELLING
       <header className="game-header">
         <div className="header-left">
           <Link to="/dashboard" className="back-btn">←</Link>
+          <span className="version-badge">v{packageJson.version}</span>
           <div className="inventory-btn-wrapper">
             <button className="inventory-btn" onClick={() => setInventoryOpen(true)}>
               🎒 {inventory.length}

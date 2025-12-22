@@ -26,14 +26,15 @@
 }
 
 .version-badge {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-family: var(--font-body);
-  color: var(--text-muted);
-  background: var(--bg-elevated);
-  padding: 2px 6px;
+  color: var(--gold);
+  background: rgba(212, 175, 55, 0.15);
+  padding: 3px 8px;
   border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  font-weight: normal;
+  border: 1px solid var(--gold-dim);
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .logo-small::after {

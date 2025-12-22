@@ -258,3 +258,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-22_14h01m52s_v0.17.5.txt](logs/deploys/2025-12-22_14h01m52s_v0.17.5.txt) 
  
+ 
+## v0.17.6 - 22/12/2025 14:04:20 
+ 
+- **Type**: patch 
+- **Message**: Version affichee dans Game + contraste ameliore du badge 
+- **Fichiers modifiés**: 4 
+- **Rapport**: [2025-12-22_14h04m20s_v0.17.6.txt](logs/deploys/2025-12-22_14h04m20s_v0.17.6.txt) 
+ 
