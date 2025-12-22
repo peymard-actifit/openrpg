@@ -206,3 +206,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.8 - 22/12/2025 14:10:51 
+ 
+> Sync inventaire via API dediee - plus fiable que extraction IA 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

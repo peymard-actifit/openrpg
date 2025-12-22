@@ -274,3 +274,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-22_14h08m26s_v0.17.7.txt](logs/deploys/2025-12-22_14h08m26s_v0.17.7.txt) 
  
+ 
+## v0.17.8 - 22/12/2025 14:10:51 
+ 
+- **Type**: patch 
+- **Message**: Sync inventaire via API dediee - plus fiable que extraction IA 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-22_14h10m51s_v0.17.8.txt](logs/deploys/2025-12-22_14h10m51s_v0.17.8.txt) 
+ 
