@@ -233,3 +233,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.11 - 22/12/2025 16:18:23 
+ 
+> Touche Entree fonctionne pour confirmer le message + Echap pour annuler 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

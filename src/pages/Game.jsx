@@ -100,6 +100,24 @@ export default function Game() {
     }
   }, [showConfirm])
 
+  // Écouter Entrée pour confirmer quand le modal est affiché
+  useEffect(() => {
+    if (!showConfirm) return
+
+    function handleGlobalKeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        confirmAndSend()
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        cancelMessage()
+      }
+    }
+
+    document.addEventListener('keydown', handleGlobalKeyDown)
+    return () => document.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [showConfirm, pendingMessage])
+
   async function syncInventoryOnLoad() {
     if (inventoryChecked) return
     setInventoryChecked(true)
