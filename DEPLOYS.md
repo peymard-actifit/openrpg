@@ -226,3 +226,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-22_13h48m54s_v0.17.1.txt](logs/deploys/2025-12-22_13h48m54s_v0.17.1.txt) 
  
+ 
+## v0.17.2 - 22/12/2025 13:51:11 
+ 
+- **Type**: patch 
+- **Message**: Affichage version a cote du logo OpenRPG dans le dashboard 
+- **Fichiers modifiés**: 3 
+- **Rapport**: [2025-12-22_13h51m11s_v0.17.2.txt](logs/deploys/2025-12-22_13h51m11s_v0.17.2.txt) 
+ 

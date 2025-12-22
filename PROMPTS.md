@@ -152,3 +152,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.2 - 22/12/2025 13:51:11 
+ 
+> Affichage version a cote du logo OpenRPG dans le dashboard 
+ 
+**Type**: patch | **Fichiers**: 3 
+ 

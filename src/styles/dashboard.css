@@ -20,6 +20,20 @@
   text-decoration: none;
   position: relative;
   cursor: help;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.version-badge {
+  font-size: 0.65rem;
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: normal;
 }
 
 .logo-small::after {

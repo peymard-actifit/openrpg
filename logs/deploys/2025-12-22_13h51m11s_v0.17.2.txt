@@ -1,0 +1,34 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 22/12/2025 13:51:11 
+🏷️  Version: v0.17.1 → v0.17.2 
+📊 Type: patch 
+💬 Message: Affichage version a cote du logo OpenRPG dans le dashboard 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (3) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-22_13h48m54s_v0.17.1.txt
+ M package.json
+ M src/pages/Dashboard.jsx
+ M src/styles/dashboard.css
+?? logs/deploys/2025-12-22_13h51m11s_v0.17.2.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                    |  8 +++++
+ PROMPTS.md                                    |  9 ++++++
+ logs/deploys/2025-12-22_13h45m51s_v0.17.0.txt |  3 ++
+ logs/deploys/2025-12-22_13h48m54s_v0.17.1.txt | 42 +++++++++++++++++++++++++++
+ package.json                                  |  2 +-
+ src/App.jsx                                   | 39 +++++++++++++++++++++++--
+ src/pages/Dashboard.jsx                       |  3 +-
+ src/styles/dashboard.css                      | 14 +++++++++
+ 8 files changed, 115 insertions(+), 5 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import * as api from '../lib/api'
 import InvitationNotifications from '../components/InvitationNotifications'
+import packageJson from '../../package.json'
 import '../styles/dashboard.css'
 
 const STAT_ICONS = [
@@ -354,7 +355,7 @@ export default function Dashboard() {
     <div className="dashboard">
       <header className="dashboard-header">
         <Link to="/" className="logo-small" title="Un jeu de rôle sans limites, sans règles et dans tous les univers ! A vous de jouer">
-          ⚔️ OpenRPG
+          ⚔️ OpenRPG <span className="version-badge">v{packageJson.version}</span>
         </Link>
         <div className="header-right">
           <InvitationNotifications />
