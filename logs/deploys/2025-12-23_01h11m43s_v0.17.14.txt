@@ -1,0 +1,34 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 23/12/2025 01:11:43 
+🏷️  Version: v0.17.13 → v0.17.14 
+📊 Type: patch 
+💬 Message: Introduction IA narrative pour les nouveaux joueurs en mode sync 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M api/invitations/[invitationId].js
+ M logs/deploys/2025-12-23_01h09m27s_v0.17.13.txt
+ M package.json
+?? logs/deploys/2025-12-23_01h11m43s_v0.17.14.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                     |  8 +++
+ PROMPTS.md                                     |  9 +++
+ api/chat.js                                    |  8 ++-
+ api/games/participants.js                      |  9 ++-
+ api/games/sync-groups.js                       | 34 +++++------
+ api/invitations/[invitationId].js              | 80 +++++++++++++++++++++++++-
+ logs/deploys/2025-12-23_01h06m02s_v0.17.12.txt |  3 +
+ logs/deploys/2025-12-23_01h09m27s_v0.17.13.txt | 71 +++++++++++++++++++++++
+ package.json                                   |  2 +-
+ 9 files changed, 203 insertions(+), 21 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

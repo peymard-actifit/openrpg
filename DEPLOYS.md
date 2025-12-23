@@ -323,3 +323,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 5 
 - **Rapport**: [2025-12-23_01h09m27s_v0.17.13.txt](logs/deploys/2025-12-23_01h09m27s_v0.17.13.txt) 
  
+ 
+## v0.17.14 - 23/12/2025 01:11:43 
+ 
+- **Type**: patch 
+- **Message**: Introduction IA narrative pour les nouveaux joueurs en mode sync 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-23_01h11m43s_v0.17.14.txt](logs/deploys/2025-12-23_01h11m43s_v0.17.14.txt) 
+ 

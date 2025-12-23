@@ -260,3 +260,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 5 
  
+ 
+--- 
+ 
+### v0.17.14 - 23/12/2025 01:11:43 
+ 
+> Introduction IA narrative pour les nouveaux joueurs en mode sync 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 
