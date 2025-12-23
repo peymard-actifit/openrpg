@@ -339,3 +339,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 5 
 - **Rapport**: [2025-12-23_01h28m21s_v0.17.15.txt](logs/deploys/2025-12-23_01h28m21s_v0.17.15.txt) 
  
+ 
+## v0.17.16 - 23/12/2025 01:32:13 
+ 
+- **Type**: patch 
+- **Message**: Entree envoie automatiquement la version corrigee 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-23_01h32m13s_v0.17.16.txt](logs/deploys/2025-12-23_01h32m13s_v0.17.16.txt) 
+ 

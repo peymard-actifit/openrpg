@@ -109,7 +109,8 @@ export default function Game() {
     function handleGlobalKeyDown(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault()
-        confirmAndSend()
+        // Si une correction existe, l'utiliser automatiquement
+        confirmAndSend(!!correctedMessage)
       } else if (e.key === 'Escape') {
         e.preventDefault()
         cancelMessage()
@@ -118,7 +119,7 @@ export default function Game() {
 
     document.addEventListener('keydown', handleGlobalKeyDown)
     return () => document.removeEventListener('keydown', handleGlobalKeyDown)
-  }, [showConfirm, pendingMessage, isCorrecting])
+  }, [showConfirm, pendingMessage, isCorrecting, correctedMessage])
 
   async function syncInventoryOnLoad() {
     if (inventoryChecked) return
@@ -320,10 +321,6 @@ Commence l'histoire et liste les objets avec leurs balises.` }
     setCorrectedMessage(null)
   }
   
-  function useOriginalMessage() {
-    setCorrectedMessage(null)
-  }
-
   function confirmAndSend(useCorrection = false) {
     const messageToSend = useCorrection && correctedMessage ? correctedMessage : pendingMessage
     setShowConfirm(false)
@@ -676,21 +673,21 @@ STORYTELLING
                   ) : correctedMessage ? (
                     <>
                       <div className="confirm-text original">
-                        <span className="label">Original :</span> "{pendingMessage}"
+                        <span className="label">Avant :</span> "{pendingMessage}"
                       </div>
                       <div className="confirm-text corrected">
-                        <span className="label">✨ Corrigé :</span> "{correctedMessage}"
+                        <span className="label">✨ Après :</span> "{correctedMessage}"
                       </div>
-                      <div className="confirm-hint">Choisissez la version à envoyer</div>
+                      <div className="confirm-hint">Entrée = envoyer la version corrigée</div>
                       <div className="confirm-actions">
                         <button className="btn btn-secondary" onClick={cancelMessage}>
                           ✏️ Modifier
                         </button>
-                        <button className="btn btn-outline" onClick={useOriginalMessage}>
-                          📝 Garder l'original
+                        <button className="btn btn-outline" onClick={() => confirmAndSend(false)}>
+                          📝 Garder mes fautes
                         </button>
                         <button className="btn btn-primary" onClick={() => confirmAndSend(true)}>
-                          ✨ Envoyer corrigé
+                          ✓ Envoyer
                         </button>
                       </div>
                     </>

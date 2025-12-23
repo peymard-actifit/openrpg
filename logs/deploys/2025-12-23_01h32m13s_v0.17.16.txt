@@ -2,39 +2,33 @@
   RAPPORT DE DEPLOIEMENT - OpenRPG 
 ================================================== 
  
-📅 Date: 23/12/2025 01:28:21 
-🏷️  Version: v0.17.14 → v0.17.15 
+📅 Date: 23/12/2025 01:32:13 
+🏷️  Version: v0.17.15 → v0.17.16 
 📊 Type: patch 
-💬 Message: Correction orthographique IA avant envoi du message 
+💬 Message: Entree envoie automatiquement la version corrigee 
  
 -------------------------------------------------- 
-  FICHIERS MODIFIES (5) 
+  FICHIERS MODIFIES (2) 
 -------------------------------------------------- 
- M logs/deploys/2025-12-23_01h11m43s_v0.17.14.txt
+ M logs/deploys/2025-12-23_01h28m21s_v0.17.15.txt
  M package.json
- M src/lib/api.js
  M src/pages/Game.jsx
- M src/styles/game.css
-?? api/correct.js
-?? logs/deploys/2025-12-23_01h28m21s_v0.17.15.txt
+?? logs/deploys/2025-12-23_01h32m13s_v0.17.16.txt
  
 -------------------------------------------------- 
   STATISTIQUES GIT 
 -------------------------------------------------- 
  DEPLOYS.md                                     |  8 +++
  PROMPTS.md                                     |  9 +++
- api/invitations/[invitationId].js              | 72 +++++++++++++++++++++
- logs/deploys/2025-12-23_01h09m27s_v0.17.13.txt |  3 +
- logs/deploys/2025-12-23_01h11m43s_v0.17.14.txt | 37 +++++++++++
+ api/correct.js                                 | 59 +++++++++++++++++
+ logs/deploys/2025-12-23_01h11m43s_v0.17.14.txt |  3 +
+ logs/deploys/2025-12-23_01h28m21s_v0.17.15.txt | 40 ++++++++++++
  package.json                                   |  2 +-
  src/lib/api.js                                 |  8 +++
- src/pages/Game.jsx                             | 86 +++++++++++++++++++++-----
+ src/pages/Game.jsx                             | 87 ++++++++++++++++++++------
  src/styles/game.css                            | 47 ++++++++++++++
- 9 files changed, 255 insertions(+), 17 deletions(-)
+ 9 files changed, 244 insertions(+), 19 deletions(-)
  
 ================================================== 
   DEPLOIEMENT REUSSI 
 ================================================== 
- 
-🔗 Commit: ff52230 
-🏷️  Tag: v0.17.15 

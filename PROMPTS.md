@@ -278,3 +278,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 5 
  
+ 
+--- 
+ 
+### v0.17.16 - 23/12/2025 01:32:13 
+ 
+> Entree envoie automatiquement la version corrigee 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 
