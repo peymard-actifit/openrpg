@@ -242,3 +242,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.12 - 23/12/2025 01:06:02 
+ 
+> Fix acces parties multijoueur pour participants - GET/PATCH/messages 
+ 
+**Type**: patch | **Fichiers**: 52 
+ 

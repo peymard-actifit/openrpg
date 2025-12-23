@@ -14,9 +14,16 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'ID de partie invalide' })
   }
 
-  // Vérifier que la partie appartient à l'utilisateur
+  // Vérifier que l'utilisateur a accès à la partie (propriétaire ou participant)
   const games = await getCollection('games')
-  const game = await games.findOne({ _id: new ObjectId(gameId), userId })
+  const game = await games.findOne({ 
+    _id: new ObjectId(gameId),
+    $or: [
+      { userId },
+      { ownerId: userId },
+      { 'participants.userId': userId, 'participants.status': { $in: ['active', 'paused'] } }
+    ]
+  })
   
   if (!game) {
     return res.status(404).json({ error: 'Partie non trouvée' })
@@ -75,5 +82,6 @@ export default async function handler(req, res) {
 
   return res.status(405).json({ error: 'Method not allowed' })
 }
+
 
 

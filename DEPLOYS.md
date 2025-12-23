@@ -306,3 +306,12 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-22_16h18m23s_v0.17.11.txt](logs/deploys/2025-12-22_16h18m23s_v0.17.11.txt) 
  
+
+ 
+## v0.17.12 - 23/12/2025 01:06:02 
+ 
+- **Type**: patch 
+- **Message**: Fix acces parties multijoueur pour participants - GET/PATCH/messages 
+- **Fichiers modifiés**: 52 
+- **Rapport**: [2025-12-23_01h06m02s_v0.17.12.txt](logs/deploys/2025-12-23_01h06m02s_v0.17.12.txt) 
+ 

@@ -16,12 +16,16 @@ export default async function handler(req, res) {
 
   const games = await getCollection('games')
 
-  // GET - Récupérer une partie
+  // GET - Récupérer une partie (propriétaire OU participant)
   if (req.method === 'GET') {
     try {
       const game = await games.findOne({ 
         _id: new ObjectId(gameId),
-        userId 
+        $or: [
+          { userId },
+          { ownerId: userId },
+          { 'participants.userId': userId, 'participants.status': { $in: ['active', 'paused'] } }
+        ]
       })
 
       if (!game) {
@@ -39,7 +43,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // PATCH - Mettre à jour une partie
+  // PATCH - Mettre à jour une partie (propriétaire OU participant actif)
   if (req.method === 'PATCH') {
     try {
       const updates = req.body
@@ -68,7 +72,14 @@ export default async function handler(req, res) {
       filteredUpdates.updatedAt = new Date()
 
       const result = await games.updateOne(
-        { _id: new ObjectId(gameId), userId },
+        { 
+          _id: new ObjectId(gameId),
+          $or: [
+            { userId },
+            { ownerId: userId },
+            { 'participants.userId': userId, 'participants.status': 'active' }
+          ]
+        },
         { $set: filteredUpdates }
       )
 
