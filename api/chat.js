@@ -62,8 +62,14 @@ async function handleMultiplayerChat(req, res, messages, gameContext, userId) {
     return res.status(404).json({ error: 'Partie non trouvée' })
   }
 
-  const currentParticipant = game.participants?.find(p => p.userId === userId)
+  const currentParticipant = game.participants?.find(p => p.userId === userId && p.status === 'active')
   const isOwner = game.ownerId === userId || game.userId === userId
+  
+  // Vérifier que l'utilisateur a le droit de jouer
+  if (!isOwner && !currentParticipant) {
+    return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à jouer dans cette partie' })
+  }
+  
   const playerName = gameContext.profile?.characterName || 'Joueur'
   
   // Déterminer le mode de synchronisation

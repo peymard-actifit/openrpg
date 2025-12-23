@@ -48,7 +48,7 @@ export default async function handler(req, res) {
 
   // GET - Récupérer les groupes et le mode du joueur
   if (req.method === 'GET') {
-    const participant = game.participants?.find(p => p.userId === userId)
+    const participant = game.participants?.find(p => p.userId === currentUserId)
     
     return res.status(200).json({
       isOwner,
@@ -85,12 +85,12 @@ export default async function handler(req, res) {
         }
 
         await games.updateOne(
-          { _id: new ObjectId(gameId), 'participants.userId': userId },
+          { _id: new ObjectId(gameId), 'participants.userId': currentUserId },
           { $set: updates }
         )
 
         // Message système
-        const participant = game.participants?.find(p => p.userId === userId)
+        const participant = game.participants?.find(p => p.userId === currentUserId)
         const modeLabel = {
           'syncWithMaster': '🔗 synchrone avec le maître',
           'asyncIndependent': '📨 asynchrone (indépendant)',
@@ -115,8 +115,8 @@ export default async function handler(req, res) {
         const newGroup = {
           id: newGroupId,
           name: groupName || `Groupe ${(game.syncGroups?.length || 0) + 1}`,
-          leaderId: userId,
-          members: [userId],
+          leaderId: currentUserId,
+          members: [currentUserId],
           createdAt: new Date()
         }
 
@@ -129,10 +129,10 @@ export default async function handler(req, res) {
               'participants.$[elem].syncGroupId': newGroupId
             }
           },
-          { arrayFilters: [{ 'elem.userId': userId }] }
+          { arrayFilters: [{ 'elem.userId': currentUserId }] }
         )
 
-        const participant = game.participants?.find(p => p.userId === userId)
+        const participant = game.participants?.find(p => p.userId === currentUserId)
         await gameChats.insertOne({
           gameId,
           userId: 'system',
@@ -159,16 +159,16 @@ export default async function handler(req, res) {
         await games.updateOne(
           { _id: new ObjectId(gameId), 'syncGroups.id': groupId },
           { 
-            $addToSet: { 'syncGroups.$.members': userId },
+            $addToSet: { 'syncGroups.$.members': currentUserId },
             $set: { 
               'participants.$[elem].syncMode': 'syncWithGroup',
               'participants.$[elem].syncGroupId': groupId
             }
           },
-          { arrayFilters: [{ 'elem.userId': userId }] }
+          { arrayFilters: [{ 'elem.userId': currentUserId }] }
         )
 
-        const participant = game.participants?.find(p => p.userId === userId)
+        const participant = game.participants?.find(p => p.userId === currentUserId)
         await gameChats.insertOne({
           gameId,
           userId: 'system',
@@ -184,17 +184,17 @@ export default async function handler(req, res) {
       // Quitter un sous-groupe (revenir en async ou sync maître)
       if (action === 'leaveGroup') {
         const { returnMode = 'asyncIndependent' } = req.body
-        const currentGroup = game.syncGroups?.find(g => g.members?.includes(userId))
+        const currentGroup = game.syncGroups?.find(g => g.members?.includes(currentUserId))
         
         if (currentGroup) {
           await games.updateOne(
             { _id: new ObjectId(gameId), 'syncGroups.id': currentGroup.id },
-            { $pull: { 'syncGroups.$.members': userId } }
+            { $pull: { 'syncGroups.$.members': currentUserId } }
           )
         }
 
         await games.updateOne(
-          { _id: new ObjectId(gameId), 'participants.userId': userId },
+          { _id: new ObjectId(gameId), 'participants.userId': currentUserId },
           { 
             $set: { 
               'participants.$.syncMode': returnMode,
@@ -203,7 +203,7 @@ export default async function handler(req, res) {
           }
         )
 
-        const participant = game.participants?.find(p => p.userId === userId)
+        const participant = game.participants?.find(p => p.userId === currentUserId)
         await gameChats.insertOne({
           gameId,
           userId: 'system',
@@ -228,7 +228,7 @@ export default async function handler(req, res) {
         }
 
         // Vérifier que l'inviteur est dans le groupe
-        if (!group.members?.includes(userId)) {
+        if (!group.members?.includes(currentUserId)) {
           return res.status(403).json({ error: 'Non membre du groupe' })
         }
 
@@ -238,7 +238,7 @@ export default async function handler(req, res) {
           { $addToSet: { 'syncGroups.$.pendingInvites': targetUserId } }
         )
 
-        const inviter = game.participants?.find(p => p.userId === userId)
+        const inviter = game.participants?.find(p => p.userId === currentUserId)
         const target = game.participants?.find(p => p.userId === targetUserId)
         await gameChats.insertOne({
           gameId,
@@ -263,7 +263,7 @@ export default async function handler(req, res) {
           return res.status(404).json({ error: 'Groupe non trouvé' })
         }
 
-        if (!isOwner && group.leaderId !== userId) {
+        if (!isOwner && group.leaderId !== currentUserId) {
           return res.status(403).json({ error: 'Seul le leader ou le maître peut supprimer' })
         }
 

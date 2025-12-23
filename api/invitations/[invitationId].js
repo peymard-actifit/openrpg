@@ -52,10 +52,16 @@ export default async function handler(req, res) {
 
       const game = await games.findOne({ _id: new ObjectId(invitation.gameId) })
       
+      // Convertir mode simple en syncMode pour compatibilité avec le chat
+      const mode = invitation.mode || 'sync'
+      const syncMode = mode === 'sync' ? 'syncWithMaster' : 'asyncIndependent'
+      
       const participant = {
         userId: uid,
         characterName: profile?.characterName || 'Joueur',
-        mode: invitation.mode || 'sync',
+        mode: mode,
+        syncMode: syncMode,
+        syncGroupId: null,
         status: 'active',
         joinedAt: new Date(),
         stats: profile?.stats || {}

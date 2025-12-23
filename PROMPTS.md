@@ -251,3 +251,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 52 
  
+ 
+--- 
+ 
+### v0.17.13 - 23/12/2025 01:09:27 
+ 
+> Fix sync/async multijoueur - alignement syncMode et verification acces participants 
+ 
+**Type**: patch | **Fichiers**: 5 
+ 

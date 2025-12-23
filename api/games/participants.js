@@ -51,13 +51,20 @@ export default async function handler(req, res) {
           return res.status(403).json({ error: 'Non autorisé' })
         }
 
+        // Convertir mode simple en syncMode pour compatibilité avec le chat
+        const syncMode = mode === 'sync' ? 'syncWithMaster' : 'asyncIndependent'
+
         await games.updateOne(
           { 
             _id: new ObjectId(gameId),
             'participants.userId': targetUserId
           },
           { 
-            $set: { 'participants.$.mode': mode }
+            $set: { 
+              'participants.$.mode': mode,
+              'participants.$.syncMode': syncMode,
+              'participants.$.syncGroupId': null  // Quitter tout sous-groupe
+            }
           }
         )
         return res.status(200).json({ success: true })

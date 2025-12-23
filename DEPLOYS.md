@@ -315,3 +315,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 52 
 - **Rapport**: [2025-12-23_01h06m02s_v0.17.12.txt](logs/deploys/2025-12-23_01h06m02s_v0.17.12.txt) 
  
+ 
+## v0.17.13 - 23/12/2025 01:09:27 
+ 
+- **Type**: patch 
+- **Message**: Fix sync/async multijoueur - alignement syncMode et verification acces participants 
+- **Fichiers modifiés**: 5 
+- **Rapport**: [2025-12-23_01h09m27s_v0.17.13.txt](logs/deploys/2025-12-23_01h09m27s_v0.17.13.txt) 
+ 
