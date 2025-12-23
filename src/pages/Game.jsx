@@ -33,6 +33,7 @@ export default function Game() {
   const [diceRequested, setDiceRequested] = useState(false)
   const [diceType, setDiceType] = useState(6)
   const [voiceOutputEnabled, setVoiceOutputEnabled] = useState(false)
+  const [autoCorrect, setAutoCorrect] = useState(true)
   const [inventoryOpen, setInventoryOpen] = useState(false)
   const [inventory, setInventory] = useState([])
   const [levelUpPending, setLevelUpPending] = useState(false)
@@ -302,6 +303,12 @@ Commence l'histoire et liste les objets avec leurs balises.` }
     setPendingMessage(msg)
     setCorrectedMessage(null)
     setShowConfirm(true)
+    
+    // Si la correction automatique est désactivée, ne pas appeler l'API
+    if (!autoCorrect) {
+      return
+    }
+    
     setIsCorrecting(true)
     
     try {
@@ -577,6 +584,13 @@ STORYTELLING
             isOwner={isOwner}
             onInviteClick={() => setShowInviteModal(true)}
           />
+          <button
+            className={`auto-correct-toggle ${autoCorrect ? 'active' : ''}`}
+            onClick={() => setAutoCorrect(!autoCorrect)}
+            title={autoCorrect ? 'Correction auto activée' : 'Correction auto désactivée'}
+          >
+            {autoCorrect ? '✨' : '📝'}
+          </button>
           <VoiceInput onTranscript={handleVoiceTranscript} disabled={sending} />
           <VoiceOutput 
             enabled={voiceOutputEnabled} 

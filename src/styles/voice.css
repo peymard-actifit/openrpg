@@ -117,5 +117,34 @@
   50% { transform: scaleY(1); }
 }
 
+/* Auto Correct Toggle */
+.auto-correct-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  opacity: 0.5;
+}
 
+.auto-correct-toggle:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.auto-correct-toggle.active {
+  opacity: 1;
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold);
+}
+
+.auto-correct-toggle.active:hover {
+  background: rgba(212, 175, 55, 0.25);
+}
 

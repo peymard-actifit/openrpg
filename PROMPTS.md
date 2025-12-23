@@ -287,3 +287,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.17 - 23/12/2025 01:38:33 
+ 
+> Toggle correction automatique en haut a droite 
+ 
+**Type**: patch | **Fichiers**: 3 
+ 
