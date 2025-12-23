@@ -331,3 +331,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-23_01h11m43s_v0.17.14.txt](logs/deploys/2025-12-23_01h11m43s_v0.17.14.txt) 
  
+ 
+## v0.17.15 - 23/12/2025 01:28:21 
+ 
+- **Type**: patch 
+- **Message**: Correction orthographique IA avant envoi du message 
+- **Fichiers modifiés**: 5 
+- **Rapport**: [2025-12-23_01h28m21s_v0.17.15.txt](logs/deploys/2025-12-23_01h28m21s_v0.17.15.txt) 
+ 

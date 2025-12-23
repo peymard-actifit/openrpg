@@ -40,6 +40,8 @@ export default function Game() {
   const [inventoryChecked, setInventoryChecked] = useState(false)
   const [alignment, setAlignment] = useState({ goodEvil: 0, lawChaos: 0 })
   const [pendingMessage, setPendingMessage] = useState(null)
+  const [correctedMessage, setCorrectedMessage] = useState(null)
+  const [isCorrecting, setIsCorrecting] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [rerolls, setRerolls] = useState(0)
   const [pendingDiceResult, setPendingDiceResult] = useState(null)
@@ -100,9 +102,9 @@ export default function Game() {
     }
   }, [showConfirm])
 
-  // Écouter Entrée pour confirmer quand le modal est affiché
+  // Écouter Entrée pour confirmer quand le modal est affiché (pas pendant la correction)
   useEffect(() => {
-    if (!showConfirm) return
+    if (!showConfirm || isCorrecting) return
 
     function handleGlobalKeyDown(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -116,7 +118,7 @@ export default function Game() {
 
     document.addEventListener('keydown', handleGlobalKeyDown)
     return () => document.removeEventListener('keydown', handleGlobalKeyDown)
-  }, [showConfirm, pendingMessage])
+  }, [showConfirm, pendingMessage, isCorrecting])
 
   async function syncInventoryOnLoad() {
     if (inventoryChecked) return
@@ -292,22 +294,42 @@ Commence l'histoire et liste les objets avec leurs balises.` }
     }
   }
 
-  function prepareMessage() {
+  async function prepareMessage() {
     const msg = input.trim()
     if (!msg) return
     
     setPendingMessage(msg)
+    setCorrectedMessage(null)
     setShowConfirm(true)
+    setIsCorrecting(true)
+    
+    try {
+      const result = await api.correctText(msg)
+      if (result.hasChanges && result.corrected) {
+        setCorrectedMessage(result.corrected)
+      }
+    } catch (err) {
+      console.error('Erreur correction:', err)
+    } finally {
+      setIsCorrecting(false)
+    }
   }
 
   function cancelMessage() {
     setShowConfirm(false)
+    setCorrectedMessage(null)
+  }
+  
+  function useOriginalMessage() {
+    setCorrectedMessage(null)
   }
 
-  function confirmAndSend() {
+  function confirmAndSend(useCorrection = false) {
+    const messageToSend = useCorrection && correctedMessage ? correctedMessage : pendingMessage
     setShowConfirm(false)
     setInput('')
-    sendMessageDirect(pendingMessage)
+    setCorrectedMessage(null)
+    sendMessageDirect(messageToSend)
     setPendingMessage(null)
   }
 
@@ -644,16 +666,48 @@ STORYTELLING
               
               {showConfirm && (
                 <div className="confirm-message">
-                  <div className="confirm-text">"{pendingMessage}"</div>
-                  <div className="confirm-hint">Appuyez sur Entrée pour confirmer</div>
-                  <div className="confirm-actions">
-                    <button className="btn btn-secondary" onClick={cancelMessage}>
-                      ✏️ Modifier
-                    </button>
-                    <button className="btn btn-primary" onClick={confirmAndSend}>
-                      ✓ Envoyer
-                    </button>
-                  </div>
+                  {isCorrecting ? (
+                    <>
+                      <div className="confirm-text correcting">"{pendingMessage}"</div>
+                      <div className="confirm-hint">
+                        <span className="correcting-spinner">✨</span> Vérification orthographique...
+                      </div>
+                    </>
+                  ) : correctedMessage ? (
+                    <>
+                      <div className="confirm-text original">
+                        <span className="label">Original :</span> "{pendingMessage}"
+                      </div>
+                      <div className="confirm-text corrected">
+                        <span className="label">✨ Corrigé :</span> "{correctedMessage}"
+                      </div>
+                      <div className="confirm-hint">Choisissez la version à envoyer</div>
+                      <div className="confirm-actions">
+                        <button className="btn btn-secondary" onClick={cancelMessage}>
+                          ✏️ Modifier
+                        </button>
+                        <button className="btn btn-outline" onClick={useOriginalMessage}>
+                          📝 Garder l'original
+                        </button>
+                        <button className="btn btn-primary" onClick={() => confirmAndSend(true)}>
+                          ✨ Envoyer corrigé
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="confirm-text">"{pendingMessage}"</div>
+                      <div className="confirm-hint">✓ Aucune faute détectée - Appuyez sur Entrée</div>
+                      <div className="confirm-actions">
+                        <button className="btn btn-secondary" onClick={cancelMessage}>
+                          ✏️ Modifier
+                        </button>
+                        <button className="btn btn-primary" onClick={confirmAndSend}>
+                          ✓ Envoyer
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
               

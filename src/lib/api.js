@@ -162,6 +162,14 @@ export async function syncInventory(gameId) {
   })
 }
 
+// Corriger l'orthographe d'un texte
+export async function correctText(text) {
+  return apiCall('/correct', {
+    method: 'POST',
+    body: JSON.stringify({ text })
+  })
+}
+
 // ==========================================
 // MULTI-JOUEUR
 // ==========================================

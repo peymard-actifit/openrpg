@@ -383,6 +383,53 @@
   font-size: 0.85rem;
 }
 
+/* Correction orthographique */
+.confirm-text.correcting {
+  opacity: 0.7;
+}
+
+.confirm-text.original {
+  background: rgba(255, 100, 100, 0.1);
+  border-left: 3px solid #ff6b6b;
+  text-decoration: line-through;
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.confirm-text.corrected {
+  background: rgba(100, 255, 100, 0.1);
+  border-left: 3px solid #51cf66;
+}
+
+.confirm-text .label {
+  font-weight: bold;
+  font-style: normal;
+  margin-right: var(--space-xs);
+  font-size: 0.8rem;
+}
+
+.correcting-spinner {
+  display: inline-block;
+  animation: sparkle 1s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--text-secondary);
+}
+
+.btn-outline:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
 /* Badge relances */
 .reroll-badge {
   padding: var(--space-xs) var(--space-sm);

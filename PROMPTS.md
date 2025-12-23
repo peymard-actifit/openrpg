@@ -269,3 +269,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v0.17.15 - 23/12/2025 01:28:21 
+ 
+> Correction orthographique IA avant envoi du message 
+ 
+**Type**: patch | **Fichiers**: 5 
+ 

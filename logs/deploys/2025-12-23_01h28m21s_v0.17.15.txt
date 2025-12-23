@@ -1,0 +1,37 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 23/12/2025 01:28:21 
+🏷️  Version: v0.17.14 → v0.17.15 
+📊 Type: patch 
+💬 Message: Correction orthographique IA avant envoi du message 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (5) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-23_01h11m43s_v0.17.14.txt
+ M package.json
+ M src/lib/api.js
+ M src/pages/Game.jsx
+ M src/styles/game.css
+?? api/correct.js
+?? logs/deploys/2025-12-23_01h28m21s_v0.17.15.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                     |  8 +++
+ PROMPTS.md                                     |  9 +++
+ api/invitations/[invitationId].js              | 72 +++++++++++++++++++++
+ logs/deploys/2025-12-23_01h09m27s_v0.17.13.txt |  3 +
+ logs/deploys/2025-12-23_01h11m43s_v0.17.14.txt | 37 +++++++++++
+ package.json                                   |  2 +-
+ src/lib/api.js                                 |  8 +++
+ src/pages/Game.jsx                             | 86 +++++++++++++++++++++-----
+ src/styles/game.css                            | 47 ++++++++++++++
+ 9 files changed, 255 insertions(+), 17 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 
