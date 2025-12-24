@@ -389,3 +389,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 4 
 - **Rapport**: [2025-12-25_00h07m41s_v1.0.5.txt](logs/deploys/2025-12-25_00h07m41s_v1.0.5.txt) 
  
+ 
+## v1.0.6 - 25/12/2025 00:14:05 
+ 
+- **Type**: patch 
+- **Message**: Admin automatique: statut isAdmin recupere depuis API au chargement 
+- **Fichiers modifiés**: 6 
+- **Rapport**: [2025-12-25_00h14m05s_v1.0.6.txt](logs/deploys/2025-12-25_00h14m05s_v1.0.6.txt) 
+ 

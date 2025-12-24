@@ -1,0 +1,38 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 00:14:05 
+🏷️  Version: v1.0.5 → v1.0.6 
+📊 Type: patch 
+💬 Message: Admin automatique: statut isAdmin recupere depuis API au chargement 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (6) 
+-------------------------------------------------- 
+ M api/auth/me.js
+ M logs/deploys/2025-12-25_00h07m41s_v1.0.5.txt
+ M package.json
+ M src/pages/Dashboard.jsx
+?? logs/deploys/2025-12-25_00h14m05s_v1.0.6.txt
+?? scripts/check-admin.js
+?? scripts/debug-id.js
+?? scripts/set-all-admin.js
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |    8 +
+ PROMPTS.md                                   |    9 +
+ api/admin/toggle.js                          |   19 +-
+ api/auth/me.js                               |    3 +-
+ api/games/all.js                             |   11 +-
+ logs/deploys/2025-12-25_00h04m25s_v1.0.4.txt |    3 +
+ logs/deploys/2025-12-25_00h07m41s_v1.0.5.txt | 3353 ++++++++++++++++++++++++++
+ package.json                                 |    2 +-
+ src/pages/Dashboard.jsx                      |    9 +
+ 9 files changed, 3405 insertions(+), 12 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -91,6 +91,14 @@ export default function Dashboard() {
     }
   }, [profile])
 
+  // Initialiser le statut admin depuis l'API
+  useEffect(() => {
+    if (user?.isAdmin) {
+      setIsAdmin(true)
+      setShowAllGames(true)
+    }
+  }, [user])
+
   useEffect(() => {
     if (isAdmin) {
       fetchAllGames()

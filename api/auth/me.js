@@ -27,7 +27,8 @@ export default async function handler(req, res) {
     return res.status(200).json({
       user: {
         id: user._id.toString(),
-        email: user.email
+        email: user.email,
+        isAdmin: user.isAdmin || false
       },
       profile: profile ? {
         ...profile,

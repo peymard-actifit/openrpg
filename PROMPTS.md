@@ -359,3 +359,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 4 
  
+ 
+--- 
+ 
+### v1.0.6 - 25/12/2025 00:14:05 
+ 
+> Admin automatique: statut isAdmin recupere depuis API au chargement 
+ 
+**Type**: patch | **Fichiers**: 6 
+ 
