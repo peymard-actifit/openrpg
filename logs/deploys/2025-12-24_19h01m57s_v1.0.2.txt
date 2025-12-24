@@ -1,0 +1,34 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 24/12/2025 19:01:57 
+🏷️  Version: v1.0.1 → v1.0.2 
+📊 Type: patch 
+💬 Message: Focus automatique sur zone de reponse apres chaque message IA 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (6) 
+-------------------------------------------------- 
+ M DEPLOYS.md
+ M PROMPTS.md
+ M api/games/all.js
+ M logs/deploys/2025-12-24_18h27m03s_v1.0.1.txt
+ M package.json
+ M src/pages/Game.jsx
+?? logs/deploys/2025-12-24_19h01m57s_v1.0.2.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 ----
+ PROMPTS.md                                   |  9 ++++
+ logs/deploys/2025-12-24_18h08m37s_v1.0.0.txt |  3 ++
+ logs/deploys/2025-12-24_18h27m03s_v1.0.1.txt | 66 ++++++++++++++++++++++++++++
+ package.json                                 |  2 +-
+ src/pages/Game.jsx                           | 17 ++++++-
+ 6 files changed, 95 insertions(+), 10 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -323,3 +323,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v1.0.2 - 24/12/2025 19:01:57 
+ 
+> Focus automatique sur zone de reponse apres chaque message IA 
+ 
+**Type**: patch | **Fichiers**: 6 
+ 

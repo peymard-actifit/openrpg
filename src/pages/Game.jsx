@@ -81,7 +81,11 @@ export default function Game() {
     if (lastMessageRef.current && messagesContainerRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }, [messages])
+    // Focus automatique sur l'input après chaque nouveau message
+    if (messages.length > 0 && inputRef.current && !sending && !showConfirm) {
+      setTimeout(() => inputRef.current?.focus(), 100)
+    }
+  }, [messages, sending])
 
   useEffect(() => {
     if (voiceOutputEnabled && messages.length > 0) {
