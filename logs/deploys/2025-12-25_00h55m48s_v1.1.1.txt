@@ -1,0 +1,35 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 00:55:48 
+🏷️  Version: v1.1.0 → v1.1.1 
+📊 Type: patch 
+💬 Message: Reouverture partie Ballade en cimmǸrie - quete non terminee 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (3) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-25_00h29m47s_v1.1.0.txt
+ M package.json
+?? logs/deploys/2025-12-25_00h55m48s_v1.1.1.txt
+?? scripts/check-games.js
+?? scripts/reopen-game.js
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 ++++++
+ PROMPTS.md                                   |  9 ++++++
+ api/games/[gameId].js                        | 39 +++++++++++++++++++-------
+ api/games/[gameId]/messages.js               | 32 +++++++++++++++++-----
+ logs/deploys/2025-12-25_00h27m10s_v1.0.9.txt |  3 ++
+ logs/deploys/2025-12-25_00h29m47s_v1.1.0.txt | 41 ++++++++++++++++++++++++++++
+ package.json                                 |  2 +-
+ src/pages/Dashboard.jsx                      |  6 ++--
+ src/styles/dashboard.css                     | 22 +++++++++++++--
+ 9 files changed, 139 insertions(+), 23 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

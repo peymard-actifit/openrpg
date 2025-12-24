@@ -429,3 +429,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 5 
 - **Rapport**: [2025-12-25_00h29m47s_v1.1.0.txt](logs/deploys/2025-12-25_00h29m47s_v1.1.0.txt) 
  
+ 
+## v1.1.1 - 25/12/2025 00:55:48 
+ 
+- **Type**: patch 
+- **Message**: Reouverture partie Ballade en cimmǸrie - quete non terminee 
+- **Fichiers modifiés**: 3 
+- **Rapport**: [2025-12-25_00h55m48s_v1.1.1.txt](logs/deploys/2025-12-25_00h55m48s_v1.1.1.txt) 
+ 

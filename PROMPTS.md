@@ -404,3 +404,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: minor | **Fichiers**: 5 
  
+ 
+--- 
+ 
+### v1.1.1 - 25/12/2025 00:55:48 
+ 
+> Reouverture partie Ballade en cimmǸrie - quete non terminee 
+ 
+**Type**: patch | **Fichiers**: 3 
+ 
