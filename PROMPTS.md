@@ -377,3 +377,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v1.0.8 - 25/12/2025 00:24:13 
+ 
+> Synchronisation et maintenance 
+ 
+**Type**: patch | **Fichiers**: 1 
+ 

@@ -405,3 +405,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-25_00h18m12s_v1.0.7.txt](logs/deploys/2025-12-25_00h18m12s_v1.0.7.txt) 
  
+ 
+## v1.0.8 - 25/12/2025 00:24:13 
+ 
+- **Type**: patch 
+- **Message**: Synchronisation et maintenance 
+- **Fichiers modifiés**: 1 
+- **Rapport**: [2025-12-25_00h24m13s_v1.0.8.txt](logs/deploys/2025-12-25_00h24m13s_v1.0.8.txt) 
+ 
