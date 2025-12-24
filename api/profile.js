@@ -35,7 +35,8 @@ export default async function handler(req, res) {
         sex: profile.sex || profile.gender,
         height: profile.height,
         weight: profile.weight,
-        stats
+        stats,
+        consignes: profile.consignes || ''
       })
     } catch (error) {
       console.error('Get profile error:', error)
@@ -98,7 +99,7 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: 'Profil non trouvé' })
       }
 
-      const { characterName, age, sex, height, weight, stats } = req.body
+      const { characterName, age, sex, height, weight, stats, consignes } = req.body
 
       const updateData = {
         updatedAt: new Date()
@@ -110,6 +111,7 @@ export default async function handler(req, res) {
       if (height !== undefined) updateData.height = height
       if (weight !== undefined) updateData.weight = weight
       if (stats !== undefined) updateData.stats = stats
+      if (consignes !== undefined) updateData.consignes = consignes
 
       await profiles.updateOne(
         { userId },
@@ -125,7 +127,8 @@ export default async function handler(req, res) {
         sex: updatedProfile.sex,
         height: updatedProfile.height,
         weight: updatedProfile.weight,
-        stats: updatedProfile.stats
+        stats: updatedProfile.stats,
+        consignes: updatedProfile.consignes || ''
       })
     } catch (error) {
       console.error('Update profile error:', error)

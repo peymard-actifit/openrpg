@@ -305,3 +305,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 0 
  
+ 
+--- 
+ 
+### v1.0.0 - 24/12/2025 18:08:37 
+ 
+> Consignes IA personnalisees + prompt cable Joe Abercrombie + admin toutes parties 
+ 
+**Type**: major | **Fichiers**: 40 
+ 

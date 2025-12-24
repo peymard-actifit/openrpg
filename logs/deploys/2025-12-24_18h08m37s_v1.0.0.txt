@@ -1,0 +1,99 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 24/12/2025 18:08:37 
+🏷️  Version: v0.17.18 → v1.0.0 
+📊 Type: major 
+💬 Message: Consignes IA personnalisees + prompt cable Joe Abercrombie + admin toutes parties 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (40) 
+-------------------------------------------------- 
+ M DEPLOYS.md
+ M PROMPTS.md
+ M api/admin/toggle.js
+ M api/auth/login.js
+ M api/auth/me.js
+ M api/auth/register.js
+ M api/correct.js
+ M api/games/[gameId]/messages.js
+ M api/games/all.js
+ M api/games/check-finished.js
+ M api/games/participants.js
+ M api/generate-image.js
+ M api/lib/auth.js
+ M api/lib/mongodb.js
+ M api/profile.js
+ M api/speak.js
+ M api/transcribe.js
+ M logs/deploys/2025-12-24_17h49m12s_v0.17.18.txt
+ M package.json
+ M scripts/deploy.sh
+ M src/components/InvitationNotifications.jsx
+ M src/components/LevelUpModal.jsx
+ M src/components/RerollPrompt.jsx
+ M src/components/StatsPanel.jsx
+ M src/components/SyncGroupsPanel.jsx
+ M src/components/SyncStatus.jsx
+ M src/components/VoiceControls.jsx
+ M src/lib/openai.js
+ M src/main.jsx
+ M src/pages/Dashboard.jsx
+ M src/pages/Game.jsx
+ M src/pages/Landing.jsx
+ M src/pages/Login.jsx
+ M src/pages/Register.jsx
+ M src/styles/archive.css
+ M src/styles/auth.css
+ M src/styles/dashboard.css
+ M src/styles/reroll.css
+ M src/styles/voice.css
+ M vite.config.js
+?? logs/deploys/2025-12-24_18h08m37s_v1.0.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                     |   1 +
+ PROMPTS.md                                     |   9 ++
+ api/admin/toggle.js                            |   1 +
+ api/auth/login.js                              |   1 +
+ api/auth/me.js                                 |   1 +
+ api/auth/register.js                           |   1 +
+ api/correct.js                                 |   1 +
+ api/games/all.js                               |  17 +-
+ api/games/check-finished.js                    |   1 +
+ api/generate-image.js                          |   1 +
+ api/lib/auth.js                                |   1 +
+ api/lib/mongodb.js                             |   1 +
+ api/profile.js                                 |   9 +-
+ api/speak.js                                   |   1 +
+ api/transcribe.js                              |   1 +
+ logs/deploys/2025-12-24_17h49m12s_v0.17.18.txt |  33 ++++
+ package.json                                   |   2 +-
+ scripts/deploy.sh                              |   1 +
+ src/components/InvitationNotifications.jsx     |   1 +
+ src/components/LevelUpModal.jsx                |   1 +
+ src/components/RerollPrompt.jsx                |   1 +
+ src/components/StatsPanel.jsx                  |   1 +
+ src/components/SyncGroupsPanel.jsx             |   1 +
+ src/components/SyncStatus.jsx                  |   1 +
+ src/components/VoiceControls.jsx               |   1 +
+ src/lib/openai.js                              |   1 +
+ src/main.jsx                                   |   1 +
+ src/pages/Dashboard.jsx                        | 189 ++++++++++++++--------
+ src/pages/Game.jsx                             |  18 ++-
+ src/pages/Landing.jsx                          |   1 +
+ src/pages/Login.jsx                            |   1 +
+ src/pages/Register.jsx                         |   1 +
+ src/styles/archive.css                         |   1 +
+ src/styles/auth.css                            |   1 +
+ src/styles/dashboard.css                       | 215 +++++++++++++++++++++++++
+ src/styles/reroll.css                          |   1 +
+ vite.config.js                                 |   1 +
+ 37 files changed, 449 insertions(+), 72 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -16,6 +16,9 @@ import SyncGroupsPanel from '../components/SyncGroupsPanel'
 import packageJson from '../../package.json'
 import '../styles/game.css'
 
+// Prompt câblé - Style de base de l'IA (priorité basse)
+const HARDCODED_PROMPT = "L'IA doit prendre systématiquement le style de Joe Abercrombie pour s'exprimer, rajouter des éléments d'humour quand cela est possible, ne pas être trop gentille et parfois mettre le joueur en position de mourir s'il ne fait pas l'action la plus logique pour s'en sortir."
+
 export default function Game() {
   const { gameId } = useParams()
   const { user, profile } = useAuth()
@@ -472,11 +475,24 @@ Commence l'histoire et liste les objets avec leurs balises.` }
 
   function buildSystemPrompt() {
     const turnCount = messages.filter(m => m.role === 'user').length
+    const userConsignes = profile?.consignes || ''
 
     return `Tu es le Maître du Jeu d'OpenRPG, un jeu de rôle textuel immersif.
 
 ═══════════════════════════════════════════
-CONTEXTE
+🎭 STYLE DE NARRATION (PROMPT CÂBLÉ)
+═══════════════════════════════════════════
+${HARDCODED_PROMPT}
+
+${userConsignes ? `═══════════════════════════════════════════
+📝 CONSIGNES PERSONNALISÉES DU JOUEUR
+═══════════════════════════════════════════
+${userConsignes}
+
+⚠️ Ces consignes personnalisées PRIMENT sur le prompt câblé ci-dessus.
+` : ''}
+═══════════════════════════════════════════
+CONTEXTE DE L'HISTOIRE
 ═══════════════════════════════════════════
 ${game?.initialPrompt}
 

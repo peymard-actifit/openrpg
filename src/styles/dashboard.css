@@ -556,6 +556,75 @@
   display: block;
 }
 
+/* Liste admin compacte */
+.admin-games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.admin-game-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--bg-elevated);
+  border-radius: 6px;
+  border: 1px solid rgba(65, 105, 225, 0.15);
+  font-size: 0.8rem;
+  transition: background 0.2s;
+}
+
+.admin-game-row:hover {
+  background: rgba(65, 105, 225, 0.1);
+}
+
+.admin-game-row.archived {
+  opacity: 0.7;
+}
+
+.online-indicator {
+  font-size: 0.6rem;
+}
+
+.game-status-icon {
+  font-size: 0.9rem;
+}
+
+.admin-game-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-game-title {
+  color: var(--text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-game-player {
+  font-size: 0.7rem;
+  color: var(--mana-blue);
+}
+
+.admin-game-level {
+  color: var(--gold);
+  font-family: var(--font-medieval);
+  white-space: nowrap;
+}
+
+.admin-game-status {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 /* Modal small */
 .modal.modal-small {
   max-width: 350px;
@@ -619,6 +688,152 @@
 
 .modal-profile {
   max-width: 550px;
+}
+
+/* Modal profil compact */
+.modal-profile-compact {
+  max-width: 480px;
+  padding: var(--space-md);
+}
+
+.modal-profile-compact h2 {
+  margin-bottom: var(--space-sm);
+  font-size: 1rem;
+}
+
+.profile-form-compact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.form-row-compact {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.input-compact {
+  flex: 1;
+}
+
+.input-compact.name-input {
+  flex: 2;
+}
+
+.input-compact.mini {
+  flex: 0 0 55px;
+}
+
+.input-compact input,
+.input-compact select {
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--bg-input);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.input-compact input:focus,
+.input-compact select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.stats-row-compact {
+  display: flex;
+  gap: var(--space-xs);
+  justify-content: space-between;
+}
+
+.stat-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-compact .stat-label {
+  font-size: 1rem;
+}
+
+.stat-compact input {
+  width: 45px;
+  padding: var(--space-xs);
+  background: var(--bg-input);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 4px;
+  color: var(--gold);
+  font-family: var(--font-medieval);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.stat-compact input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.modal-actions-compact {
+  display: flex;
+  gap: var(--space-xs);
+  justify-content: flex-end;
+  margin-top: var(--space-sm);
+}
+
+.modal-actions-compact .btn-sm {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.9rem;
+  min-width: 40px;
+}
+
+/* Modal consignes */
+.modal-consignes {
+  max-width: 500px;
+}
+
+.modal-consignes textarea {
+  width: 100%;
+  padding: var(--space-sm);
+  background: var(--bg-input);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.modal-consignes textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.consignes-info {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.consignes-info strong {
+  color: var(--gold);
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.consignes-info ul {
+  margin: 0;
+  padding-left: var(--space-md);
+}
+
+.consignes-info li {
+  margin-bottom: 2px;
 }
 
 @keyframes fadeIn {

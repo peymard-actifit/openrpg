@@ -7,13 +7,16 @@ import packageJson from '../../package.json'
 import '../styles/dashboard.css'
 
 const STAT_ICONS = [
-  { key: 'strength', icon: '💪', name: 'Force' },
-  { key: 'intelligence', icon: '🧠', name: 'Intelligence' },
-  { key: 'wisdom', icon: '🦉', name: 'Sagesse' },
-  { key: 'dexterity', icon: '🏃', name: 'Dextérité' },
-  { key: 'constitution', icon: '❤️', name: 'Constitution' },
-  { key: 'mana', icon: '✨', name: 'Mana' }
+  { key: 'strength', icon: '💪', name: 'FOR' },
+  { key: 'intelligence', icon: '🧠', name: 'INT' },
+  { key: 'wisdom', icon: '🦉', name: 'SAG' },
+  { key: 'dexterity', icon: '🏃', name: 'DEX' },
+  { key: 'constitution', icon: '❤️', name: 'CON' },
+  { key: 'mana', icon: '✨', name: 'MAN' }
 ]
+
+// Prompt câblé - Style de l'IA
+const HARDCODED_PROMPT = "L'IA doit prendre systématiquement le style de Joe Abercrombie pour s'exprimer, rajouter des éléments d'humour quand cela est possible, ne pas être trop gentille et parfois mettre le joueur en position de mourir s'il ne fait pas l'action la plus logique pour s'en sortir."
 
 export default function Dashboard() {
   const { user, profile, signOut, refreshProfile } = useAuth()
@@ -26,9 +29,11 @@ export default function Dashboard() {
   const [showAllGames, setShowAllGames] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showEditProfile, setShowEditProfile] = useState(false)
+  const [showConsignes, setShowConsignes] = useState(false)
   const [showAdminPrompt, setShowAdminPrompt] = useState(false)
   const [adminCode, setAdminCode] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
+  const [userConsignes, setUserConsignes] = useState('')
   const [newGameTitle, setNewGameTitle] = useState('')
   const [newGamePrompt, setNewGamePrompt] = useState('')
   const [creating, setCreating] = useState(false)
@@ -82,6 +87,7 @@ export default function Dashboard() {
           mana: 10
         }
       })
+      setUserConsignes(profile.consignes || '')
     }
   }, [profile])
 
@@ -194,6 +200,17 @@ export default function Dashboard() {
       setShowUserMenu(false)
     } catch (err) {
       console.error('Erreur sauvegarde profil:', err)
+    }
+  }
+
+  async function handleSaveConsignes() {
+    try {
+      await api.updateProfile({ consignes: userConsignes })
+      await refreshProfile()
+      setShowConsignes(false)
+      setShowUserMenu(false)
+    } catch (err) {
+      console.error('Erreur sauvegarde consignes:', err)
     }
   }
 
@@ -354,7 +371,14 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <Link to="/" className="logo-small" title="Un jeu de rôle sans limites, sans règles et dans tous les univers ! A vous de jouer">
+        <Link 
+          to="/" 
+          className="logo-small" 
+          title={isAdmin 
+            ? `Un jeu de rôle sans limites, sans règles et dans tous les univers ! A vous de jouer\n\n🔒 PROMPT CÂBLÉ:\n${HARDCODED_PROMPT}` 
+            : "Un jeu de rôle sans limites, sans règles et dans tous les univers ! A vous de jouer"
+          }
+        >
           ⚔️ OpenRPG <span className="version-badge">v{packageJson.version}</span>
         </Link>
         <div className="header-right">
@@ -372,6 +396,9 @@ export default function Dashboard() {
               <div className="user-menu-dropdown">
                 <button onClick={() => { setShowEditProfile(true); setShowUserMenu(false); }}>
                   ⚙️ Modifier le personnage
+                </button>
+                <button onClick={() => { setShowConsignes(true); setShowUserMenu(false); }}>
+                  📝 Consignes pour OpenRPG
                 </button>
                 <button onClick={handleToggleAdmin}>
                   {isAdmin ? '🔓 Désactiver Admin' : '🔐 Mode Admin'}
@@ -595,20 +622,28 @@ export default function Dashboard() {
         {/* Toutes les parties (Admin) */}
         {isAdmin && showAllGames && allGames.length > 0 && (
           <section className="games-section all-games">
-            <h2>👁️ Toutes les parties en cours ({allGames.length})</h2>
-            <div className="games-grid">
+            <h2>👁️ Toutes les parties ({allGames.length})</h2>
+            <div className="admin-games-list">
               {allGames.map(game => (
                 <div 
                   key={game.id} 
-                  className="game-card admin-view"
+                  className={`admin-game-row ${game.status === 'archived' ? 'archived' : ''}`}
                   title={game.initialPrompt}
                 >
-                  <span className="game-icon">📜</span>
-                  <div className="game-info">
-                    <h3>{game.title}</h3>
-                    <span className="game-player">👤 {game.playerName}</span>
-                    <span className="game-level">Niveau {game.level || 1}</span>
+                  <span className={`online-indicator ${game.playerOnline ? 'online' : 'offline'}`}>
+                    {game.playerOnline ? '🟢' : '⚫'}
+                  </span>
+                  <span className="game-status-icon">
+                    {game.status === 'archived' ? (game.victory ? '🏆' : '💀') : '📜'}
+                  </span>
+                  <div className="admin-game-info">
+                    <span className="admin-game-title">{game.title}</span>
+                    <span className="admin-game-player">👤 {game.playerName}</span>
                   </div>
+                  <span className="admin-game-level">Nv.{game.level || 1}</span>
+                  <span className="admin-game-status">
+                    {game.status === 'archived' ? (game.victory ? 'Victoire' : 'Mort') : 'En cours'}
+                  </span>
                 </div>
               ))}
             </div>
@@ -673,104 +708,130 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Modal édition profil */}
+      {/* Modal édition profil - version compacte */}
       {showEditProfile && (
         <div className="modal-overlay" onClick={() => setShowEditProfile(false)}>
-          <div className="modal modal-profile" onClick={e => e.stopPropagation()}>
-            <h2>👤 Modifier le Personnage</h2>
-            <p className="modal-hint">
-              Ces caractéristiques sont vos stats de départ pour toutes les aventures.
-            </p>
+          <div className="modal modal-profile-compact" onClick={e => e.stopPropagation()}>
+            <h2>👤 Personnage</h2>
 
-            <div className="profile-form">
-              <div className="form-row">
-                <div className="input-group">
-                  <label>Nom du personnage</label>
+            <div className="profile-form-compact">
+              {/* Ligne 1: Nom + Age + Sexe */}
+              <div className="form-row-compact">
+                <div className="input-compact name-input">
                   <input
                     type="text"
                     value={editProfile.characterName}
                     onChange={(e) => setEditProfile(prev => ({ ...prev, characterName: e.target.value }))}
-                    placeholder="Votre nom d'aventurier"
+                    placeholder="Nom"
                   />
                 </div>
-              </div>
-
-              <div className="form-row physical-row">
-                <div className="input-group small">
-                  <label>Âge</label>
+                <div className="input-compact mini">
                   <input
                     type="number"
                     value={editProfile.age}
                     onChange={(e) => setEditProfile(prev => ({ ...prev, age: e.target.value }))}
-                    placeholder="25"
+                    placeholder="Âge"
                   />
                 </div>
-                <div className="input-group small">
-                  <label>Sexe</label>
+                <div className="input-compact mini">
                   <select
                     value={editProfile.sex}
                     onChange={(e) => setEditProfile(prev => ({ ...prev, sex: e.target.value }))}
                   >
                     <option value="">-</option>
-                    <option value="M">♂️ M</option>
-                    <option value="F">♀️ F</option>
-                    <option value="X">⚧️ X</option>
+                    <option value="M">♂️</option>
+                    <option value="F">♀️</option>
+                    <option value="X">⚧️</option>
                   </select>
                 </div>
-                <div className="input-group small">
-                  <label>Taille (cm)</label>
+                <div className="input-compact mini">
                   <input
                     type="number"
                     value={editProfile.height}
                     onChange={(e) => setEditProfile(prev => ({ ...prev, height: e.target.value }))}
-                    placeholder="175"
+                    placeholder="cm"
                   />
                 </div>
-                <div className="input-group small">
-                  <label>Poids (kg)</label>
+                <div className="input-compact mini">
                   <input
                     type="number"
                     value={editProfile.weight}
                     onChange={(e) => setEditProfile(prev => ({ ...prev, weight: e.target.value }))}
-                    placeholder="70"
+                    placeholder="kg"
                   />
                 </div>
               </div>
 
-              <div className="stats-section">
-                <h3>Caractéristiques (0-20)</h3>
-                <div className="stats-grid">
-                  {STAT_ICONS.map(stat => (
-                    <div key={stat.key} className="stat-input-group">
-                      <label>
-                        <span className="stat-icon">{stat.icon}</span>
-                        {stat.name}
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        value={editProfile.stats[stat.key]}
-                        onChange={(e) => handleStatChange(stat.key, e.target.value)}
-                      />
-                    </div>
-                  ))}
-                </div>
+              {/* Ligne 2: Stats sur une seule ligne */}
+              <div className="stats-row-compact">
+                {STAT_ICONS.map(stat => (
+                  <div key={stat.key} className="stat-compact">
+                    <span className="stat-label">{stat.icon}</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="20"
+                      value={editProfile.stats[stat.key]}
+                      onChange={(e) => handleStatChange(stat.key, e.target.value)}
+                    />
+                  </div>
+                ))}
               </div>
+            </div>
+
+            <div className="modal-actions-compact">
+              <button className="btn btn-secondary btn-sm" onClick={() => setShowEditProfile(false)}>
+                ✕
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={handleSaveProfile}>
+                💾
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal consignes pour OpenRPG */}
+      {showConsignes && (
+        <div className="modal-overlay" onClick={() => setShowConsignes(false)}>
+          <div className="modal modal-consignes" onClick={e => e.stopPropagation()}>
+            <h2>📝 Consignes pour OpenRPG</h2>
+            <p className="modal-hint">
+              Ces consignes seront appliquées à toutes vos parties. Elles permettent de personnaliser le style de l'IA.
+            </p>
+
+            <div className="input-group">
+              <label>Vos instructions personnalisées</label>
+              <textarea
+                value={userConsignes}
+                onChange={(e) => setUserConsignes(e.target.value)}
+                placeholder="Ex: Je préfère les descriptions courtes et percutantes. Ajoute des références à la culture pop quand c'est approprié..."
+                rows={6}
+              />
+            </div>
+
+            <div className="consignes-info">
+              <strong>💡 Exemples de consignes :</strong>
+              <ul>
+                <li>Style narratif (sombre, épique, humoristique...)</li>
+                <li>Longueur des réponses préférée</li>
+                <li>Thèmes à privilégier ou éviter</li>
+                <li>Références culturelles appréciées</li>
+              </ul>
             </div>
 
             <div className="modal-actions">
               <button 
                 type="button" 
                 className="btn btn-secondary"
-                onClick={() => setShowEditProfile(false)}
+                onClick={() => setShowConsignes(false)}
               >
                 Annuler
               </button>
               <button 
                 type="button" 
                 className="btn btn-primary"
-                onClick={handleSaveProfile}
+                onClick={handleSaveConsignes}
               >
                 💾 Sauvegarder
               </button>

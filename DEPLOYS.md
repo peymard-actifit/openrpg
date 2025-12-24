@@ -355,11 +355,12 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 3 
 - **Rapport**: [2025-12-23_01h38m33s_v0.17.17.txt](logs/deploys/2025-12-23_01h38m33s_v0.17.17.txt) 
  
+
  
-## v0.17.18 - 24/12/2025 17:49:12 
+## v1.0.0 - 24/12/2025 18:08:37 
  
-- **Type**: patch 
-- **Message**: Initialisation session Cursor - verification systeme 
-- **Fichiers modifiés**: 0 
-- **Rapport**: [2025-12-24_17h49m12s_v0.17.18.txt](logs/deploys/2025-12-24_17h49m12s_v0.17.18.txt) 
+- **Type**: major 
+- **Message**: Consignes IA personnalisees + prompt cable Joe Abercrombie + admin toutes parties 
+- **Fichiers modifiés**: 40 
+- **Rapport**: [2025-12-24_18h08m37s_v1.0.0.txt](logs/deploys/2025-12-24_18h08m37s_v1.0.0.txt) 
  
