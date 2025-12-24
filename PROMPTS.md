@@ -314,3 +314,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: major | **Fichiers**: 40 
  
+ 
+--- 
+ 
+### v1.0.1 - 24/12/2025 18:27:03 
+ 
+> Choix rapides (numeros, lettres) envoyes sans correction 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

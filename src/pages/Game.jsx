@@ -303,6 +303,17 @@ Commence l'histoire et liste les objets avec leurs balises.` }
     const msg = input.trim()
     if (!msg) return
     
+    // Détection de réponses courtes (numéros, choix simples) → envoi direct
+    const isQuickChoice = /^[0-9]+$/.test(msg) || // Juste un numéro
+                          /^[a-zA-Z]$/.test(msg) || // Juste une lettre
+                          msg.length <= 3 // Très court (oui, non, ok...)
+    
+    if (isQuickChoice) {
+      setInput('')
+      sendMessageDirect(msg)
+      return
+    }
+    
     setPendingMessage(msg)
     setCorrectedMessage(null)
     setShowConfirm(true)

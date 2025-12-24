@@ -2,60 +2,23 @@
   RAPPORT DE DEPLOIEMENT - OpenRPG 
 ================================================== 
  
-📅 Date: 24/12/2025 18:08:37 
-🏷️  Version: v0.17.18 → v1.0.0 
-📊 Type: major 
-💬 Message: Consignes IA personnalisees + prompt cable Joe Abercrombie + admin toutes parties 
+📅 Date: 24/12/2025 18:27:03 
+🏷️  Version: v1.0.0 → v1.0.1 
+📊 Type: patch 
+💬 Message: Choix rapides (numeros, lettres) envoyes sans correction 
  
 -------------------------------------------------- 
-  FICHIERS MODIFIES (40) 
+  FICHIERS MODIFIES (2) 
 -------------------------------------------------- 
- M DEPLOYS.md
- M PROMPTS.md
- M api/admin/toggle.js
- M api/auth/login.js
- M api/auth/me.js
- M api/auth/register.js
- M api/correct.js
- M api/games/[gameId]/messages.js
- M api/games/all.js
- M api/games/check-finished.js
- M api/games/participants.js
- M api/generate-image.js
- M api/lib/auth.js
- M api/lib/mongodb.js
- M api/profile.js
- M api/speak.js
- M api/transcribe.js
- M logs/deploys/2025-12-24_17h49m12s_v0.17.18.txt
+ M logs/deploys/2025-12-24_18h08m37s_v1.0.0.txt
  M package.json
- M scripts/deploy.sh
- M src/components/InvitationNotifications.jsx
- M src/components/LevelUpModal.jsx
- M src/components/RerollPrompt.jsx
- M src/components/StatsPanel.jsx
- M src/components/SyncGroupsPanel.jsx
- M src/components/SyncStatus.jsx
- M src/components/VoiceControls.jsx
- M src/lib/openai.js
- M src/main.jsx
- M src/pages/Dashboard.jsx
  M src/pages/Game.jsx
- M src/pages/Landing.jsx
- M src/pages/Login.jsx
- M src/pages/Register.jsx
- M src/styles/archive.css
- M src/styles/auth.css
- M src/styles/dashboard.css
- M src/styles/reroll.css
- M src/styles/voice.css
- M vite.config.js
-?? logs/deploys/2025-12-24_18h08m37s_v1.0.0.txt
+?? logs/deploys/2025-12-24_18h27m03s_v1.0.1.txt
  
 -------------------------------------------------- 
   STATISTIQUES GIT 
 -------------------------------------------------- 
- DEPLOYS.md                                     |   1 +
+ DEPLOYS.md                                     |  11 +-
  PROMPTS.md                                     |   9 ++
  api/admin/toggle.js                            |   1 +
  api/auth/login.js                              |   1 +
@@ -70,7 +33,8 @@
  api/profile.js                                 |   9 +-
  api/speak.js                                   |   1 +
  api/transcribe.js                              |   1 +
- logs/deploys/2025-12-24_17h49m12s_v0.17.18.txt |  33 ++++
+ logs/deploys/2025-12-24_17h49m12s_v0.17.18.txt |   3 +
+ logs/deploys/2025-12-24_18h08m37s_v1.0.0.txt   | 102 ++++++++++++
  package.json                                   |   2 +-
  scripts/deploy.sh                              |   1 +
  src/components/InvitationNotifications.jsx     |   1 +
@@ -83,7 +47,7 @@
  src/lib/openai.js                              |   1 +
  src/main.jsx                                   |   1 +
  src/pages/Dashboard.jsx                        | 189 ++++++++++++++--------
- src/pages/Game.jsx                             |  18 ++-
+ src/pages/Game.jsx                             |  29 +++-
  src/pages/Landing.jsx                          |   1 +
  src/pages/Login.jsx                            |   1 +
  src/pages/Register.jsx                         |   1 +
@@ -92,11 +56,8 @@
  src/styles/dashboard.css                       | 215 +++++++++++++++++++++++++
  src/styles/reroll.css                          |   1 +
  vite.config.js                                 |   1 +
- 37 files changed, 449 insertions(+), 72 deletions(-)
+ 38 files changed, 537 insertions(+), 77 deletions(-)
  
 ================================================== 
   DEPLOIEMENT REUSSI 
 ================================================== 
- 
-🔗 Commit: 6f76001 
-🏷️  Tag: v1.0.0 
