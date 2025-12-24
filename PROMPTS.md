@@ -332,3 +332,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 6 
  
+ 
+--- 
+ 
+### v1.0.3 - 24/12/2025 23:57:45 
+ 
+> Nouveau prompt cable style Abercrombie + API admin stats 
+ 
+**Type**: patch | **Fichiers**: 35 
+ 

@@ -16,7 +16,7 @@ const STAT_ICONS = [
 ]
 
 // Prompt câblé - Style de l'IA
-const HARDCODED_PROMPT = "L'IA doit prendre systématiquement le style de Joe Abercrombie pour s'exprimer, rajouter des éléments d'humour quand cela est possible, ne pas être trop gentille et parfois mettre le joueur en position de mourir s'il ne fait pas l'action la plus logique pour s'en sortir."
+const HARDCODED_PROMPT = "L'IA doit utiliser le style tranchant et incisif de l'écrivain Joe Abercrombie. Une description odorante, tactile et sensitive des choses. Une vue très prosaique et simple et en meme temps beaucoup d'humour."
 
 export default function Dashboard() {
   const { user, profile, signOut, refreshProfile } = useAuth()
