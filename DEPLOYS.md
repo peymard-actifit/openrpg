@@ -381,3 +381,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 1678 
 - **Rapport**: [2025-12-25_00h04m25s_v1.0.4.txt](logs/deploys/2025-12-25_00h04m25s_v1.0.4.txt) 
  
+ 
+## v1.0.5 - 25/12/2025 00:07:41 
+ 
+- **Type**: patch 
+- **Message**: Fix mode admin: affichage automatique de toutes les parties des que admin active 
+- **Fichiers modifiés**: 4 
+- **Rapport**: [2025-12-25_00h07m41s_v1.0.5.txt](logs/deploys/2025-12-25_00h07m41s_v1.0.5.txt) 
+ 

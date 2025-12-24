@@ -290,6 +290,7 @@ export default function Dashboard() {
         setIsAdmin(true)
         setShowAdminPrompt(false)
         setAdminCode('')
+        setShowAllGames(true) // Afficher automatiquement les parties
         fetchAllGames()
       }
     } catch (err) {

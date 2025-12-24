@@ -1,5 +1,6 @@
 import { getCollection } from '../lib/mongodb.js'
 import { getUserIdFromRequest } from '../lib/auth.js'
+import { ObjectId } from 'mongodb'
 
 const ADMIN_CODE = '12411241'
 
@@ -11,7 +12,13 @@ export default async function handler(req, res) {
 
   // Vérifier le statut admin
   const users = await getCollection('users')
-  const user = await users.findOne({ _id: userId })
+  // Chercher par id string OU par _id ObjectId
+  const user = await users.findOne({ 
+    $or: [
+      { id: userId },
+      { _id: ObjectId.isValid(userId) ? new ObjectId(userId) : null }
+    ]
+  })
   
   if (!user?.isAdmin) {
     return res.status(403).json({ error: 'Accès non autorisé' })
@@ -41,7 +48,7 @@ export default async function handler(req, res) {
       const onlineUsers = await presence.find({ 
         lastSeen: { $gte: fiveMinutesAgo } 
       }).toArray()
-      const onlineUserIds = new Set(onlineUsers.map(u => u.odUserId || u.odUserId))
+      const onlineUserIds = new Set(onlineUsers.map(u => u.userId))
 
       return res.status(200).json(
         allGames.map(g => ({

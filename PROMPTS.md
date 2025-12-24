@@ -350,3 +350,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 1678 
  
+ 
+--- 
+ 
+### v1.0.5 - 25/12/2025 00:07:41 
+ 
+> Fix mode admin: affichage automatique de toutes les parties des que admin active 
+ 
+**Type**: patch | **Fichiers**: 4 
+ 

@@ -17,12 +17,17 @@ export default async function handler(req, res) {
   const { code, disable } = req.body
   const users = await getCollection('users')
 
+  // Trouver l'utilisateur (par _id ObjectId ou id string)
+  const userQuery = {
+    $or: [
+      { _id: ObjectId.isValid(userId) ? new ObjectId(userId) : null },
+      { id: userId }
+    ]
+  }
+
   // Désactiver le mode admin
   if (disable) {
-    await users.updateOne(
-      { _id: new ObjectId(userId) },
-      { $set: { isAdmin: false } }
-    )
+    await users.updateOne(userQuery, { $set: { isAdmin: false } })
     return res.status(200).json({ isAdmin: false })
   }
 
@@ -31,10 +36,8 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'Code incorrect' })
   }
 
-  await users.updateOne(
-    { _id: new ObjectId(userId) },
-    { $set: { isAdmin: true } }
-  )
+  const result = await users.updateOne(userQuery, { $set: { isAdmin: true } })
+  console.log('Admin toggle result:', result.modifiedCount, 'user updated for userId:', userId)
 
   return res.status(200).json({ isAdmin: true })
 }
