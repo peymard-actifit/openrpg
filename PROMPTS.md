@@ -413,3 +413,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 3 
  
+ 
+--- 
+ 
+### v1.2.0 - 25/12/2025 00:59:55 
+ 
+> Admin: boutons supprimer et rouvrir les parties dans le dashboard 
+ 
+**Type**: minor | **Fichiers**: 6 
+ 

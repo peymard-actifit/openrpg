@@ -1,0 +1,40 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 00:59:55 
+🏷️  Version: v1.1.1 → v1.2.0 
+📊 Type: minor 
+💬 Message: Admin: boutons supprimer et rouvrir les parties dans le dashboard 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (6) 
+-------------------------------------------------- 
+ M api/games/[gameId].js
+ M logs/deploys/2025-12-25_00h55m48s_v1.1.1.txt
+ M package.json
+ M src/lib/api.js
+ M src/pages/Dashboard.jsx
+ M src/styles/dashboard.css
+?? api/games/[gameId]/reopen.js
+?? logs/deploys/2025-12-25_00h59m55s_v1.2.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 +++
+ PROMPTS.md                                   |  9 +++
+ api/games/[gameId].js                        | 31 +++++----
+ logs/deploys/2025-12-25_00h29m47s_v1.1.0.txt |  3 +
+ logs/deploys/2025-12-25_00h55m48s_v1.1.1.txt | 38 +++++++++++
+ package.json                                 |  2 +-
+ scripts/check-games.js                       | 96 ++++++++++++++++++++++++++++
+ scripts/reopen-game.js                       | 64 +++++++++++++++++++
+ src/lib/api.js                               |  7 ++
+ src/pages/Dashboard.jsx                      | 49 ++++++++++++--
+ src/styles/dashboard.css                     | 50 +++++++++++++--
+ 11 files changed, 336 insertions(+), 21 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

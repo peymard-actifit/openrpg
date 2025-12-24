@@ -437,3 +437,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 3 
 - **Rapport**: [2025-12-25_00h55m48s_v1.1.1.txt](logs/deploys/2025-12-25_00h55m48s_v1.1.1.txt) 
  
+ 
+## v1.2.0 - 25/12/2025 00:59:55 
+ 
+- **Type**: minor 
+- **Message**: Admin: boutons supprimer et rouvrir les parties dans le dashboard 
+- **Fichiers modifiés**: 6 
+- **Rapport**: [2025-12-25_00h59m55s_v1.2.0.txt](logs/deploys/2025-12-25_00h59m55s_v1.2.0.txt) 
+ 

@@ -116,6 +116,13 @@ export async function deleteGame(gameId) {
   })
 }
 
+// Rouvrir une partie archivée (admin)
+export async function reopenGame(gameId) {
+  return apiCall(`/games/${gameId}/reopen`, {
+    method: 'POST'
+  })
+}
+
 export async function getAllGames() {
   return apiCall('/games/all')
 }

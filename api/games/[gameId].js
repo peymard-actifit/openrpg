@@ -119,23 +119,32 @@ export default async function handler(req, res) {
     }
   }
 
-  // DELETE - Supprimer une partie
+  // DELETE - Supprimer une partie (propriétaire OU admin)
   if (req.method === 'DELETE') {
     try {
-      // Supprimer aussi les messages associés
+      // Vérifier que la partie existe
+      const game = await games.findOne({ _id: new ObjectId(gameId) })
+      if (!game) {
+        return res.status(404).json({ error: 'Partie non trouvée' })
+      }
+      
+      // Vérifier les droits (propriétaire ou admin)
+      if (game.userId !== userId && game.ownerId !== userId && !isAdmin) {
+        return res.status(403).json({ error: 'Non autorisé à supprimer cette partie' })
+      }
+      
+      // Supprimer les messages associés
       const messages = await getCollection('messages')
       await messages.deleteMany({ gameId })
       
-      const result = await games.deleteOne({ 
-        _id: new ObjectId(gameId), 
-        userId 
-      })
+      // Supprimer les chats de groupe associés
+      const gameChats = await getCollection('game_chats')
+      await gameChats.deleteMany({ gameId })
+      
+      // Supprimer la partie
+      await games.deleteOne({ _id: new ObjectId(gameId) })
 
-      if (result.deletedCount === 0) {
-        return res.status(404).json({ error: 'Partie non trouvée' })
-      }
-
-      return res.status(200).json({ success: true })
+      return res.status(200).json({ success: true, deleted: game.title })
     } catch (error) {
       console.error('Delete game error:', error)
       return res.status(500).json({ error: 'Erreur lors de la suppression' })

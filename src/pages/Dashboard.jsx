@@ -636,9 +636,8 @@ export default function Dashboard() {
               {allGames.map(game => (
                 <div 
                   key={game.id} 
-                  className={`admin-game-row ${game.status === 'archived' ? 'archived' : ''} clickable`}
-                  title={`Cliquer pour voir: ${game.initialPrompt}`}
-                  onClick={() => navigate(`/game/${game.id}`)}
+                  className={`admin-game-row ${game.status === 'archived' ? 'archived' : ''}`}
+                  title={game.initialPrompt}
                 >
                   <span className={`online-indicator ${game.playerOnline ? 'online' : 'offline'}`}>
                     {game.playerOnline ? '🟢' : '⚫'}
@@ -646,7 +645,10 @@ export default function Dashboard() {
                   <span className="game-status-icon">
                     {game.status === 'archived' ? (game.victory ? '🏆' : '💀') : '📜'}
                   </span>
-                  <div className="admin-game-info">
+                  <div 
+                    className="admin-game-info clickable"
+                    onClick={() => navigate(`/game/${game.id}`)}
+                  >
                     <span className="admin-game-title">{game.title}</span>
                     <span className="admin-game-player">👤 {game.playerName}</span>
                   </div>
@@ -654,7 +656,44 @@ export default function Dashboard() {
                   <span className="admin-game-status">
                     {game.status === 'archived' ? (game.victory ? 'Victoire' : 'Mort') : 'En cours'}
                   </span>
-                  <span className="admin-view-btn">👁️</span>
+                  <div className="admin-game-actions">
+                    {game.status === 'archived' && (
+                      <button 
+                        className="admin-action-btn reopen"
+                        title="Rouvrir la partie"
+                        onClick={async (e) => {
+                          e.stopPropagation()
+                          if (confirm(`Rouvrir la partie "${game.title}" ?`)) {
+                            try {
+                              await api.reopenGame(game.id)
+                              fetchAllGames()
+                            } catch (err) {
+                              alert('Erreur: ' + err.message)
+                            }
+                          }
+                        }}
+                      >
+                        🔄
+                      </button>
+                    )}
+                    <button 
+                      className="admin-action-btn delete"
+                      title="Supprimer la partie"
+                      onClick={async (e) => {
+                        e.stopPropagation()
+                        if (confirm(`⚠️ Supprimer définitivement "${game.title}" de ${game.playerName} ?\n\nCette action est irréversible !`)) {
+                          try {
+                            await api.deleteGame(game.id)
+                            fetchAllGames()
+                          } catch (err) {
+                            alert('Erreur: ' + err.message)
+                          }
+                        }
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

@@ -591,14 +591,56 @@
   opacity: 0.7;
 }
 
-.admin-view-btn {
-  opacity: 0.4;
-  transition: opacity 0.2s;
-  font-size: 1rem;
+.admin-game-info.clickable {
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
-.admin-game-row:hover .admin-view-btn {
+.admin-game-info.clickable:hover {
+  color: var(--accent);
+}
+
+.admin-game-info.clickable:hover .admin-game-title {
+  text-decoration: underline;
+}
+
+.admin-game-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+
+.admin-game-row:hover .admin-game-actions {
   opacity: 1;
+}
+
+.admin-action-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.admin-action-btn.reopen {
+  color: #4CAF50;
+}
+
+.admin-action-btn.reopen:hover {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: #4CAF50;
+}
+
+.admin-action-btn.delete {
+  color: #f44336;
+}
+
+.admin-action-btn.delete:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: #f44336;
 }
 
 .online-indicator {
