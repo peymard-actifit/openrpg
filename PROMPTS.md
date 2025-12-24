@@ -368,3 +368,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 6 
  
+ 
+--- 
+ 
+### v1.0.7 - 25/12/2025 00:18:12 
+ 
+> Fix droits admin: seul apydya@gmail.com est admin 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

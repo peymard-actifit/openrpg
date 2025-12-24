@@ -1,0 +1,35 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 00:18:12 
+🏷️  Version: v1.0.6 → v1.0.7 
+📊 Type: patch 
+💬 Message: Fix droits admin: seul apydya@gmail.com est admin 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-25_00h14m05s_v1.0.6.txt
+ M package.json
+?? logs/deploys/2025-12-25_00h18m12s_v1.0.7.txt
+?? scripts/fix-admin.js
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 ++++
+ PROMPTS.md                                   |  9 ++++
+ api/auth/me.js                               |  3 +-
+ logs/deploys/2025-12-25_00h07m41s_v1.0.5.txt |  3 ++
+ logs/deploys/2025-12-25_00h14m05s_v1.0.6.txt | 41 +++++++++++++++++
+ package.json                                 |  2 +-
+ scripts/check-admin.js                       | 67 ++++++++++++++++++++++++++++
+ scripts/debug-id.js                          | 47 +++++++++++++++++++
+ scripts/set-all-admin.js                     | 39 ++++++++++++++++
+ src/pages/Dashboard.jsx                      |  8 ++++
+ 10 files changed, 225 insertions(+), 2 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

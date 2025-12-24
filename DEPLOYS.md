@@ -397,3 +397,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 6 
 - **Rapport**: [2025-12-25_00h14m05s_v1.0.6.txt](logs/deploys/2025-12-25_00h14m05s_v1.0.6.txt) 
  
+ 
+## v1.0.7 - 25/12/2025 00:18:12 
+ 
+- **Type**: patch 
+- **Message**: Fix droits admin: seul apydya@gmail.com est admin 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-25_00h18m12s_v1.0.7.txt](logs/deploys/2025-12-25_00h18m12s_v1.0.7.txt) 
+ 
