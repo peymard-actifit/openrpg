@@ -17,7 +17,7 @@ import packageJson from '../../package.json'
 import '../styles/game.css'
 
 // Prompt câblé - Style de base de l'IA (priorité basse)
-const HARDCODED_PROMPT = "L'IA doit utiliser le style tranchant et incisif de l'écrivain Joe Abercrombie. Une description odorante, tactile et sensitive des choses. Une vue très prosaique et simple et en meme temps beaucoup d'humour."
+const HARDCODED_PROMPT = "L'IA doit utiliser le style tranchant et incisif de l'écrivain Joe Abercrombie. Une description odorante, tactile et sensitive des choses. Une vue très prosaïque et simple et en même temps beaucoup d'humour."
 
 export default function Game() {
   const { gameId } = useParams()

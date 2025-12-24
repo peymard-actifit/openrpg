@@ -341,3 +341,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 35 
  
+ 
+--- 
+ 
+### v1.0.4 - 25/12/2025 00:04:25 
+ 
+> Mise a jour du prompt cable Joe Abercrombie et ajout API stats admin 
+ 
+**Type**: patch | **Fichiers**: 1678 
+ 

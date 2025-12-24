@@ -16,53 +16,44 @@ export default async function handler(req, res) {
     const profiles = await getCollection('profiles')
     const games = await getCollection('games')
 
-    // Récupérer tous les utilisateurs
     const allUsers = await users.find({}).toArray()
-    
-    // Récupérer tous les profils
     const allProfiles = await profiles.find({}).toArray()
-    
-    // Récupérer toutes les parties
     const allGames = await games.find({}).toArray()
 
-    // Construire la liste des comptes avec leurs parties
-    const accountsWithGames = allUsers.map(user => {
-      const profile = allProfiles.find(p => p.userId === user.id || p.userId === user._id?.toString())
-      const userGames = allGames.filter(g => 
-        g.userId === user.id || 
-        g.userId === user._id?.toString() ||
-        g.ownerId === user.id ||
-        g.ownerId === user._id?.toString()
-      )
+    const result = allUsers.map(user => {
+      const uid = user.id || user._id?.toString()
+      const profile = allProfiles.find(p => p.userId === uid || p.userId === user._id?.toString())
+      const userGames = allGames.filter(g => g.userId === uid || g.ownerId === uid)
 
       return {
-        id: user.id || user._id?.toString(),
-        email: user.email,
+        id: uid,
+        email: user.email || user.username || 'Email inconnu',
         characterName: profile?.characterName || 'Non défini',
-        isAdmin: user.isAdmin || false,
+        stats: profile?.stats || {},
         createdAt: user.createdAt,
         gamesCount: userGames.length,
         games: userGames.map(g => ({
           id: g._id?.toString(),
           title: g.title || 'Sans titre',
-          status: g.status,
+          status: g.victory ? 'victory' : (g.deathReason ? 'dead' : (g.status || 'active')),
           level: g.level || 1,
           isMultiplayer: g.isMultiplayer || false,
-          participantsCount: g.participants?.length || 0,
-          createdAt: g.createdAt,
-          updatedAt: g.updatedAt
+          createdAt: g.createdAt
         }))
       }
     })
 
     return res.status(200).json({
       totalUsers: allUsers.length,
+      totalProfiles: allProfiles.length,
       totalGames: allGames.length,
-      accounts: accountsWithGames
+      activeGames: allGames.filter(g => g.status === 'active' && !g.victory && !g.deathReason).length,
+      victoryGames: allGames.filter(g => g.victory).length,
+      deadGames: allGames.filter(g => g.deathReason).length,
+      users: result
     })
   } catch (error) {
-    console.error('Admin stats error:', error)
-    return res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' })
+    console.error('Stats error:', error)
+    return res.status(500).json({ error: 'Erreur serveur', details: error.message })
   }
 }
-

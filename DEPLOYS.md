@@ -373,3 +373,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 35 
 - **Rapport**: [2025-12-24_23h57m45s_v1.0.3.txt](logs/deploys/2025-12-24_23h57m45s_v1.0.3.txt) 
  
+ 
+## v1.0.4 - 25/12/2025 00:04:25 
+ 
+- **Type**: patch 
+- **Message**: Mise a jour du prompt cable Joe Abercrombie et ajout API stats admin 
+- **Fichiers modifiés**: 1678 
+- **Rapport**: [2025-12-25_00h04m25s_v1.0.4.txt](logs/deploys/2025-12-25_00h04m25s_v1.0.4.txt) 
+ 
