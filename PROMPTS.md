@@ -296,3 +296,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 3 
  
+ 
+--- 
+ 
+### v0.17.18 - 24/12/2025 17:49:12 
+ 
+> Initialisation session Cursor - verification systeme 
+ 
+**Type**: patch | **Fichiers**: 0 
+ 

@@ -355,3 +355,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 3 
 - **Rapport**: [2025-12-23_01h38m33s_v0.17.17.txt](logs/deploys/2025-12-23_01h38m33s_v0.17.17.txt) 
  
+ 
+## v0.17.18 - 24/12/2025 17:49:12 
+ 
+- **Type**: patch 
+- **Message**: Initialisation session Cursor - verification systeme 
+- **Fichiers modifiés**: 0 
+- **Rapport**: [2025-12-24_17h49m12s_v0.17.18.txt](logs/deploys/2025-12-24_17h49m12s_v0.17.18.txt) 
+ 
