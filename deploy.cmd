@@ -158,6 +158,18 @@ echo. >> "%REPORT_FILE%"
 echo 🔗 Commit: %COMMIT_HASH% >> "%REPORT_FILE%"
 echo 🏷️  Tag: v%NEW_VERSION% >> "%REPORT_FILE%"
 
+REM Déploiement Vercel forcé
+echo.
+echo ℹ️  Deploiement Vercel en production...
+vercel --prod --token NP1ulAoVQ7Q4UWiheweI73Oj --yes
+if %errorlevel%==0 (
+    echo ✅ Vercel deploye avec succes
+    echo 🚀 Vercel: deploye >> "%REPORT_FILE%"
+) else (
+    echo ⚠️  Erreur deploiement Vercel
+    echo ⚠️  Vercel: erreur >> "%REPORT_FILE%"
+)
+
 echo.
 echo 🎉 Deploiement v%NEW_VERSION% termine !
 echo.
@@ -167,6 +179,7 @@ echo    Type: %TYPE%
 echo    Message: %MESSAGE%
 echo    Rapport: %REPORT_FILE%
 echo    Commit: %COMMIT_HASH%
+echo    Vercel: https://openrpg-rho.vercel.app
 echo.
 goto :eof
 

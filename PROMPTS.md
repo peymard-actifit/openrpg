@@ -386,3 +386,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 1 
  
+ 
+--- 
+ 
+### v1.0.9 - 25/12/2025 00:27:10 
+ 
+> Script deploy avec Vercel integre 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

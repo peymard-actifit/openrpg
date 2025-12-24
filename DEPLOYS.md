@@ -413,3 +413,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 1 
 - **Rapport**: [2025-12-25_00h24m13s_v1.0.8.txt](logs/deploys/2025-12-25_00h24m13s_v1.0.8.txt) 
  
+ 
+## v1.0.9 - 25/12/2025 00:27:10 
+ 
+- **Type**: patch 
+- **Message**: Script deploy avec Vercel integre 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-25_00h27m10s_v1.0.9.txt](logs/deploys/2025-12-25_00h27m10s_v1.0.9.txt) 
+ 
