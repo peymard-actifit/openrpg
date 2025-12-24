@@ -421,3 +421,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-25_00h27m10s_v1.0.9.txt](logs/deploys/2025-12-25_00h27m10s_v1.0.9.txt) 
  
+ 
+## v1.1.0 - 25/12/2025 00:29:47 
+ 
+- **Type**: minor 
+- **Message**: Admin peut voir toutes les parties en cliquant dessus 
+- **Fichiers modifiés**: 5 
+- **Rapport**: [2025-12-25_00h29m47s_v1.1.0.txt](logs/deploys/2025-12-25_00h29m47s_v1.1.0.txt) 
+ 

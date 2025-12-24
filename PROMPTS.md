@@ -395,3 +395,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v1.1.0 - 25/12/2025 00:29:47 
+ 
+> Admin peut voir toutes les parties en cliquant dessus 
+ 
+**Type**: minor | **Fichiers**: 5 
+ 

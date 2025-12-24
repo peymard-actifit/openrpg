@@ -636,8 +636,9 @@ export default function Dashboard() {
               {allGames.map(game => (
                 <div 
                   key={game.id} 
-                  className={`admin-game-row ${game.status === 'archived' ? 'archived' : ''}`}
-                  title={game.initialPrompt}
+                  className={`admin-game-row ${game.status === 'archived' ? 'archived' : ''} clickable`}
+                  title={`Cliquer pour voir: ${game.initialPrompt}`}
+                  onClick={() => navigate(`/game/${game.id}`)}
                 >
                   <span className={`online-indicator ${game.playerOnline ? 'online' : 'offline'}`}>
                     {game.playerOnline ? '🟢' : '⚫'}
@@ -653,6 +654,7 @@ export default function Dashboard() {
                   <span className="admin-game-status">
                     {game.status === 'archived' ? (game.victory ? 'Victoire' : 'Mort') : 'En cours'}
                   </span>
+                  <span className="admin-view-btn">👁️</span>
                 </div>
               ))}
             </div>

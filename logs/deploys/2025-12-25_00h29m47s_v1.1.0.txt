@@ -1,0 +1,38 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 00:29:47 
+🏷️  Version: v1.0.9 → v1.1.0 
+📊 Type: minor 
+💬 Message: Admin peut voir toutes les parties en cliquant dessus 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (5) 
+-------------------------------------------------- 
+ M api/games/[gameId].js
+ M api/games/[gameId]/messages.js
+ M logs/deploys/2025-12-25_00h27m10s_v1.0.9.txt
+ M package.json
+ M src/pages/Dashboard.jsx
+ M src/styles/dashboard.css
+?? logs/deploys/2025-12-25_00h29m47s_v1.1.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 ++++++
+ PROMPTS.md                                   |  9 +++++++
+ api/games/[gameId].js                        | 39 +++++++++++++++++++++-------
+ api/games/[gameId]/messages.js               | 32 ++++++++++++++++++-----
+ deploy.cmd                                   | 13 ++++++++++
+ logs/deploys/2025-12-25_00h24m13s_v1.0.8.txt |  3 +++
+ logs/deploys/2025-12-25_00h27m10s_v1.0.9.txt | 34 ++++++++++++++++++++++++
+ package.json                                 |  2 +-
+ src/pages/Dashboard.jsx                      |  6 +++--
+ src/styles/dashboard.css                     | 22 +++++++++++++---
+ 10 files changed, 145 insertions(+), 23 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

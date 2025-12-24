@@ -574,15 +574,31 @@
   border-radius: 6px;
   border: 1px solid rgba(65, 105, 225, 0.15);
   font-size: 0.8rem;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
-.admin-game-row:hover {
-  background: rgba(65, 105, 225, 0.1);
+.admin-game-row.clickable {
+  cursor: pointer;
+}
+
+.admin-game-row.clickable:hover {
+  background: rgba(65, 105, 225, 0.2);
+  border-color: rgba(65, 105, 225, 0.4);
+  transform: translateX(4px);
 }
 
 .admin-game-row.archived {
   opacity: 0.7;
+}
+
+.admin-view-btn {
+  opacity: 0.4;
+  transition: opacity 0.2s;
+  font-size: 1rem;
+}
+
+.admin-game-row:hover .admin-view-btn {
+  opacity: 1;
 }
 
 .online-indicator {

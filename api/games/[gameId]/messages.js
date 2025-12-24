@@ -14,16 +14,34 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'ID de partie invalide' })
   }
 
-  // Vérifier que l'utilisateur a accès à la partie (propriétaire ou participant)
-  const games = await getCollection('games')
-  const game = await games.findOne({ 
-    _id: new ObjectId(gameId),
+  // Vérifier si l'utilisateur est admin
+  const users = await getCollection('users')
+  const currentUser = await users.findOne({
     $or: [
-      { userId },
-      { ownerId: userId },
-      { 'participants.userId': userId, 'participants.status': { $in: ['active', 'paused'] } }
+      { _id: ObjectId.isValid(userId) ? new ObjectId(userId) : null },
+      { id: userId }
     ]
   })
+  const isAdmin = currentUser?.isAdmin === true
+
+  // Vérifier que l'utilisateur a accès à la partie (propriétaire, participant OU admin)
+  const games = await getCollection('games')
+  let game
+  
+  if (isAdmin) {
+    // Admin peut voir toutes les parties
+    game = await games.findOne({ _id: new ObjectId(gameId) })
+  } else {
+    // Utilisateur normal
+    game = await games.findOne({ 
+      _id: new ObjectId(gameId),
+      $or: [
+        { userId },
+        { ownerId: userId },
+        { 'participants.userId': userId, 'participants.status': { $in: ['active', 'paused'] } }
+      ]
+    })
+  }
   
   if (!game) {
     return res.status(404).json({ error: 'Partie non trouvée' })
