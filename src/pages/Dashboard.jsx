@@ -256,6 +256,12 @@ export default function Dashboard() {
         await api.addMessage(newGame.id, msg.role, msg.content)
       }
       
+      // Rafraîchir les listes avant de naviguer
+      await fetchGames()
+      if (isAdmin) {
+        await fetchAllGames()
+      }
+      
       navigate(`/game/${newGame.id}`)
     } catch (err) {
       console.error('Erreur continuation:', err)
@@ -697,7 +703,7 @@ export default function Dashboard() {
                           if (confirm(`Rouvrir la partie "${game.title}" ?`)) {
                             try {
                               await api.reopenGame(game.id)
-                              fetchAllGames()
+                              await Promise.all([fetchGames(), fetchAllGames()])
                             } catch (err) {
                               alert('Erreur: ' + err.message)
                             }
@@ -715,7 +721,7 @@ export default function Dashboard() {
                         if (confirm(`⚠️ Supprimer définitivement "${game.title}" de ${game.playerName} ?\n\nCette action est irréversible !`)) {
                           try {
                             await api.deleteGame(game.id)
-                            fetchAllGames()
+                            await Promise.all([fetchGames(), fetchAllGames()])
                           } catch (err) {
                             alert('Erreur: ' + err.message)
                           }

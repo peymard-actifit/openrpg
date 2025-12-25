@@ -431,3 +431,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 43 
  
+ 
+--- 
+ 
+### v1.2.2 - 25/12/2025 09:34:21 
+ 
+> Rafraichissement immediat du dashboard apres actions 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

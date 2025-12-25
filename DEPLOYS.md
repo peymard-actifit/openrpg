@@ -454,3 +454,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 43 
 - **Rapport**: [2025-12-25_09h24m40s_v1.2.1.txt](logs/deploys/2025-12-25_09h24m40s_v1.2.1.txt) 
  
+ 
+## v1.2.2 - 25/12/2025 09:34:21 
+ 
+- **Type**: patch 
+- **Message**: Rafraichissement immediat du dashboard apres actions 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-25_09h34m21s_v1.2.2.txt](logs/deploys/2025-12-25_09h34m21s_v1.2.2.txt) 
+ 

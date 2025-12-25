@@ -1,0 +1,65 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 09:34:21 
+🏷️  Version: v1.2.1 → v1.2.2 
+📊 Type: patch 
+💬 Message: Rafraichissement immediat du dashboard apres actions 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-25_09h24m40s_v1.2.1.txt
+ M package.json
+ M src/pages/Dashboard.jsx
+?? logs/deploys/2025-12-25_09h34m21s_v1.2.2.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |   9 +++
+ PROMPTS.md                                   |   9 +++
+ api/auth/login.js                            |   1 +
+ api/auth/register.js                         |   1 +
+ api/correct.js                               |   1 +
+ api/games/[gameId]/reopen.js                 |   1 +
+ api/games/check-finished.js                  |   1 +
+ api/generate-image.js                        |   1 +
+ api/lib/auth.js                              |   1 +
+ api/lib/mongodb.js                           |   1 +
+ api/speak.js                                 |   1 +
+ api/transcribe.js                            |   1 +
+ logs/deploys/2025-12-25_00h59m55s_v1.2.0.txt |   3 +
+ logs/deploys/2025-12-25_09h24m40s_v1.2.1.txt | 110 +++++++++++++++++++++++++++
+ package.json                                 |   2 +-
+ scripts/check-admin.js                       |   1 +
+ scripts/check-games.js                       |   1 +
+ scripts/debug-id.js                          |   1 +
+ scripts/deploy.sh                            |   1 +
+ scripts/fix-admin.js                         |   1 +
+ scripts/reopen-game.js                       |   1 +
+ scripts/set-all-admin.js                     |   1 +
+ src/components/InvitationNotifications.jsx   |   1 +
+ src/components/LevelUpModal.jsx              |   1 +
+ src/components/RerollPrompt.jsx              |   1 +
+ src/components/StatsPanel.jsx                |   1 +
+ src/components/SyncGroupsPanel.jsx           |   1 +
+ src/components/SyncStatus.jsx                |   1 +
+ src/components/VoiceControls.jsx             |   1 +
+ src/lib/openai.js                            |   1 +
+ src/main.jsx                                 |   1 +
+ src/pages/Dashboard.jsx                      |  45 ++++++++++-
+ src/pages/Landing.jsx                        |   1 +
+ src/pages/Login.jsx                          |   1 +
+ src/pages/Register.jsx                       |   1 +
+ src/styles/archive.css                       |   1 +
+ src/styles/auth.css                          |   1 +
+ src/styles/dashboard.css                     |   9 +++
+ src/styles/reroll.css                        |   1 +
+ vite.config.js                               |   1 +
+ 40 files changed, 215 insertions(+), 5 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 
