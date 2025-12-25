@@ -625,6 +625,15 @@
   transition: all 0.2s;
 }
 
+.admin-action-btn.continue {
+  color: #2196F3;
+}
+
+.admin-action-btn.continue:hover {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: #2196F3;
+}
+
 .admin-action-btn.reopen {
   color: #4CAF50;
 }

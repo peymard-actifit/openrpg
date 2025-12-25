@@ -445,3 +445,12 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 6 
 - **Rapport**: [2025-12-25_00h59m55s_v1.2.0.txt](logs/deploys/2025-12-25_00h59m55s_v1.2.0.txt) 
  
+
+ 
+## v1.2.1 - 25/12/2025 09:24:40 
+ 
+- **Type**: patch 
+- **Message**: Ajout bouton continuer pour parties mortes et admin 
+- **Fichiers modifiés**: 43 
+- **Rapport**: [2025-12-25_09h24m40s_v1.2.1.txt](logs/deploys/2025-12-25_09h24m40s_v1.2.1.txt) 
+ 

@@ -422,3 +422,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: minor | **Fichiers**: 6 
  
+ 
+--- 
+ 
+### v1.2.1 - 25/12/2025 09:24:40 
+ 
+> Ajout bouton continuer pour parties mortes et admin 
+ 
+**Type**: patch | **Fichiers**: 43 
+ 

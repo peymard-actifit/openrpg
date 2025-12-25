@@ -612,13 +612,34 @@ export default function Dashboard() {
                     <div 
                       key={game.id} 
                       className="game-card dead"
-                      onClick={() => navigate(`/archive/${game.id}`)}
                       title={game.initialPrompt}
                     >
                       <span className="game-icon">💀</span>
                       <div className="game-info">
                         <h3>{game.title}</h3>
                         <span className="game-level">Niveau {game.level || 1}</span>
+                      </div>
+                      <div className="archive-actions">
+                        <button 
+                          className="btn btn-sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            navigate(`/archive/${game.id}`)
+                          }}
+                          title="Voir l'archive"
+                        >
+                          👁️
+                        </button>
+                        <button 
+                          className="btn btn-sm btn-primary"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleContinueArchived(game)
+                          }}
+                          title="Reprendre cette aventure"
+                        >
+                          ▶️
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -657,10 +678,20 @@ export default function Dashboard() {
                     {game.status === 'archived' ? (game.victory ? 'Victoire' : 'Mort') : 'En cours'}
                   </span>
                   <div className="admin-game-actions">
+                    <button 
+                      className="admin-action-btn continue"
+                      title="Créer une copie dans mes parties"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleContinueArchived(game)
+                      }}
+                    >
+                      ▶️
+                    </button>
                     {game.status === 'archived' && (
                       <button 
                         className="admin-action-btn reopen"
-                        title="Rouvrir la partie"
+                        title="Rouvrir la partie (pour le joueur original)"
                         onClick={async (e) => {
                           e.stopPropagation()
                           if (confirm(`Rouvrir la partie "${game.title}" ?`)) {
