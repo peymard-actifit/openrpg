@@ -485,3 +485,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 3 
  
+ 
+--- 
+ 
+### v1.4.2 - 25/12/2025 10:56:36 
+ 
+> Sync automatique messages IA en mode multijoueur 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

@@ -470,3 +470,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 3 
 - **Rapport**: [2025-12-25_10h35m08s_v1.4.1.txt](logs/deploys/2025-12-25_10h35m08s_v1.4.1.txt) 
  
+ 
+## v1.4.2 - 25/12/2025 10:56:36 
+ 
+- **Type**: patch 
+- **Message**: Sync automatique messages IA en mode multijoueur 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-25_10h56m36s_v1.4.2.txt](logs/deploys/2025-12-25_10h56m36s_v1.4.2.txt) 
+ 

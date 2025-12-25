@@ -78,6 +78,34 @@ export default function Game() {
     return () => clearInterval(heartbeatInterval)
   }, [gameId])
 
+  // Polling des messages en mode multijoueur pour synchroniser les réponses de l'IA
+  useEffect(() => {
+    if (!game?.isMultiplayer || !gameStarted) return
+
+    const pollMessages = async () => {
+      try {
+        const messagesData = await api.getMessages(gameId)
+        if (messagesData && messagesData.length > messages.length) {
+          // Nouveaux messages détectés - mettre à jour
+          setMessages(messagesData)
+          
+          // Traiter le dernier message s'il vient de l'IA
+          const lastMsg = messagesData[messagesData.length - 1]
+          if (lastMsg.role === 'assistant') {
+            checkForDiceRequest(lastMsg.content)
+            setWaitingForPlayers(false)
+          }
+        }
+      } catch (err) {
+        // Ignorer les erreurs de polling
+      }
+    }
+
+    // Polling toutes les 2 secondes en mode multijoueur
+    const interval = setInterval(pollMessages, 2000)
+    return () => clearInterval(interval)
+  }, [game?.isMultiplayer, gameStarted, gameId, messages.length])
+
   useEffect(() => {
     if (lastMessageRef.current && messagesContainerRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })

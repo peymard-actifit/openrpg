@@ -1,0 +1,34 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 10:56:36 
+🏷️  Version: v1.4.1 → v1.4.2 
+📊 Type: patch 
+💬 Message: Sync automatique messages IA en mode multijoueur 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-25_10h35m08s_v1.4.1.txt
+ M package.json
+ M src/pages/Game.jsx
+?? logs/deploys/2025-12-25_10h56m36s_v1.4.2.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |   8 ++
+ PROMPTS.md                                   |   9 ++
+ api/games/typing-status.js                   |  95 +++++++++++++++++
+ dist/assets/index-DujbVlEz.js                | 148 +++++++++++++++++++++++++++
+ dist/assets/index-c9I6__b8.css               |   1 +
+ dist/index.html                              |  20 ++++
+ logs/deploys/2025-12-25_10h35m08s_v1.4.1.txt |  35 +++++++
+ package.json                                 |   2 +-
+ src/pages/Game.jsx                           |  29 ++++++
+ 9 files changed, 346 insertions(+), 1 deletion(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 
