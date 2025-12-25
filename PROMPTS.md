@@ -476,3 +476,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: minor | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v1.4.1 - 25/12/2025 10:35:08 
+ 
+> Fix import manquant TypingIndicator 
+ 
+**Type**: patch | **Fichiers**: 3 
+ 

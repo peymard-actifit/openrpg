@@ -13,6 +13,7 @@ import GameChat from '../components/GameChat'
 import InviteModal from '../components/InviteModal'
 import SyncStatus from '../components/SyncStatus'
 import SyncGroupsPanel from '../components/SyncGroupsPanel'
+import TypingIndicator from '../components/TypingIndicator'
 import packageJson from '../../package.json'
 import '../styles/game.css'
 
