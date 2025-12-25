@@ -458,3 +458,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 3 
  
+ 
+--- 
+ 
+### v1.3.0 - 25/12/2025 10:04:13 
+ 
+> Mode sync ameliore: voir actions des autres joueurs en temps reel, noms des joueurs en attente 
+ 
+**Type**: minor | **Fichiers**: 11 
+ 

@@ -1,0 +1,41 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 10:04:13 
+🏷️  Version: v1.2.4 → v1.3.0 
+📊 Type: minor 
+💬 Message: Mode sync ameliore: voir actions des autres joueurs en temps reel, noms des joueurs en attente 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (11) 
+-------------------------------------------------- 
+ M DEPLOYS.md
+ M PROMPTS.md
+ M api/games/pending-actions.js
+ M package.json
+ M src/components/InvitationNotifications.jsx
+ M src/components/SyncStatus.jsx
+ M src/lib/api.js
+ M src/pages/Game.jsx
+ M src/styles/multiplayer.css
+?? api/games/typing.js
+?? logs/deploys/2025-12-25_10h04m13s_v1.3.0.txt
+?? src/components/TypingIndicator.jsx
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  32 ---
+ api/games/pending-actions.js                 |  87 ++++++++-
+ logs/deploys/2025-12-25_09h40m15s_v1.2.4.txt |   3 +
+ package.json                                 |   2 +-
+ src/components/SyncStatus.jsx                |  88 +++++++--
+ src/lib/api.js                               |  20 ++
+ src/pages/Game.jsx                           |  35 +++-
+ src/styles/multiplayer.css                   | 280 +++++++++++++++++++++++++++
+ 8 files changed, 486 insertions(+), 61 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

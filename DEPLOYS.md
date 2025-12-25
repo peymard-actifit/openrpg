@@ -447,34 +447,10 @@ Ce fichier trace automatiquement tous les déploiements du projet.
  
 
  
-## v1.2.1 - 25/12/2025 09:24:40 
+## v1.3.0 - 25/12/2025 10:04:13 
  
-- **Type**: patch 
-- **Message**: Ajout bouton continuer pour parties mortes et admin 
-- **Fichiers modifiés**: 43 
-- **Rapport**: [2025-12-25_09h24m40s_v1.2.1.txt](logs/deploys/2025-12-25_09h24m40s_v1.2.1.txt) 
- 
- 
-## v1.2.2 - 25/12/2025 09:34:21 
- 
-- **Type**: patch 
-- **Message**: Rafraichissement immediat du dashboard apres actions 
-- **Fichiers modifiés**: 2 
-- **Rapport**: [2025-12-25_09h34m21s_v1.2.2.txt](logs/deploys/2025-12-25_09h34m21s_v1.2.2.txt) 
- 
- 
-## v1.2.3 - 25/12/2025 09:36:55 
- 
-- **Type**: patch 
-- **Message**: Affichage nombre joueurs/parties dans zone admin 
-- **Fichiers modifiés**: 2 
-- **Rapport**: [2025-12-25_09h36m55s_v1.2.3.txt](logs/deploys/2025-12-25_09h36m55s_v1.2.3.txt) 
- 
- 
-## v1.2.4 - 25/12/2025 09:40:15 
- 
-- **Type**: patch 
-- **Message**: Correction clic sur notifications invitations 
-- **Fichiers modifiés**: 3 
-- **Rapport**: [2025-12-25_09h40m15s_v1.2.4.txt](logs/deploys/2025-12-25_09h40m15s_v1.2.4.txt) 
+- **Type**: minor 
+- **Message**: Mode sync ameliore: voir actions des autres joueurs en temps reel, noms des joueurs en attente 
+- **Fichiers modifiés**: 11 
+- **Rapport**: [2025-12-25_10h04m13s_v1.3.0.txt](logs/deploys/2025-12-25_10h04m13s_v1.3.0.txt) 
  

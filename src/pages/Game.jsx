@@ -129,6 +129,31 @@ export default function Game() {
     return () => document.removeEventListener('keydown', handleGlobalKeyDown)
   }, [showConfirm, pendingMessage, isCorrecting, correctedMessage])
 
+  // Live typing - envoyer ce que le joueur tape en temps réel (multijoueur uniquement)
+  useEffect(() => {
+    if (!game?.isMultiplayer || !gameId) return
+    
+    // Debounce : envoyer après 300ms d'inactivité
+    const timeout = setTimeout(() => {
+      if (input.trim()) {
+        api.sendTyping(gameId, input, true).catch(() => {})
+      } else {
+        api.stopTyping(gameId).catch(() => {})
+      }
+    }, 300)
+    
+    return () => clearTimeout(timeout)
+  }, [input, game?.isMultiplayer, gameId])
+
+  // Arrêter de signaler la frappe quand on envoie ou quitte
+  useEffect(() => {
+    if (!game?.isMultiplayer || !gameId) return
+    
+    return () => {
+      api.stopTyping(gameId).catch(() => {})
+    }
+  }, [gameId, game?.isMultiplayer])
+
   async function syncInventoryOnLoad() {
     if (inventoryChecked) return
     setInventoryChecked(true)
@@ -639,11 +664,12 @@ STORYTELLING
         alignment={alignment}
       />
 
-      {/* Statut sync multijoueur */}
-      {game?.isMultiplayer && waitingForPlayers && (
+      {/* Statut sync multijoueur - toujours affiché en multijoueur pour voir les autres joueurs */}
+      {game?.isMultiplayer && (
         <SyncStatus 
           gameId={gameId} 
           isMultiplayer={game.isMultiplayer}
+          showAlways={true}
           onAllReady={() => {
             setWaitingForPlayers(false)
             fetchGame() // Recharger pour récupérer la réponse
@@ -700,6 +726,11 @@ STORYTELLING
                 </div>
               )}
             </div>
+
+            {/* Indicateur de frappe des autres joueurs */}
+            {game?.isMultiplayer && (
+              <TypingIndicator gameId={gameId} isMultiplayer={game.isMultiplayer} />
+            )}
 
             <div className="input-area">
               {diceRequested && (

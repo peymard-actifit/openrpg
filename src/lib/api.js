@@ -259,6 +259,26 @@ export async function cancelPendingAction(gameId) {
   })
 }
 
+// Envoyer le texte en cours de frappe (live typing)
+export async function sendTyping(gameId, draft = '', isTyping = true) {
+  return apiCall(`/games/typing?gameId=${gameId}`, {
+    method: 'POST',
+    body: JSON.stringify({ draft, isTyping })
+  })
+}
+
+// Récupérer qui tape actuellement
+export async function getTypingStatus(gameId) {
+  return apiCall(`/games/typing?gameId=${gameId}`)
+}
+
+// Arrêter de signaler qu'on tape
+export async function stopTyping(gameId) {
+  return apiCall(`/games/typing?gameId=${gameId}`, {
+    method: 'DELETE'
+  })
+}
+
 // Vérifier le statut en ligne des joueurs
 export async function checkOnlineStatus(gameId) {
   return apiCall(`/games/check-online?gameId=${gameId}`)
