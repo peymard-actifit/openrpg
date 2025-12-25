@@ -10,6 +10,7 @@ export default async function handler(req, res) {
   const games = await getCollection('games')
 
   // GET - Liste des parties (propres + invité)
+  // Exclure les parties soft-deleted par le joueur
   if (req.method === 'GET') {
     try {
       const userGames = await games
@@ -17,7 +18,9 @@ export default async function handler(req, res) {
           $or: [
             { userId: currentUserId },
             { 'participants.userId': currentUserId, 'participants.status': { $ne: 'removed' } }
-          ]
+          ],
+          // Exclure les parties que ce joueur a supprimées (soft delete)
+          'deletedByOwner.userId': { $ne: currentUserId }
         })
         .sort({ createdAt: -1 })
         .toArray()

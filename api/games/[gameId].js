@@ -120,6 +120,8 @@ export default async function handler(req, res) {
   }
 
   // DELETE - Supprimer une partie (propriétaire OU admin)
+  // Admin = suppression définitive
+  // Joueur non-admin = soft delete (partie cachée pour lui mais visible par admins)
   if (req.method === 'DELETE') {
     try {
       // Vérifier que la partie existe
@@ -129,22 +131,43 @@ export default async function handler(req, res) {
       }
       
       // Vérifier les droits (propriétaire ou admin)
-      if (game.userId !== userId && game.ownerId !== userId && !isAdmin) {
+      const isOwner = game.userId === userId || game.ownerId === userId
+      if (!isOwner && !isAdmin) {
         return res.status(403).json({ error: 'Non autorisé à supprimer cette partie' })
       }
       
-      // Supprimer les messages associés
-      const messages = await getCollection('messages')
-      await messages.deleteMany({ gameId })
-      
-      // Supprimer les chats de groupe associés
-      const gameChats = await getCollection('game_chats')
-      await gameChats.deleteMany({ gameId })
-      
-      // Supprimer la partie
-      await games.deleteOne({ _id: new ObjectId(gameId) })
+      // Si admin → suppression définitive
+      if (isAdmin) {
+        // Supprimer les messages associés
+        const messages = await getCollection('messages')
+        await messages.deleteMany({ gameId })
+        
+        // Supprimer les chats de groupe associés
+        const gameChats = await getCollection('game_chats')
+        await gameChats.deleteMany({ gameId })
+        
+        // Supprimer la partie définitivement
+        await games.deleteOne({ _id: new ObjectId(gameId) })
 
-      return res.status(200).json({ success: true, deleted: game.title })
+        return res.status(200).json({ success: true, deleted: game.title, permanent: true })
+      }
+      
+      // Si propriétaire non-admin → soft delete
+      // La partie est cachée pour le joueur mais reste visible pour les admins
+      await games.updateOne(
+        { _id: new ObjectId(gameId) },
+        { 
+          $set: { 
+            deletedByOwner: {
+              userId: userId,
+              deletedAt: new Date()
+            },
+            updatedAt: new Date()
+          }
+        }
+      )
+      
+      return res.status(200).json({ success: true, deleted: game.title, softDelete: true })
     } catch (error) {
       console.error('Delete game error:', error)
       return res.status(500).json({ error: 'Erreur lors de la suppression' })

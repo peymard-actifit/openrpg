@@ -56,7 +56,9 @@ export default async function handler(req, res) {
           id: g._id.toString(),
           _id: undefined,
           playerName: profileMap[g.userId] || 'Inconnu',
-          playerOnline: onlineUserIds.has(g.userId)
+          playerOnline: onlineUserIds.has(g.userId),
+          // Indique si le créateur a supprimé la partie (soft delete)
+          deletedByOwner: g.deletedByOwner || null
         }))
       )
     } catch (error) {

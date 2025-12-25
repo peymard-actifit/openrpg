@@ -503,3 +503,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: minor | **Fichiers**: 6 
  
+ 
+--- 
+ 
+### v1.6.0 - 25/12/2025 11:19:04 
+ 
+> Soft delete: joueur cache partie, admin supprime definitivement 
+ 
+**Type**: minor | **Fichiers**: 6 
+ 

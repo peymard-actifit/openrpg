@@ -665,25 +665,34 @@ export default function Dashboard() {
               {allGames.map(game => (
                 <div 
                   key={game.id} 
-                  className={`admin-game-row ${game.status === 'archived' ? 'archived' : ''}`}
-                  title={game.initialPrompt}
+                  className={`admin-game-row ${game.status === 'archived' ? 'archived' : ''} ${game.deletedByOwner ? 'soft-deleted' : ''}`}
+                  title={game.deletedByOwner 
+                    ? `⚠️ Supprimée par le créateur le ${new Date(game.deletedByOwner.deletedAt).toLocaleDateString('fr-FR')}\n\n${game.initialPrompt}`
+                    : game.initialPrompt
+                  }
                 >
                   <span className={`online-indicator ${game.playerOnline ? 'online' : 'offline'}`}>
                     {game.playerOnline ? '🟢' : '⚫'}
                   </span>
                   <span className="game-status-icon">
-                    {game.status === 'archived' ? (game.victory ? '🏆' : '💀') : '📜'}
+                    {game.deletedByOwner ? '🚫' : game.status === 'archived' ? (game.victory ? '🏆' : '💀') : '📜'}
                   </span>
                   <div 
                     className="admin-game-info clickable"
                     onClick={() => navigate(`/game/${game.id}`)}
                   >
-                    <span className="admin-game-title">{game.title}</span>
+                    <span className="admin-game-title">
+                      {game.title}
+                      {game.deletedByOwner && <span className="deleted-badge">Masquée</span>}
+                    </span>
                     <span className="admin-game-player">👤 {game.playerName}</span>
                   </div>
                   <span className="admin-game-level">Nv.{game.level || 1}</span>
                   <span className="admin-game-status">
-                    {game.status === 'archived' ? (game.victory ? 'Victoire' : 'Mort') : 'En cours'}
+                    {game.deletedByOwner 
+                      ? 'Supprimée' 
+                      : game.status === 'archived' ? (game.victory ? 'Victoire' : 'Mort') : 'En cours'
+                    }
                   </span>
                   <div className="admin-game-actions">
                     <button 

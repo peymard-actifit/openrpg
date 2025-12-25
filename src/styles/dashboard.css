@@ -591,6 +591,31 @@
   opacity: 0.7;
 }
 
+.admin-game-row.soft-deleted {
+  opacity: 0.6;
+  background: rgba(255, 87, 51, 0.1);
+  border-color: rgba(255, 87, 51, 0.3);
+}
+
+.admin-game-row.soft-deleted .admin-game-title {
+  text-decoration: line-through;
+  color: #ff5733;
+}
+
+.deleted-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  background: rgba(255, 87, 51, 0.2);
+  color: #ff5733;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: none !important;
+}
+
 .admin-game-info.clickable {
   cursor: pointer;
   transition: color 0.2s;
