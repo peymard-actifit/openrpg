@@ -1,0 +1,33 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 11:36:08 
+🏷️  Version: v1.6.1 → v1.6.2 
+📊 Type: patch 
+💬 Message: Dashboard: couronne pour les joueurs administrateurs 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (3) 
+-------------------------------------------------- 
+ M api/games/all.js
+ M logs/deploys/2025-12-25_11h22m50s_v1.6.1.txt
+ M package.json
+ M src/pages/Dashboard.jsx
+?? logs/deploys/2025-12-25_11h36m08s_v1.6.2.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 ++++++
+ PROMPTS.md                                   |  9 +++++++
+ api/games/all.js                             | 12 +++++++++
+ logs/deploys/2025-12-25_11h19m04s_v1.6.0.txt |  3 +++
+ logs/deploys/2025-12-25_11h22m50s_v1.6.1.txt | 38 ++++++++++++++++++++++++++++
+ package.json                                 |  2 +-
+ src/pages/Dashboard.jsx                      |  8 +++---
+ 7 files changed, 76 insertions(+), 4 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

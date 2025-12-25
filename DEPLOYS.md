@@ -502,3 +502,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-25_11h22m50s_v1.6.1.txt](logs/deploys/2025-12-25_11h22m50s_v1.6.1.txt) 
  
+ 
+## v1.6.2 - 25/12/2025 11:36:08 
+ 
+- **Type**: patch 
+- **Message**: Dashboard: couronne pour les joueurs administrateurs 
+- **Fichiers modifiés**: 3 
+- **Rapport**: [2025-12-25_11h36m08s_v1.6.2.txt](logs/deploys/2025-12-25_11h36m08s_v1.6.2.txt) 
+ 

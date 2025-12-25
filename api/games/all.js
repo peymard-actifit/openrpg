@@ -42,6 +42,17 @@ export default async function handler(req, res) {
       const profileMap = {}
       allProfiles.forEach(p => { profileMap[p.userId] = p.characterName })
 
+      // Vérifier le statut admin des joueurs
+      const allUsers = await users.find({}).toArray()
+      const adminUserIds = new Set()
+      allUsers.forEach(u => {
+        if (u.isAdmin) {
+          // Gérer les deux formats d'ID possibles
+          if (u.id) adminUserIds.add(u.id)
+          if (u._id) adminUserIds.add(u._id.toString())
+        }
+      })
+
       // Vérifier le statut en ligne des joueurs
       const presence = await getCollection('presence')
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
@@ -57,6 +68,7 @@ export default async function handler(req, res) {
           _id: undefined,
           playerName: profileMap[g.userId] || 'Inconnu',
           playerOnline: onlineUserIds.has(g.userId),
+          playerIsAdmin: adminUserIds.has(g.userId),
           // Indique si le créateur a supprimé la partie (soft delete)
           deletedByOwner: g.deletedByOwner || null
         }))

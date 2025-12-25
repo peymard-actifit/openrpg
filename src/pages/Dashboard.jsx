@@ -685,7 +685,9 @@ export default function Dashboard() {
                       {game.title}
                       {game.deletedByOwner && <span className="deleted-badge">Masquée</span>}
                     </span>
-                    <span className="admin-game-player">👤 {game.playerName}</span>
+                    <span className="admin-game-player">
+                      {game.playerIsAdmin ? '👑' : '👤'} {game.playerName}
+                    </span>
                   </div>
                   <span className="admin-game-level">Nv.{game.level || 1}</span>
                   <span className="admin-game-status">

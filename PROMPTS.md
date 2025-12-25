@@ -521,3 +521,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v1.6.2 - 25/12/2025 11:36:08 
+ 
+> Dashboard: couronne pour les joueurs administrateurs 
+ 
+**Type**: patch | **Fichiers**: 3 
+ 
