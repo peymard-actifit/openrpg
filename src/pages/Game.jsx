@@ -376,6 +376,10 @@ Commence l'histoire et liste les objets avec leurs balises.` }
     setShowConfirm(false)
     setInput('')
     setCorrectedMessage(null)
+    // Arrêter de signaler la frappe
+    if (game?.isMultiplayer) {
+      api.stopTyping(gameId).catch(() => {})
+    }
     sendMessageDirect(messageToSend)
     setPendingMessage(null)
   }

@@ -2,43 +2,35 @@
   RAPPORT DE DEPLOIEMENT - OpenRPG 
 ================================================== 
  
-📅 Date: 25/12/2025 10:04:13 
-🏷️  Version: v1.2.4 → v1.3.0 
+📅 Date: 25/12/2025 10:05:02 
+🏷️  Version: v1.3.0 → v1.4.0 
 📊 Type: minor 
-💬 Message: Mode sync ameliore: voir actions des autres joueurs en temps reel, noms des joueurs en attente 
+💬 Message: Multijoueur sync: voir actions des autres, typing indicator, chat amǸliorǸ 
  
 -------------------------------------------------- 
-  FICHIERS MODIFIES (11) 
+  FICHIERS MODIFIES (2) 
 -------------------------------------------------- 
- M DEPLOYS.md
- M PROMPTS.md
- M api/games/pending-actions.js
+ M logs/deploys/2025-12-25_10h04m13s_v1.3.0.txt
  M package.json
- M src/components/InvitationNotifications.jsx
- M src/components/SyncStatus.jsx
- M src/lib/api.js
  M src/pages/Game.jsx
- M src/styles/multiplayer.css
-?? api/games/typing.js
-?? logs/deploys/2025-12-25_10h04m13s_v1.3.0.txt
-?? src/components/TypingIndicator.jsx
+?? logs/deploys/2025-12-25_10h05m02s_v1.4.0.txt
  
 -------------------------------------------------- 
   STATISTIQUES GIT 
 -------------------------------------------------- 
- DEPLOYS.md                                   |  32 ---
+ DEPLOYS.md                                   |  34 +---
+ PROMPTS.md                                   |   9 +
  api/games/pending-actions.js                 |  87 ++++++++-
- logs/deploys/2025-12-25_09h40m15s_v1.2.4.txt |   3 +
+ api/games/typing.js                          |  90 +++++++++
+ logs/deploys/2025-12-25_10h04m13s_v1.3.0.txt |  44 +++++
  package.json                                 |   2 +-
  src/components/SyncStatus.jsx                |  88 +++++++--
+ src/components/TypingIndicator.jsx           |  49 +++++
  src/lib/api.js                               |  20 ++
- src/pages/Game.jsx                           |  35 +++-
+ src/pages/Game.jsx                           |  39 +++-
  src/styles/multiplayer.css                   | 280 +++++++++++++++++++++++++++
- 8 files changed, 486 insertions(+), 61 deletions(-)
+ 11 files changed, 684 insertions(+), 58 deletions(-)
  
 ================================================== 
   DEPLOIEMENT REUSSI 
 ================================================== 
- 
-🔗 Commit: d20d519 
-🏷️  Tag: v1.3.0 

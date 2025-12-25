@@ -467,3 +467,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: minor | **Fichiers**: 11 
  
+ 
+--- 
+ 
+### v1.4.0 - 25/12/2025 10:05:02 
+ 
+> Multijoueur sync: voir actions des autres, typing indicator, chat amǸliorǸ 
+ 
+**Type**: minor | **Fichiers**: 2 
+ 

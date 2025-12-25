@@ -454,3 +454,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 11 
 - **Rapport**: [2025-12-25_10h04m13s_v1.3.0.txt](logs/deploys/2025-12-25_10h04m13s_v1.3.0.txt) 
  
+ 
+## v1.4.0 - 25/12/2025 10:05:02 
+ 
+- **Type**: minor 
+- **Message**: Multijoueur sync: voir actions des autres, typing indicator, chat amǸliorǸ 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-25_10h05m02s_v1.4.0.txt](logs/deploys/2025-12-25_10h05m02s_v1.4.0.txt) 
+ 
