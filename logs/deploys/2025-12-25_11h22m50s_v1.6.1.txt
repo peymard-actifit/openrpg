@@ -1,0 +1,35 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 11:22:50 
+🏷️  Version: v1.6.0 → v1.6.1 
+📊 Type: patch 
+💬 Message: Admin: clarification icone copie partie (clipboard) 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (2) 
+-------------------------------------------------- 
+ M logs/deploys/2025-12-25_11h19m04s_v1.6.0.txt
+ M package.json
+ M src/pages/Dashboard.jsx
+?? logs/deploys/2025-12-25_11h22m50s_v1.6.1.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 +++++
+ PROMPTS.md                                   |  9 ++++++
+ api/games/[gameId].js                        | 45 +++++++++++++++++++-------
+ api/games/all.js                             |  4 ++-
+ api/games/index.js                           |  5 ++-
+ logs/deploys/2025-12-25_11h13m58s_v1.5.0.txt |  3 ++
+ logs/deploys/2025-12-25_11h19m04s_v1.6.0.txt | 47 ++++++++++++++++++++++++++++
+ package.json                                 |  2 +-
+ src/pages/Dashboard.jsx                      | 23 +++++++++-----
+ src/styles/dashboard.css                     | 25 +++++++++++++++
+ 10 files changed, 150 insertions(+), 21 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -512,3 +512,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: minor | **Fichiers**: 6 
  
+ 
+--- 
+ 
+### v1.6.1 - 25/12/2025 11:22:50 
+ 
+> Admin: clarification icone copie partie (clipboard) 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

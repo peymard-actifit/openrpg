@@ -697,13 +697,13 @@ export default function Dashboard() {
                   <div className="admin-game-actions">
                     <button 
                       className="admin-action-btn continue"
-                      title="Créer une copie dans mes parties"
+                      title={`Récupérer une copie de "${game.title}" dans mes parties actives`}
                       onClick={(e) => {
                         e.stopPropagation()
                         handleContinueArchived(game)
                       }}
                     >
-                      ▶️
+                      📋
                     </button>
                     {game.status === 'archived' && (
                       <button 

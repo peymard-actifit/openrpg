@@ -494,3 +494,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 6 
 - **Rapport**: [2025-12-25_11h19m04s_v1.6.0.txt](logs/deploys/2025-12-25_11h19m04s_v1.6.0.txt) 
  
+ 
+## v1.6.1 - 25/12/2025 11:22:50 
+ 
+- **Type**: patch 
+- **Message**: Admin: clarification icone copie partie (clipboard) 
+- **Fichiers modifiés**: 2 
+- **Rapport**: [2025-12-25_11h22m50s_v1.6.1.txt](logs/deploys/2025-12-25_11h22m50s_v1.6.1.txt) 
+ 
