@@ -161,8 +161,12 @@
 }
 
 /* ---- Notifications d'invitation ---- */
-.notification-badge {
+.notification-wrapper {
   position: relative;
+  display: inline-block;
+}
+
+.notification-badge {
   padding: 0.5rem 1rem;
   border: 1px solid var(--gold);
   border-radius: 20px;
@@ -170,6 +174,7 @@
   color: var(--gold);
   cursor: pointer;
   animation: pulse-badge 2s infinite;
+  z-index: 100;
 }
 
 @keyframes pulse-badge {

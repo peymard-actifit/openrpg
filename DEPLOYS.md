@@ -470,3 +470,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-25_09h36m55s_v1.2.3.txt](logs/deploys/2025-12-25_09h36m55s_v1.2.3.txt) 
  
+ 
+## v1.2.4 - 25/12/2025 09:40:15 
+ 
+- **Type**: patch 
+- **Message**: Correction clic sur notifications invitations 
+- **Fichiers modifiés**: 3 
+- **Rapport**: [2025-12-25_09h40m15s_v1.2.4.txt](logs/deploys/2025-12-25_09h40m15s_v1.2.4.txt) 
+ 

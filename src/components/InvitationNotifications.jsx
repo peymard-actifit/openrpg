@@ -39,16 +39,19 @@ export default function InvitationNotifications() {
   if (invitations.length === 0) return null
 
   return (
-    <>
+    <div className="notification-wrapper">
       <button 
         className="notification-badge"
-        onClick={() => setShowPanel(!showPanel)}
+        onClick={(e) => {
+          e.stopPropagation()
+          setShowPanel(!showPanel)
+        }}
       >
         📩 {invitations.length}
       </button>
 
       {showPanel && (
-        <div className="invitations-panel">
+        <div className="invitations-panel" onClick={(e) => e.stopPropagation()}>
           <div className="panel-header">
             <h3>📩 Invitations ({invitations.length})</h3>
             <button className="close-btn" onClick={() => setShowPanel(false)}>×</button>
@@ -86,7 +89,7 @@ export default function InvitationNotifications() {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 

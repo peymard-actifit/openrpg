@@ -449,3 +449,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v1.2.4 - 25/12/2025 09:40:15 
+ 
+> Correction clic sur notifications invitations 
+ 
+**Type**: patch | **Fichiers**: 3 
+ 
