@@ -478,3 +478,11 @@ Ce fichier trace automatiquement tous les déploiements du projet.
 - **Fichiers modifiés**: 2 
 - **Rapport**: [2025-12-25_10h56m36s_v1.4.2.txt](logs/deploys/2025-12-25_10h56m36s_v1.4.2.txt) 
  
+ 
+## v1.5.0 - 25/12/2025 11:13:58 
+ 
+- **Type**: minor 
+- **Message**: Multi: nom joueur devant messages + retour solo si 0 participant 
+- **Fichiers modifiés**: 6 
+- **Rapport**: [2025-12-25_11h13m58s_v1.5.0.txt](logs/deploys/2025-12-25_11h13m58s_v1.5.0.txt) 
+ 

@@ -250,6 +250,12 @@
   font-size: 1rem;
 }
 
+.player-name-tag {
+  font-weight: 700;
+  color: var(--gold);
+  margin-right: 0.25rem;
+}
+
 .message.assistant .message-content {
   background: var(--bg-card);
   border: 1px solid rgba(212, 175, 55, 0.15);

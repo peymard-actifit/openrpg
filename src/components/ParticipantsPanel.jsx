@@ -6,7 +6,8 @@ export default function ParticipantsPanel({
   gameId, 
   currentUserId, 
   isOwner,
-  onInviteClick 
+  onInviteClick,
+  onParticipantsChange
 }) {
   const [participants, setParticipants] = useState([])
   const [isMultiplayer, setIsMultiplayer] = useState(false)
@@ -32,8 +33,13 @@ export default function ParticipantsPanel({
 
   async function handleAction(action, targetUserId, mode) {
     try {
-      await api.updateParticipant(gameId, action, targetUserId, mode)
+      const result = await api.updateParticipant(gameId, action, targetUserId, mode)
       fetchParticipants()
+      
+      // Notifier le parent si les participants ont changé (notamment pour désactiver le mode multijoueur)
+      if (onParticipantsChange) {
+        onParticipantsChange()
+      }
     } catch (err) {
       console.error('Erreur action participant:', err)
     }

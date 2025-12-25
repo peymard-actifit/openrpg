@@ -494,3 +494,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v1.5.0 - 25/12/2025 11:13:58 
+ 
+> Multi: nom joueur devant messages + retour solo si 0 participant 
+ 
+**Type**: minor | **Fichiers**: 6 
+ 

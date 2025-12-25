@@ -1,0 +1,39 @@
+================================================== 
+  RAPPORT DE DEPLOIEMENT - OpenRPG 
+================================================== 
+ 
+📅 Date: 25/12/2025 11:13:58 
+🏷️  Version: v1.4.2 → v1.5.0 
+📊 Type: minor 
+💬 Message: Multi: nom joueur devant messages + retour solo si 0 participant 
+ 
+-------------------------------------------------- 
+  FICHIERS MODIFIES (6) 
+-------------------------------------------------- 
+ M api/games/[gameId]/messages.js
+ M api/games/participants.js
+ M logs/deploys/2025-12-25_10h56m36s_v1.4.2.txt
+ M package.json
+ M src/components/ParticipantsPanel.jsx
+ M src/pages/Game.jsx
+ M src/styles/game.css
+?? logs/deploys/2025-12-25_11h13m58s_v1.5.0.txt
+ 
+-------------------------------------------------- 
+  STATISTIQUES GIT 
+-------------------------------------------------- 
+ DEPLOYS.md                                   |  8 ++++++
+ PROMPTS.md                                   |  9 +++++++
+ api/games/[gameId]/messages.js               | 12 +++++++++
+ api/games/participants.js                    | 15 ++++++++++-
+ logs/deploys/2025-12-25_10h35m08s_v1.4.1.txt |  3 +++
+ logs/deploys/2025-12-25_10h56m36s_v1.4.2.txt | 37 ++++++++++++++++++++++++++++
+ package.json                                 |  2 +-
+ src/components/ParticipantsPanel.jsx         | 10 ++++++--
+ src/pages/Game.jsx                           | 32 ++++++++++++++++++++++++
+ src/styles/game.css                          |  6 +++++
+ 10 files changed, 130 insertions(+), 4 deletions(-)
+ 
+================================================== 
+  DEPLOIEMENT REUSSI 
+================================================== 

@@ -672,6 +672,7 @@ STORYTELLING
             currentUserId={currentUserId}
             isOwner={isOwner}
             onInviteClick={() => setShowInviteModal(true)}
+            onParticipantsChange={() => fetchGame()}
           />
           <button
             className={`auto-correct-toggle ${autoCorrect ? 'active' : ''}`}
@@ -747,6 +748,9 @@ STORYTELLING
                   ref={index === messages.length - 1 ? lastMessageRef : null}
                 >
                   <div className="message-content">
+                    {msg.role === 'user' && msg.playerName && (
+                      <span className="player-name-tag">{msg.playerName} : </span>
+                    )}
                     {formatMessage(msg.content)}
                   </div>
                 </div>

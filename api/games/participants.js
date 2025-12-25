@@ -83,7 +83,20 @@ export default async function handler(req, res) {
           },
           { arrayFilters: [{ 'elem.userId': targetUserId }] }
         )
-        return res.status(200).json({ success: true })
+
+        // Vérifier s'il reste des participants actifs
+        const updatedGame = await games.findOne({ _id: new ObjectId(gameId) })
+        const activeParticipants = (updatedGame.participants || []).filter(p => p.status === 'active')
+        
+        // Si plus aucun participant actif, désactiver le mode multijoueur
+        if (activeParticipants.length === 0) {
+          await games.updateOne(
+            { _id: new ObjectId(gameId) },
+            { $set: { isMultiplayer: false } }
+          )
+        }
+
+        return res.status(200).json({ success: true, isMultiplayer: activeParticipants.length > 0 })
       }
 
       // Réinviter un joueur retiré (owner uniquement)

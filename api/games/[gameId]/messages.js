@@ -79,10 +79,22 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Role et contenu requis' })
       }
 
+      // Pour les messages utilisateur, récupérer le nom du personnage
+      let playerName = null
+      if (role === 'user') {
+        const profiles = await getCollection('profiles')
+        const profile = await profiles.findOne({
+          $or: [{ userId }, { id: userId }]
+        })
+        playerName = profile?.characterName || 'Joueur'
+      }
+
       const message = {
         gameId,
         role,
         content,
+        playerName, // Stocker le nom du joueur
+        playerId: role === 'user' ? userId : null,
         createdAt: new Date()
       }
 
