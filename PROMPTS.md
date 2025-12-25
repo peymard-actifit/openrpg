@@ -440,3 +440,12 @@ Il est mis à jour automatiquement à chaque déploiement via le script `deploy.
  
 **Type**: patch | **Fichiers**: 2 
  
+ 
+--- 
+ 
+### v1.2.3 - 25/12/2025 09:36:55 
+ 
+> Affichage nombre joueurs/parties dans zone admin 
+ 
+**Type**: patch | **Fichiers**: 2 
+ 

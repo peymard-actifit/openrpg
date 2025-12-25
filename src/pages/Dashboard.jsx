@@ -474,7 +474,9 @@ export default function Dashboard() {
               onClick={() => setShowAllGames(!showAllGames)}
             >
               <span className="admin-icon">👁️</span>
-              <span className="admin-count">{allGames.length}</span>
+              <span className="admin-count">
+                {new Set(allGames.map(g => g.userId || g.playerName)).size}/{allGames.length}
+              </span>
               {showAllGames && <span className="admin-arrow">▲</span>}
             </div>
           )}
